@@ -19,5 +19,5 @@ class Counter
 end
 
 class Implementation < Counter
-  include Memorb::Base
+  include Memorb[:increment]
 end
