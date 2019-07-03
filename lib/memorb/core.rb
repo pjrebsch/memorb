@@ -16,6 +16,19 @@ module Memorb
           def self.included(base)
             base.extend(ClassMethods)
             base.send(:prepend, InstanceMethods)
+            @name = "Memorb(#{ base.name })"
+          end
+
+          def self.name
+            defined?(@name) ? @name : 'Memorb()'
+          end
+
+          def self.inspect
+            name
+          end
+
+          def self.address
+            (object_id << 1).to_s(16)
           end
         end
       end
