@@ -1,4 +1,4 @@
-RSpec.describe 'Memorb::InstanceMethods' do
+RSpec.describe Memorb::InstanceMethods do
   describe '#memorb?' do
     it 'returns true' do
       imp = Implementation.new
