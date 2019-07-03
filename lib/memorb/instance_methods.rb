@@ -6,6 +6,10 @@ module Memorb
       super
     end
 
+    def memorb?
+      true
+    end
+
     def memorb_reset!
       @memorb_cache = Core.fresh_cache
       nil

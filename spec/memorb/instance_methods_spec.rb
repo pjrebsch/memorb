@@ -1,6 +1,12 @@
 RSpec.describe 'Memorb::InstanceMethods' do
+  describe '#memorb?' do
+    it 'returns true' do
+      imp = Implementation.new
+      expect(imp.memorb?).to be(true)
+    end
+  end
   describe '#memorb_reset!' do
-    it 'should reset the memorb cache' do
+    it 'resets the memorb cache' do
       imp = Implementation.new
       cache1 = imp.instance_variable_get(:@memorb_cache)
       imp.memorb_reset!
