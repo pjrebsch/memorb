@@ -21,3 +21,6 @@ end
 class Implementation < Counter
   include Memorb[:increment]
 end
+
+class ImplementationChild < Implementation
+end
