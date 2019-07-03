@@ -24,3 +24,7 @@ end
 
 class ImplementationChild < Implementation
 end
+
+class ImplementationSimple < Counter
+  include Memorb
+end
