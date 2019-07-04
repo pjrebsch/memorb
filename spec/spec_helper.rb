@@ -28,3 +28,8 @@ end
 
 class ChildImplementation < SimpleImplementation
 end
+
+class DuplicateImplementation < Counter
+  include Memorb
+  include Memorb
+end

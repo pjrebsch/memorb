@@ -35,3 +35,7 @@ end
 RSpec.describe ChildImplementation do
   it_behaves_like 'an implementation', ChildImplementation
 end
+
+RSpec.describe DuplicateImplementation do
+  it_behaves_like 'an implementation', DuplicateImplementation
+end
