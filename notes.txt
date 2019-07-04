@@ -1,7 +1,6 @@
 todo
 - should never auto memorize methods upon inclusion (implementer should always be explicit)
 - anonymous mixin should respect the explicitly passed methods (it currently doesn't)
-- specs between implementations should not have code duplication (look into RSpec solution)
 - the custom `Memorb(Implementation)` module should always be prepended to the implementing class
 - avoid alias_method_chain approach to overriding implementer instance methods
 

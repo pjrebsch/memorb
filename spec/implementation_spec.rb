@@ -1,6 +1,4 @@
-RSpec.describe EnumerativeImplementation do
-  let(:klass) { EnumerativeImplementation }
-
+RSpec.shared_examples 'an implementation' do |klass|
   describe '#initialize' do
     it 'retains its original behavior' do
       imp = klass.new
@@ -19,4 +17,12 @@ RSpec.describe EnumerativeImplementation do
       expect(cache1).not_to equal(cache2)
     end
   end
+end
+
+RSpec.describe SimpleImplementation do
+  it_behaves_like 'an implementation', SimpleImplementation
+end
+
+RSpec.describe EnumerativeImplementation do
+  it_behaves_like 'an implementation', EnumerativeImplementation
 end
