@@ -1,13 +1,11 @@
 todo
 - should never auto memorize methods upon inclusion (implementer should always be explicit)
 - anonymous mixin should respect the explicitly passed methods (it currently doesn't)
-- the custom `Memorb(Implementation)` module should always be prepended to the implementing class
 - avoid alias_method_chain approach to overriding implementer instance methods (prefer prepend)
-- hook on the ::inherited method to prepend custom implementation module
 - add child memoization implementation support where the child class can override parent method to have it memoized
 - modules should be able to define methods that can be included into a class that implements memorb
 - consider using https://github.com/ruby-concurrency/concurrent-ruby for primitives
-- duplicates implementation inclusions should be allowed if they add instances to be cached
+- duplicate implementation inclusions should be allowed if they add instances to be cached
 - implementers should be able to pass options to the inclusion
 - make Store thread-safe (consider using a read-write lock implementation)
 - create a top-level method that works as a multi-tool
@@ -19,6 +17,3 @@ todo
   def Memorb(*args, options = {})
     ...
   end
-
-snippets
-puts Implementation.ancestors.inspect
