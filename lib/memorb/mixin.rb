@@ -8,6 +8,10 @@ module Memorb
         @@mixins.fetch(base) { mixin! base }
       end
 
+      def for(klass)
+        @@mixins.read(klass)
+      end
+
       private
 
       def mixin!(base)
