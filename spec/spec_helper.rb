@@ -25,6 +25,6 @@ end
 class ImplementationChild < Implementation
 end
 
-class ImplementationSimple < Counter
+class SimpleImplementation < Counter
   include Memorb
 end
