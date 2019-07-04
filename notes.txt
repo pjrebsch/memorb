@@ -3,7 +3,7 @@ todo
 - anonymous mixin should respect the explicitly passed methods (it currently doesn't)
 - the custom `Memorb(Implementation)` module should always be prepended to the implementing class
 - avoid alias_method_chain approach to overriding implementer instance methods (prefer prepend)
-
+- hook on the ::inherited method to prepend custom implementation module
 
 snippets
 puts Implementation.ancestors.inspect
