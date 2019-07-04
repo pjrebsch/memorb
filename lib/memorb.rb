@@ -9,7 +9,7 @@ module Memorb
   class << self
 
     def [](*methods)
-      Core.generate_mixin
+      self
     end
 
   end
