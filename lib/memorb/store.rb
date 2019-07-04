@@ -39,5 +39,9 @@ module Memorb
       nil
     end
 
+    def inspect
+      "#<Memorb::Store(#{ @data.keys.map(&:inspect).join(', ') })>"
+    end
+
   end
 end

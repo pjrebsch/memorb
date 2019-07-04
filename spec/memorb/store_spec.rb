@@ -71,4 +71,11 @@ RSpec.describe Memorb::Store do
       expect(data).to eq(original)
     end
   end
+  describe '#inspect' do
+    it 'displays the keys that it stores' do
+      [:symbol, 'string', 123, [:a, :b]].each { |k| subject.write(k, value) }
+      expectation = '#<Memorb::Store(:symbol, "string", 123, [:a, :b])>'
+      expect(subject.inspect).to eq(expectation)
+    end
+  end
 end
