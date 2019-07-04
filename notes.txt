@@ -7,6 +7,8 @@ todo
 - add child memoization implementation support where the child class can override parent method to have it memoized
 - modules should be able to define methods that can be included into a class that implements memorb
 - consider using https://github.com/ruby-concurrency/concurrent-ruby for primitives
+- duplicates implementation inclusions should be allowed if they add instances to be cached
+- implementers should be able to pass options to the inclusion
 
 snippets
 puts Implementation.ancestors.inspect
