@@ -9,6 +9,7 @@ todo
 - consider using https://github.com/ruby-concurrency/concurrent-ruby for primitives
 - duplicates implementation inclusions should be allowed if they add instances to be cached
 - implementers should be able to pass options to the inclusion
+- make Store thread-safe (consider using a read-write lock implementation)
 
 snippets
 puts Implementation.ancestors.inspect
