@@ -1,4 +1,3 @@
-require_relative 'memorb/core'
 require_relative 'memorb/class_methods'
 require_relative 'memorb/mixin'
 
@@ -10,7 +9,7 @@ module Memorb
     end
 
     def included(base)
-      Core.mixin(base)
+      Mixin.mixin(base)
     end
   end
 
