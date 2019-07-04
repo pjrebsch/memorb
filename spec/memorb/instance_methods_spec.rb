@@ -1,5 +1,5 @@
 RSpec.describe Memorb::InstanceMethods do
-  let(:implementation) { Implementation.new }
+  let(:implementation) { SimpleImplementation.new }
   describe '#memorb?' do
     it 'returns true' do
       expect(implementation.memorb?).to be(true)

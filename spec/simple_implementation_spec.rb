@@ -3,7 +3,6 @@ RSpec.describe SimpleImplementation do
     it 'retains its original behavior' do
       imp = SimpleImplementation.new
       expect(imp.counter).to eq(123)
-      puts SimpleImplementation.ancestors.inspect
     end
     it 'initializes the memorb cache' do
       imp = SimpleImplementation.new
