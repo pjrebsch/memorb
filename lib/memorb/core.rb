@@ -11,7 +11,7 @@ module Memorb
         Hash.new
       end
 
-      def generate_mixin(methods)
+      def generate_mixin
         Module.new do
           include InstanceMethods
 
