@@ -13,9 +13,10 @@ module Memorb
 
       def generate_mixin(methods)
         Module.new do
+          include InstanceMethods
+
           def self.included(base)
             base.extend(ClassMethods)
-            base.send(:prepend, InstanceMethods)
             @name = "Memorb(#{ base.name })"
           end
 
