@@ -17,11 +17,11 @@ module Memorb
 
           def self.included(base)
             base.extend(ClassMethods)
-            @name = "Memorb(#{ base.name })"
+            @base_name = base.name
           end
 
           def self.name
-            defined?(@name) ? @name : 'Memorb()'
+            "Memorb(#{ @base_name })"
           end
 
           def self.inspect
