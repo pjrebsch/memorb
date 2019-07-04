@@ -18,7 +18,7 @@ class Counter
 
 end
 
-class Implementation < Counter
+class EnumerativeImplementation < Counter
   include Memorb[:increment]
 end
 
