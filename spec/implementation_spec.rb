@@ -17,6 +17,11 @@ RSpec.shared_examples 'an implementation' do |klass|
       expect(cache1).not_to equal(cache2)
     end
   end
+  describe 'ancestors' do
+    it '...' do
+      puts klass.ancestors.inspect
+    end
+  end
 end
 
 RSpec.describe SimpleImplementation do
