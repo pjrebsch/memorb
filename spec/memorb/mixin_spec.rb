@@ -72,8 +72,9 @@ RSpec.describe Memorb::Mixin do
       it 'caches and returns the result of the block' do
         key, value = :key, 'value'
         result = implementation.memorb_fetch(key) { value }
-        cache = implementation.instance_variable_get(:@memorb_cache)
         expect(result).to equal(value)
+        cache = implementation.instance_variable_get(:@memorb_cache)
+        expect(cache[[key]]).to equal(value)
       end
     end
     context 'when a value has been set' do
