@@ -21,5 +21,10 @@ module Memorb
       has?(key) ? read(key) : write(key, fallback.call)
     end
 
+    def forget(key)
+      @data.delete(key)
+      nil
+    end
+
   end
 end

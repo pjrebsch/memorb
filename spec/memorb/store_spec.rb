@@ -61,4 +61,14 @@ RSpec.describe Memorb::Store do
       end
     end
   end
+  describe '#forget' do
+    it 'removes the cache entry for the given key' do
+      data = subject.instance_variable_get(:@data)
+      original = { :k1 => :v1, :k2 => :v2 }
+      addition = { :k3 => :v3 }
+      data.merge!(original).merge!(addition)
+      subject.forget(:k3)
+      expect(data).to eq(original)
+    end
+  end
 end
