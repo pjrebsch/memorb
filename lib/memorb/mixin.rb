@@ -45,6 +45,17 @@ module Memorb
             RUBY
           end
 
+          def self.unregister(name)
+            begin
+              remove_method(name)
+            rescue NameError
+              # If attempting to unregister a method that isn't currently
+              # registered, Ruby will raise an exception. Simply catching
+              # it here makes the process of registering and unregistering
+              # thread-safe.
+            end
+          end
+
           def initialize(*)
             @memorb_cache = Memorb::Cache.new(integration: self.class)
             super

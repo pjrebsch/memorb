@@ -77,4 +77,32 @@ RSpec.describe Memorb::Cache do
       end
     end
   end
+  describe '#unregister' do
+    let(:integration) do
+      Class.new(Counter) { include Memorb }
+    end
+    it 'removes the override method for the given method' do
+      cache = klass.new(integration: integration)
+      cache.register(:increment)
+      cache.unregister(:increment)
+      mixin = Memorb::Mixin.for(integration)
+      expect(mixin.public_instance_methods).not_to include(:increment)
+    end
+    context 'when there is no override method defined' do
+      it 'does not raise an error' do
+        cache = klass.new(integration: integration)
+        expect { cache.unregister(:undefined_method!) }.not_to raise_error
+      end
+    end
+    context 'when a method is registered multiple times' do
+      it 'still unregisters the method' do
+        cache = klass.new(integration: integration)
+        cache.register(:increment)
+        cache.register(:increment)
+        cache.unregister(:increment)
+        mixin = Memorb::Mixin.for(integration)
+        expect(mixin.public_instance_methods).not_to include(:increment)
+      end
+    end
+  end
 end

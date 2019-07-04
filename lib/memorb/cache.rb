@@ -31,6 +31,12 @@ module Memorb
 
     def register(method_name)
       mixin.register(method_name)
+      nil
+    end
+
+    def unregister(method_name)
+      mixin.unregister(method_name)
+      nil
     end
 
   end
