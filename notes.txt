@@ -4,6 +4,7 @@ todo
 - the custom `Memorb(Implementation)` module should always be prepended to the implementing class
 - avoid alias_method_chain approach to overriding implementer instance methods (prefer prepend)
 - hook on the ::inherited method to prepend custom implementation module
+- add child memoization implementation support where the child class can override parent method to have it memoized
 
 snippets
 puts Implementation.ancestors.inspect
