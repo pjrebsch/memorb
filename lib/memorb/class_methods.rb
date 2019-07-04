@@ -3,6 +3,10 @@ require 'set'
 module Memorb
   module ClassMethods
 
+    def inherited(child)
+      Core.inclusion_procedure(child)
+    end
+
     def method_added(name)
       memorb_alias_chain_method(name)
     end

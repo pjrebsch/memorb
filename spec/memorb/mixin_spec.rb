@@ -1,5 +1,6 @@
-RSpec.describe Memorb::InstanceMethods do
+RSpec.describe Memorb::Mixin do
   let(:implementation) { SimpleImplementation.new }
+
   describe '#memorb?' do
     it 'returns true' do
       expect(implementation.memorb?).to be(true)
