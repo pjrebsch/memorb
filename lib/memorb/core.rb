@@ -1,9 +1,5 @@
-require 'set'
-
 module Memorb
   module Core
-
-    IGNORED_INSTANCE_METHODS = Set[:initialize].freeze
 
     class << self
 

@@ -1,3 +1,5 @@
+require 'set'
+
 module Memorb
   module ClassMethods
 
@@ -7,8 +9,10 @@ module Memorb
 
     private
 
+    IGNORED_INSTANCE_METHODS = Set[:initialize].freeze
+
     def memorb_alias_chain_method(name)
-      return if Core::IGNORED_INSTANCE_METHODS.include? name
+      return if IGNORED_INSTANCE_METHODS.include? name
       return if just_added? name
       with = :"#{ name }_with_memorb"
       without = :"#{ name }_without_memorb"
