@@ -3,8 +3,15 @@ module Memorb
     class << self
 
       def mixin(base)
+        @@mixins ||= {}
+        @@mixins[base] ||= mixin!(base)
+      end
+
+      private
+
+      def mixin!(base)
         base.extend ClassMethods
-        base.prepend Mixin.new
+        base.prepend new
       end
 
       def new
@@ -52,7 +59,9 @@ module Memorb
           end
 
           def memorb_fetch(*key, &fallback)
-            memorb_has?(*key) ? memorb_read(*key) : memorb_write(*key, fallback.call)
+            memorb_has?(*key) ?
+              memorb_read(*key) :
+              memorb_write(*key, fallback.call)
           end
 
           def memorb_forget(*key)

@@ -38,4 +38,13 @@ end
 
 RSpec.describe DuplicateImplementation do
   it_behaves_like 'an implementation', DuplicateImplementation
+
+  describe 'ancestors' do
+    it 'includes its memorb implementation once' do
+      ancestors = DuplicateImplementation.ancestors
+      valid = "Memorb(#{ DuplicateImplementation.name })"
+      implementations = ancestors.map(&:inspect).select { |a| a == valid }
+      expect(implementations).to match_array([valid])
+    end
+  end
 end
