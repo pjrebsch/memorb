@@ -29,7 +29,7 @@ module Memorb
         end
 
         def memorb_reset!
-          @memorb_cache = Core.fresh_cache
+          @memorb_cache = {}
           nil
         end
 

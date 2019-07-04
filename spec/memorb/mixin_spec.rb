@@ -12,7 +12,7 @@ RSpec.describe Memorb::Mixin do
       implementation.memorb_reset!
       cache2 = implementation.instance_variable_get(:@memorb_cache)
       expect(cache1).not_to equal(cache2)
-      expect(cache2).to eq(Memorb::Core.fresh_cache)
+      expect(cache2).to eq({})
     end
   end
   describe '#memorb_write' do
