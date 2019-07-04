@@ -10,7 +10,7 @@ module Memorb
     end
 
     def included(base)
-      Core.inclusion_procedure(base)
+      Core.mixin(base)
     end
   end
 

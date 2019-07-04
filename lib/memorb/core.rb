@@ -6,7 +6,7 @@ module Memorb
         Hash.new
       end
 
-      def inclusion_procedure(base)
+      def mixin(base)
         base.extend ClassMethods
         base.prepend Mixin.new
       end

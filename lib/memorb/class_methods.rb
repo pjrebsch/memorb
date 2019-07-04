@@ -4,7 +4,7 @@ module Memorb
   module ClassMethods
 
     def inherited(child)
-      Core.inclusion_procedure(child)
+      Core.mixin(child)
     end
 
     def method_added(name)
