@@ -25,3 +25,6 @@ end
 class SimpleImplementation < Counter
   include Memorb
 end
+
+class ChildImplementation < SimpleImplementation
+end

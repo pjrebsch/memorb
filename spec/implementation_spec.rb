@@ -26,3 +26,7 @@ end
 RSpec.describe EnumerativeImplementation do
   it_behaves_like 'an implementation', EnumerativeImplementation
 end
+
+RSpec.describe ChildImplementation do
+  it_behaves_like 'an implementation', ChildImplementation
+end
