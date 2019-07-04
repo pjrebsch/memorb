@@ -22,9 +22,6 @@ class Implementation < Counter
   include Memorb[:increment]
 end
 
-class ImplementationChild < Implementation
-end
-
 class SimpleImplementation < Counter
   include Memorb
 end
