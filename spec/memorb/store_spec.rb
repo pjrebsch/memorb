@@ -71,6 +71,14 @@ RSpec.describe Memorb::Store do
       expect(data).to eq(original)
     end
   end
+  describe '#reset!' do
+    it 'clears all data' do
+      data = subject.instance_variable_get(:@data)
+      data[key] = value
+      subject.reset!
+      expect(data).to be_empty
+    end
+  end
   describe '#inspect' do
     it 'displays the keys that it stores' do
       [:symbol, 'string', 123, [:a, :b]].each { |k| subject.write(k, value) }

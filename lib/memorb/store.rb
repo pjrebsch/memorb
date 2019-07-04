@@ -39,6 +39,10 @@ module Memorb
       nil
     end
 
+    def reset!
+      @data.clear
+    end
+
     def inspect
       "#<Memorb::Store(#{ @data.keys.map(&:inspect).join(', ') })>"
     end
