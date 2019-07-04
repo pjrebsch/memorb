@@ -1,6 +1,6 @@
 module Memorb
   # Store is a key-value store that can be used as a thread-safe
-  # alternative to a Hash which uses a different, limited interface.
+  # alternative to a Hash, but uses a different, limited interface.
   #
   # Thread safety is important here because an implementing class may
   # be using Memorb and expecting that a cacheable method be executed

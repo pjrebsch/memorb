@@ -2,9 +2,10 @@ module Memorb
   module Mixin
     class << self
 
+      @@mixins = Store.new
+
       def mixin(base)
-        @@mixins ||= {}
-        @@mixins[base] ||= mixin!(base)
+        @@mixins.fetch(base) { mixin! base }
       end
 
       private
