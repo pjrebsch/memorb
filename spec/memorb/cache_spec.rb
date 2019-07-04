@@ -1,18 +1,23 @@
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
   let(:store_mock) { instance_double(Memorb::Store) }
+  let(:integration) { SimpleImplementation }
   let(:key) { :key }
   let(:value) { 'value' }
-  subject { klass.new(store: store_mock) }
+  subject { klass.new(integration: integration, store: store_mock) }
 
   describe '#initialize' do
+    it 'takes an integration class' do
+      cache = klass.new(integration: integration)
+      expect(cache.integration).to equal(integration)
+    end
     it 'can take a store' do
-      cache = klass.new(store: store_mock)
+      cache = klass.new(integration: integration, store: store_mock)
       store = cache.instance_variable_get(:@store)
       expect(store).to equal(store_mock)
     end
     it 'can use its own store' do
-      cache = klass.new
+      cache = klass.new(integration: integration)
       store = cache.instance_variable_get(:@store)
       expect(store).to be_an_instance_of(Memorb::Store)
     end
@@ -46,6 +51,30 @@ RSpec.describe Memorb::Cache do
     it 'resets the store' do
       expect(store_mock).to receive(:reset!)
       subject.reset!
+    end
+  end
+  describe '#register' do
+    let(:integration) do
+      Class.new(Counter) { include Memorb }
+    end
+    it 'caches the registered method' do
+      cache = klass.new(integration: integration)
+      cache.register(:increment)
+      instance = integration.new
+      result1 = instance.increment
+      result2 = instance.increment
+      expect(result1).to eq(result2)
+    end
+    context 'when registering a method multiple times' do
+      it 'still caches the registered method' do
+        cache = klass.new(integration: integration)
+        cache.register(:increment)
+        cache.register(:increment)
+        instance = integration.new
+        result1 = instance.increment
+        result2 = instance.increment
+        expect(result1).to eq(result2)
+      end
     end
   end
 end

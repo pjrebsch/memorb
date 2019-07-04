@@ -7,10 +7,6 @@ module Memorb
       Mixin.mixin(child)
     end
 
-    def method_added(name)
-      memorb_alias_chain_method(name)
-    end
-
     private
 
     IGNORED_INSTANCE_METHODS = Set[:initialize].freeze

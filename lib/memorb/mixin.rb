@@ -15,8 +15,10 @@ module Memorb
       private
 
       def mixin!(base)
-        base.extend ClassMethods
-        base.prepend new
+        new.tap do |m|
+          base.extend ClassMethods
+          base.prepend m
+        end
       end
 
       def new
@@ -33,8 +35,18 @@ module Memorb
             name
           end
 
+          def self.register(name)
+            class_eval <<-RUBY, __FILE__, __LINE__ + 1
+              def #{ name }(*args, &block)
+                memorb.fetch(:"#{ name }", *args, block) do
+                  super
+                end
+              end
+            RUBY
+          end
+
           def initialize(*)
-            @memorb_cache = Memorb::Cache.new
+            @memorb_cache = Memorb::Cache.new(integration: self.class)
             super
           end
 
