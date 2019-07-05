@@ -16,6 +16,10 @@ class Counter
     @counter += 1
   end
 
+  def double
+    @counter *= 2
+  end
+
 end
 
 class BasicIntegration < Counter
@@ -35,11 +39,11 @@ class ChildDuplicateIntegration < BasicIntegration
 end
 
 class EnumerativeWithBracketsIntegration < Counter
-  include Memorb[:increment]
+  include Memorb[:increment, :double]
 end
 
 class EnumerativeWithParenthesesIntegration < Counter
-  include Memorb(:increment)
+  include Memorb(:increment, :double)
 end
 
 class PrependedBasicIntegration < Counter
@@ -47,5 +51,5 @@ class PrependedBasicIntegration < Counter
 end
 
 class PrependedEnumerativeIntegration < Counter
-  prepend Memorb[:increment]
+  prepend Memorb[:increment, :double]
 end

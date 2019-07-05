@@ -29,6 +29,10 @@ RSpec.shared_examples 'a registered integration' do |klass|
     mixin = Memorb::Mixin.for(klass)
     expect(mixin.public_instance_methods).to include(:increment)
   end
+  it 'registers #double' do
+    mixin = Memorb::Mixin.for(klass)
+    expect(mixin.public_instance_methods).to include(:double)
+  end
 end
 
 RSpec.shared_examples 'a duplicate integration' do |klass|
