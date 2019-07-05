@@ -14,3 +14,4 @@
 - support method registration by specific instance in addition to by class which affects all instances
 - add a version file
 - add cache expiration time
+- make sure that all types of arguments to registered methods are understood correctly

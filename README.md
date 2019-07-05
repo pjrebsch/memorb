@@ -2,7 +2,9 @@
 
 Memoize instance methods more succinctly.
 
-## Why memoize instance methods?
+## Overview
+
+### Why memoize?
 
 Sometimes you want to execute an instance method and have its result cached for future calls. You may want this because the method:
 
@@ -10,7 +12,7 @@ Sometimes you want to execute an instance method and have its result cached for 
 - returns a newly instantiated object which shouldn't be recreated on subsequent calls
 - makes calls to an external service which should be limited for performance, API rate limiting, etc.
 
-## What's the problem?
+### What's the problem?
 
 Below is a simple, contrived `Rectangle` class that will be used for demonstration. The methods represent computationally expensive methods that can't be calculated before instantiation, but whose results won't change for the lifetime of the instance and can therefore be cached.
 
@@ -70,17 +72,23 @@ end
 
 But this approach gets a bit repetitive with the instance variable, is harder to read, and doesn't resolve any of the other problems.
 
-There must be a better way...
+Memorb offers a way to solve all of these problems and more!
 
-## The Solution
+## How does it work?
 
-Memorb solves all of these problems and more! At a minimum, just specify which methods should be cached and you're done:
+Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered, Memorb will override it so that when it's first called its return value is cached to be returned immediately on every call thereafter. Internally, calls to the overridden method are serialized with a read-write lock implementation to guarantee that the initial call is not subject to a race condition between threads while optimizing the performance of concurrent reads of the cached result.
+
+## Usage
+
+At a minimum, you just need specify which methods should be cached and you're done! The following are supported ways to register methods:
+
+### Immediate Registration
+
+This approach registers methods along with the inclusion of Memorb. It is still possible to register additional methods later. You may use parentheses instead of brackets if you wish—they are functionally equivalent.
 
 ```ruby
 include Memorb[:area, :perimeter, :square?, :memory_address]
 ```
-
-Each registered method will execute once and have its result cached to be returned immediately on every call thereafter.
 
 ## Advisories
 
