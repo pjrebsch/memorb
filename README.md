@@ -8,11 +8,11 @@ Sometimes you want to execute an instance method and have its result cached for 
 
 - is computationally expensive and caching its result would increase application performance
 - returns a newly instantiated object which shouldn't be recreated on subsequent calls
-- makes calls to an external service which should be limited for performance, rate limiting, etc.
+- makes calls to an external service which should be limited for performance, API rate limiting, etc.
 
-## What problem does this address?
+## What's the problem?
 
-Below is a contrived `Rectangle` class that will be used for demonstration. The `area` and `perimeter` methods represent computationally expensive methods that can't be calculated before instantiation, but whose results won't change for the lifetime of the instance and can therefore be cached.
+Below is a simple, contrived `Rectangle` class that will be used for demonstration. The methods represent computationally expensive methods that can't be calculated before instantiation, but whose results won't change for the lifetime of the instance and can therefore be cached.
 
 ```ruby
 class Rectangle
@@ -34,6 +34,10 @@ class Rectangle
 
   def square?
     width == height
+  end
+
+  def memory_address
+    (object_id << 1).to_s(16)
   end
 
 end
@@ -63,7 +67,7 @@ def square?
 end
 ```
 
-But this approach gets a bit repetitive with the instance variable, is harder to read, and doesn't address any of the other problems.
+But this approach gets a bit repetitive with the instance variable, is harder to read, and doesn't resolve any of the other problems.
 
 There must be a better way...
 
@@ -72,16 +76,7 @@ There must be a better way...
 Memorb solves all of these problems and more! At a minimum, just specify which methods should be cached and you're done:
 
 ```ruby
-class Rectangle
-  include Memorb[:area, :perimeter, :square?]
-  # ...
-end
+include Memorb[:area, :perimeter, :square?, :memory_address]
 ```
 
 Each registered method will execute once and have its result cached to be returned immediately on every call thereafter.
-
-You can also integrate Memorb in your class using parentheses instead of square brackets if you prefer:
-
-```ruby
-include Memorb(:area, :perimeter, :square?)
-```
