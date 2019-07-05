@@ -7,3 +7,4 @@
   #   Memorb(IntegratingKlass)  #=> returns mixin for given class
   #   Memorb(:method1, :method2)  #=> returns mixin for given methods
   #   Memorb(method: :memorb_is_awesome!)  #=> returns mixin with option of different method name
+- fix inspection of Memorb::Cache
