@@ -8,19 +8,19 @@ module Memorb
 
     def included(base)
       super
-      register(base)
+      register!(base)
     end
 
     def prepended(base)
       super
-      register(base)
+      register!(base)
     end
 
     def inspect
       "#{ self.class.name }(#{ @args.map(&:inspect).join(', ') })"
     end
 
-    def register(base)
+    def register!(base)
       mixin = Mixin.mixin!(base)
       @methods.each { |name| mixin.register(name) }
     end
