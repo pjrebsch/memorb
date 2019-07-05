@@ -1,12 +1,12 @@
 RSpec.shared_examples 'an integration' do |klass|
   describe '#initialize' do
     it 'retains its original behavior' do
-      imp = klass.new
-      expect(imp.counter).to eq(123)
+      instance = klass.new
+      expect(instance.counter).to eq(123)
     end
     it 'initializes the memorb cache' do
-      imp = klass.new
-      cache = imp.memorb
+      instance = klass.new
+      cache = instance.memorb
       expect(cache).to be_an_instance_of(Memorb::Cache)
     end
   end
