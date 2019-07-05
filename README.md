@@ -2,13 +2,13 @@
 
 Memoize instance methods more succinctly.
 
-## Why memoization of instance methods?
+## Why memoize instance methods?
 
 Sometimes you want to execute an instance method and have its result cached for future calls. You may want this because the method:
 
-- is expensive to execute and caching its result would increase application performance
+- is computationally expensive and caching its result would increase application performance
 - returns a newly instantiated object which shouldn't be recreated on subsequent calls
-- calls an external service which should be limited for performance, rate limiting, etc.
+- makes calls to an external service which should be limited for performance, rate limiting, etc.
 
 ## What problem does this address?
 
@@ -49,8 +49,8 @@ end
 
 But this approach has a few problems:
 
-- if the result is falesy, the cached value is bypassed and the computation re-executed on subsequent calls
-- concurrent calls to the method could result in its repeated computation when that may not be desirable
+- if the result is falsey, the cached value is bypassed and the computation re-executed on subsequent calls
+- concurrent calls to the method could result in its repeated computation when that may not be desirable (race condition between checking instance variable)
 - having many methods saved in instance variables could make inspection of the instance a harder to read
 - if the chosen variable name is long, it could cause line wrapping when that would otherwise be unnecessary
 - the instance variable name is often chosen to match the name of the method, but method name punctuation can make this impossible
@@ -63,7 +63,7 @@ def square?
 end
 ```
 
-But this approach gets a bit repetitive with the instance variable and is harder to read.
+But this approach gets a bit repetitive with the instance variable, is harder to read, and doesn't address any of the other problems.
 
 There must be a better way...
 
