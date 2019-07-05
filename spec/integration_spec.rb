@@ -38,8 +38,8 @@ end
 RSpec.shared_examples 'a duplicate integration' do |klass|
   describe 'ancestors' do
     it 'includes its memorb integration once' do
-      ancestors = DuplicateIntegration.ancestors
-      valid = "Memorb(#{ DuplicateIntegration.name })"
+      ancestors = klass.ancestors
+      valid = "Memorb(#{ klass.name })"
       mixins = ancestors.map(&:inspect).select { |a| a == valid }
       expect(mixins).to match_array([valid])
     end
