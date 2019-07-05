@@ -13,7 +13,7 @@ module Memorb
       end
 
       def name
-        "Memorb(#{ @base_name })"
+        "Memorb:#{ @base_name }"
       end
 
       alias_method :inspect, :name

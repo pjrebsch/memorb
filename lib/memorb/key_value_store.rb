@@ -44,7 +44,7 @@ module Memorb
     end
 
     def inspect
-      "#<#{ self.class.name }(#{ @data.keys.map(&:inspect).join(', ') })>"
+      "#<#{ self.class.name } keys=[#{ @data.keys.map(&:inspect).join(', ') }]>"
     end
 
   end
