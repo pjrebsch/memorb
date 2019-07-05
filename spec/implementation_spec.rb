@@ -35,18 +35,6 @@ RSpec.describe SimpleImplementation do
   it_behaves_like 'an implementation', SimpleImplementation
 end
 
-RSpec.describe EnumerativeWithBracketsImplementation do
-  klass = EnumerativeWithBracketsImplementation
-  it_behaves_like 'an implementation', klass
-  it_behaves_like 'a registered integration', klass
-end
-
-RSpec.describe EnumerativeWithParenthesesImplementation do
-  klass = EnumerativeWithParenthesesImplementation
-  it_behaves_like 'an implementation', klass
-  it_behaves_like 'a registered integration', klass
-end
-
 RSpec.describe ChildImplementation do
   it_behaves_like 'an implementation', ChildImplementation
 end
@@ -62,4 +50,16 @@ RSpec.describe DuplicateImplementation do
       expect(implementations).to match_array([valid])
     end
   end
+end
+
+RSpec.describe EnumerativeWithBracketsImplementation do
+  klass = EnumerativeWithBracketsImplementation
+  it_behaves_like 'an implementation', klass
+  it_behaves_like 'a registered integration', klass
+end
+
+RSpec.describe EnumerativeWithParenthesesImplementation do
+  klass = EnumerativeWithParenthesesImplementation
+  it_behaves_like 'an implementation', klass
+  it_behaves_like 'a registered integration', klass
 end
