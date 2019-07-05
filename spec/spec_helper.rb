@@ -18,22 +18,22 @@ class Counter
 
 end
 
-class SimpleImplementation < Counter
+class SimpleIntegration < Counter
   include Memorb
 end
 
-class ChildImplementation < SimpleImplementation
+class ChildIntegration < SimpleIntegration
 end
 
-class DuplicateImplementation < Counter
+class DuplicateIntegration < Counter
   include Memorb
   include Memorb
 end
 
-class EnumerativeWithBracketsImplementation < Counter
+class EnumerativeWithBracketsIntegration < Counter
   include Memorb[:increment]
 end
 
-class EnumerativeWithParenthesesImplementation < Counter
+class EnumerativeWithParenthesesIntegration < Counter
   include Memorb(:increment)
 end

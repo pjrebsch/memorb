@@ -1,9 +1,9 @@
-- test child memoization implementation support where the child class can override parent method to have it memoized
+- test child memoization integration support where the child class can override parent method to have it memoized
 - modules should be able to define methods that can be included into a class that implements memorb
-- duplicate implementation inclusions should be allowed if they add instances to be cached
+- duplicate integration inclusions should be allowed if they add instances to be cached
 - implementers should be able to pass options to the inclusion
 - make Store thread-safe (consider using a read-write lock implementation)
 - create a top-level method that works as a multi-tool
-  #   Memorb(ImplementationKlass)  #=> returns mixin for given class
+  #   Memorb(IntegratingKlass)  #=> returns mixin for given class
   #   Memorb(:method1, :method2)  #=> returns mixin for given methods
   #   Memorb(method: :memorb_is_awesome!)  #=> returns mixin with option of different method name

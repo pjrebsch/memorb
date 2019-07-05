@@ -1,7 +1,7 @@
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
   let(:store_mock) { instance_double(Memorb::Store) }
-  let(:integration) { SimpleImplementation }
+  let(:integration) { SimpleIntegration }
   let(:key) { :key }
   let(:value) { 'value' }
   subject { klass.new(integration: integration, store: store_mock) }

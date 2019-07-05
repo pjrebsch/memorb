@@ -1,4 +1,4 @@
-RSpec.shared_examples 'an implementation' do |klass|
+RSpec.shared_examples 'an integration' do |klass|
   describe '#initialize' do
     it 'retains its original behavior' do
       imp = klass.new
@@ -31,35 +31,35 @@ RSpec.shared_examples 'a registered integration' do |klass|
   end
 end
 
-RSpec.describe SimpleImplementation do
-  it_behaves_like 'an implementation', SimpleImplementation
+RSpec.describe SimpleIntegration do
+  it_behaves_like 'an integration', SimpleIntegration
 end
 
-RSpec.describe ChildImplementation do
-  it_behaves_like 'an implementation', ChildImplementation
+RSpec.describe ChildIntegration do
+  it_behaves_like 'an integration', ChildIntegration
 end
 
-RSpec.describe DuplicateImplementation do
-  it_behaves_like 'an implementation', DuplicateImplementation
+RSpec.describe DuplicateIntegration do
+  it_behaves_like 'an integration', DuplicateIntegration
 
   describe 'ancestors' do
-    it 'includes its memorb implementation once' do
-      ancestors = DuplicateImplementation.ancestors
-      valid = "Memorb(#{ DuplicateImplementation.name })"
-      implementations = ancestors.map(&:inspect).select { |a| a == valid }
-      expect(implementations).to match_array([valid])
+    it 'includes its memorb integration once' do
+      ancestors = DuplicateIntegration.ancestors
+      valid = "Memorb(#{ DuplicateIntegration.name })"
+      mixins = ancestors.map(&:inspect).select { |a| a == valid }
+      expect(mixins).to match_array([valid])
     end
   end
 end
 
-RSpec.describe EnumerativeWithBracketsImplementation do
-  klass = EnumerativeWithBracketsImplementation
-  it_behaves_like 'an implementation', klass
+RSpec.describe EnumerativeWithBracketsIntegration do
+  klass = EnumerativeWithBracketsIntegration
+  it_behaves_like 'an integration', klass
   it_behaves_like 'a registered integration', klass
 end
 
-RSpec.describe EnumerativeWithParenthesesImplementation do
-  klass = EnumerativeWithParenthesesImplementation
-  it_behaves_like 'an implementation', klass
+RSpec.describe EnumerativeWithParenthesesIntegration do
+  klass = EnumerativeWithParenthesesIntegration
+  it_behaves_like 'an integration', klass
   it_behaves_like 'a registered integration', klass
 end
