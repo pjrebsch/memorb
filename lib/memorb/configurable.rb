@@ -21,7 +21,7 @@ module Memorb
     end
 
     def inspect
-      "#{ self.class.name }[#{ @args.map(&:inspect).join(', ') }]"
+      "#{ self.class.name }#{ @args.inspect }"
     end
 
     def register!(base)
