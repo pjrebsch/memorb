@@ -16,3 +16,7 @@ module Memorb
   end
 
 end
+
+def Memorb(*args)
+  Memorb::Configurable.new(*args)
+end

@@ -18,8 +18,12 @@ class Counter
 
 end
 
-class EnumerativeImplementation < Counter
+class EnumerativeWithBracketsImplementation < Counter
   include Memorb[:increment]
+end
+
+class EnumerativeWithParenthesesImplementation < Counter
+  include Memorb(:increment)
 end
 
 class SimpleImplementation < Counter

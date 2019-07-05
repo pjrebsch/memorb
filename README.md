@@ -79,3 +79,9 @@ end
 ```
 
 Each registered method will execute once and have its result cached to be returned immediately on every call thereafter.
+
+You can also integrate Memorb in your class using parentheses instead of square brackets if you prefer:
+
+```ruby
+include Memorb(:area, :perimeter, :square?)
+```

@@ -28,8 +28,12 @@ RSpec.describe SimpleImplementation do
   it_behaves_like 'an implementation', SimpleImplementation
 end
 
-RSpec.describe EnumerativeImplementation do
-  it_behaves_like 'an implementation', EnumerativeImplementation
+RSpec.describe EnumerativeWithBracketsImplementation do
+  it_behaves_like 'an implementation', EnumerativeWithBracketsImplementation
+end
+
+RSpec.describe EnumerativeWithParenthesesImplementation do
+  it_behaves_like 'an implementation', EnumerativeWithParenthesesImplementation
 end
 
 RSpec.describe ChildImplementation do
