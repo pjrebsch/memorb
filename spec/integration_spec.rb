@@ -73,3 +73,11 @@ RSpec.describe EnumerativeWithParenthesesIntegration do
   it_behaves_like 'an integration', klass
   it_behaves_like 'a registered integration', klass
 end
+
+RSpec.describe PrependedSimpleIntegration do
+  it_behaves_like 'an integration', PrependedSimpleIntegration
+end
+
+RSpec.describe PrependedEnumerativeIntegration do
+  it_behaves_like 'an integration', PrependedEnumerativeIntegration
+end

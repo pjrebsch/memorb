@@ -8,12 +8,21 @@ module Memorb
 
     def included(base)
       super
-      mixin = Mixin.mixin(base)
-      @methods.each { |name| mixin.register(name) }
+      register(base)
+    end
+
+    def prepended(base)
+      super
+      register(base)
     end
 
     def inspect
       "#{ self.class.name }(#{ @args.map(&:inspect).join(', ') })"
+    end
+
+    def register(base)
+      mixin = Mixin.mixin(base)
+      @methods.each { |name| mixin.register(name) }
     end
 
   end

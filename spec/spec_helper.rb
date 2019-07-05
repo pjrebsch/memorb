@@ -41,3 +41,11 @@ end
 class EnumerativeWithParenthesesIntegration < Counter
   include Memorb(:increment)
 end
+
+class PrependedSimpleIntegration < Counter
+  prepend Memorb
+end
+
+class PrependedEnumerativeIntegration < Counter
+  prepend Memorb[:increment]
+end

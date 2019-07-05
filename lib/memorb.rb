@@ -13,6 +13,10 @@ module Memorb
     def included(base)
       Mixin.mixin(base)
     end
+
+    def prepended(base)
+      Mixin.mixin(base)
+    end
   end
 
 end
