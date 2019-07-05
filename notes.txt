@@ -2,7 +2,7 @@
 - modules should be able to define methods that can be included into a class that implements memorb
 - duplicate integration inclusions should be allowed if they add instances to be cached
 - implementers should be able to pass options to the inclusion
-- make Store thread-safe (consider using a read-write lock implementation)
+- make stores thread-safe (consider using a read-write lock implementation)
 - create a top-level method that works as a multi-tool
   #   Memorb(IntegratingKlass)  #=> returns mixin for given class
   #   Memorb(:method1, :method2)  #=> returns mixin for given methods

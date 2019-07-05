@@ -40,7 +40,7 @@ module Memorb
       end
     end
 
-    @@mixins = Store.new
+    @@mixins = KeyValueStore.new
 
     class << self
 

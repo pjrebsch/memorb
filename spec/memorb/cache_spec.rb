@@ -1,6 +1,6 @@
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
-  let(:store_mock) { instance_double(Memorb::Store) }
+  let(:store_mock) { instance_double(Memorb::KeyValueStore) }
   let(:integration) { SimpleIntegration }
   let(:key) { :key }
   let(:value) { 'value' }
@@ -19,7 +19,7 @@ RSpec.describe Memorb::Cache do
     it 'can use its own store' do
       cache = klass.new(integration: integration)
       store = cache.instance_variable_get(:@store)
-      expect(store).to be_an_instance_of(Memorb::Store)
+      expect(store).to be_an_instance_of(Memorb::KeyValueStore)
     end
   end
   describe '#write' do

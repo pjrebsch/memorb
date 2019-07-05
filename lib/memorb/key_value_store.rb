@@ -1,18 +1,18 @@
 module Memorb
-  # Store is a key-value store that can be used as a thread-safe
+  # KeyValueStore is a key-value store that can be used as a thread-safe
   # alternative to a Hash, but uses a different, limited interface.
   #
   # Thread safety is important here because an implementing class may
   # be using Memorb and expecting that a cacheable method be executed
   # only once. When a cacheable method is called, Memorb calls #fetch
-  # on this Store and expects it to be an atomic operation. Without
-  # thread safety, a TOCTOU bug exists with the #fetch method where
+  # on this KeyValueStore and expects it to be an atomic operation.
+  # Without thread safety, a TOCTOU bug exists with the #fetch method where
   # another thread could write to a given key in the cache after #fetch
   # has determined that the key doesn't exist yet, causing a double-write
   # to the cache (or possibly a double-execution of the original cacheable
   # method).
   #
-  class Store
+  class KeyValueStore
 
     def initialize
       @data = {}
@@ -44,7 +44,7 @@ module Memorb
     end
 
     def inspect
-      "#<Memorb::Store(#{ @data.keys.map(&:inspect).join(', ') })>"
+      "#<#{ self.class.name }(#{ @data.keys.map(&:inspect).join(', ') })>"
     end
 
   end

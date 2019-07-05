@@ -1,4 +1,4 @@
-require_relative 'memorb/store'
+require_relative 'memorb/key_value_store'
 require_relative 'memorb/mixin'
 require_relative 'memorb/cache'
 require_relative 'memorb/configurable'

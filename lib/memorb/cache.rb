@@ -1,7 +1,7 @@
 module Memorb
   class Cache
 
-    def initialize(integration:, store: Store.new)
+    def initialize(integration:, store: KeyValueStore.new)
       @integration = integration
       @mixin = Mixin.for(integration)
       @store = store
