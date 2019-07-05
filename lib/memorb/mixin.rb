@@ -23,36 +23,36 @@ module Memorb
 
       def new
         Module.new do
-          def self.prepended(base)
-            @base_name = base.name
-          end
+          class << self
+            def prepended(base)
+              @base_name = base.name
+            end
 
-          def self.name
-            "Memorb(#{ @base_name })"
-          end
+            def name
+              "Memorb(#{ @base_name })"
+            end
 
-          def self.inspect
-            name
-          end
+            alias_method :inspect, :name
 
-          def self.register(name)
-            class_eval <<-RUBY, __FILE__, __LINE__ + 1
-              def #{ name }(*args, &block)
-                memorb.fetch(:"#{ name }", *args, block) do
-                  super
+            def register(name)
+              class_eval <<-RUBY, __FILE__, __LINE__ + 1
+                def #{ name }(*args, &block)
+                  memorb.fetch(:"#{ name }", *args, block) do
+                    super
+                  end
                 end
-              end
-            RUBY
-          end
+              RUBY
+            end
 
-          def self.unregister(name)
-            begin
-              remove_method(name)
-            rescue NameError
-              # If attempting to unregister a method that isn't currently
-              # registered, Ruby will raise an exception. Simply catching
-              # it here makes the process of registering and unregistering
-              # thread-safe.
+            def unregister(name)
+              begin
+                remove_method(name)
+              rescue NameError
+                # If attempting to unregister a method that isn't currently
+                # registered, Ruby will raise an exception. Simply catching
+                # it here makes the process of registering and unregistering
+                # thread-safe.
+              end
             end
           end
 
