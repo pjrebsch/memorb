@@ -39,5 +39,12 @@ module Memorb
       nil
     end
 
+    def inspect
+      rgx = Regexp.new(self.class.name + ':0x\h+')
+      original = super
+      match = original.match(rgx)
+      match ? "#<#{ match }>" : original
+    end
+
   end
 end

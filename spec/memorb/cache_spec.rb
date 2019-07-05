@@ -117,4 +117,9 @@ RSpec.describe Memorb::Cache do
       end
     end
   end
+  describe '#inspect' do
+    it 'does not include information about its internals' do
+      expect(subject.inspect).to match(/#<Memorb::Cache:0x\h+>/)
+    end
+  end
 end
