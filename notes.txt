@@ -1,8 +1,6 @@
 todo
-- should never auto memorize methods upon inclusion (implementer should always be explicit)
 - anonymous mixin should respect the explicitly passed methods (it currently doesn't)
-- avoid alias_method_chain approach to overriding implementer instance methods (prefer prepend)
-- add child memoization implementation support where the child class can override parent method to have it memoized
+- test child memoization implementation support where the child class can override parent method to have it memoized
 - modules should be able to define methods that can be included into a class that implements memorb
 - consider using https://github.com/ruby-concurrency/concurrent-ruby for primitives
 - duplicate implementation inclusions should be allowed if they add instances to be cached
