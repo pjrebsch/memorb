@@ -1,20 +1,12 @@
-todo
-- anonymous mixin should respect the explicitly passed methods (it currently doesn't)
 - test child memoization implementation support where the child class can override parent method to have it memoized
 - modules should be able to define methods that can be included into a class that implements memorb
-- consider using https://github.com/ruby-concurrency/concurrent-ruby for primitives
 - duplicate implementation inclusions should be allowed if they add instances to be cached
 - implementers should be able to pass options to the inclusion
 - make Store thread-safe (consider using a read-write lock implementation)
 - create a top-level method that works as a multi-tool
-  # lib/memorb.rb
-  #   Memorb()  #=> returns Memorb module
   #   Memorb(ImplementationKlass)  #=> returns mixin for given class
   #   Memorb(:method1, :method2)  #=> returns mixin for given methods
   #   Memorb(method: :memorb_is_awesome!)  #=> returns mixin with option of different method name
-  def Memorb(*args, options = {})
-    ...
-  end
 - handle inspected name better when included in an anonymous class:
   klass = Class.new { include Memorb }
   klass.ancestors.inspect
