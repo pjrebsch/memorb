@@ -76,6 +76,18 @@ RSpec.describe Memorb::Cache do
         expect(result1).to eq(result2)
       end
     end
+    context 'when registering a method that does not exist' do
+      it 'still allows the method to be registered' do
+        cache = klass.new(integration: integration)
+        expect { cache.register(:undefined_method) }.not_to raise_error
+      end
+      it 'raises an error when trying to call it' do
+        cache = klass.new(integration: integration)
+        cache.register(:undefined_method)
+        instance = integration.new
+        expect { instance.undefined_method }.to raise_error(NoMethodError)
+      end
+    end
   end
   describe '#unregister' do
     let(:integration) do
