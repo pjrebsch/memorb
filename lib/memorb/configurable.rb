@@ -1,6 +1,10 @@
 module Memorb
   class Configurable < Module
 
+    def self.[](*args)
+      new(*args)
+    end
+
     def initialize(*args)
       @args = args
       @methods = args
