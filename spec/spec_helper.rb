@@ -18,11 +18,11 @@ class Counter
 
 end
 
-class SimpleIntegration < Counter
+class BasicIntegration < Counter
   include Memorb
 end
 
-class ChildIntegration < SimpleIntegration
+class ChildIntegration < BasicIntegration
 end
 
 class DuplicateIntegration < Counter
@@ -30,7 +30,7 @@ class DuplicateIntegration < Counter
   include Memorb
 end
 
-class ChildDuplicateIntegration < SimpleIntegration
+class ChildDuplicateIntegration < BasicIntegration
   include Memorb
 end
 
@@ -42,7 +42,7 @@ class EnumerativeWithParenthesesIntegration < Counter
   include Memorb(:increment)
 end
 
-class PrependedSimpleIntegration < Counter
+class PrependedBasicIntegration < Counter
   prepend Memorb
 end
 

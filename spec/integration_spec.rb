@@ -42,8 +42,8 @@ RSpec.shared_examples 'a duplicate integration' do |klass|
   end
 end
 
-RSpec.describe SimpleIntegration do
-  it_behaves_like 'an integration', SimpleIntegration
+RSpec.describe BasicIntegration do
+  it_behaves_like 'an integration', BasicIntegration
 end
 
 RSpec.describe ChildIntegration do
@@ -74,8 +74,8 @@ RSpec.describe EnumerativeWithParenthesesIntegration do
   it_behaves_like 'a registered integration', klass
 end
 
-RSpec.describe PrependedSimpleIntegration do
-  it_behaves_like 'an integration', PrependedSimpleIntegration
+RSpec.describe PrependedBasicIntegration do
+  it_behaves_like 'an integration', PrependedBasicIntegration
 end
 
 RSpec.describe PrependedEnumerativeIntegration do
