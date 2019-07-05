@@ -52,7 +52,7 @@ module Memorb
     end
 
     def inspect
-      "#<#{ self.class.name } keys=[#{ keys.map(&:inspect).join(', ') }]>"
+      "#<#{ self.class.name } keys=#{ keys.inspect }>"
     end
 
     private
