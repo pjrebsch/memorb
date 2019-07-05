@@ -83,5 +83,7 @@ RSpec.describe PrependedBasicIntegration do
 end
 
 RSpec.describe PrependedEnumerativeIntegration do
-  it_behaves_like 'an integration', PrependedEnumerativeIntegration
+  klass = PrependedEnumerativeIntegration
+  it_behaves_like 'an integration', klass
+  it_behaves_like 'a registered integration', klass
 end
