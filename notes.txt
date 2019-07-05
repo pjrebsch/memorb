@@ -3,6 +3,7 @@
 - duplicate integration inclusions should be allowed if they add instances to be cached
 - implementers should be able to pass options to the inclusion
 - make stores thread-safe (consider using a read-write lock implementation)
+- rename instances of `imp` in specs
 - create a top-level method that works as a multi-tool
   #   Memorb(IntegratingKlass)  #=> returns mixin for given class
   #   Memorb(:method1, :method2)  #=> returns mixin for given methods
