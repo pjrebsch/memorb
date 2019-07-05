@@ -13,3 +13,4 @@
 - change the example implementation to be less contrived (like use scrypt in a password wrapper class, or levels of round-based hashing)
 - support method registration by specific instance in addition to by class which affects all instances
 - add a version file
+- add cache expiration time
