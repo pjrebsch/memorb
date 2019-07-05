@@ -1,3 +1,5 @@
+require 'concurrent'
+
 module Memorb
   # KeyValueStore is a key-value store that can be used as a thread-safe
   # alternative to a Hash, but uses a different, limited interface.
@@ -16,35 +18,69 @@ module Memorb
 
     def initialize
       @data = {}
+      @lock = Concurrent::ReentrantReadWriteLock.new
     end
 
     def write(key, value)
-      @data[key] = value
+      @lock.with_write_lock { _write(key, value) }
     end
 
     def read(key)
-      @data[key]
+      @lock.with_read_lock { _read(key) }
     end
 
     def has?(key)
-      @data.include?(key)
+      @lock.with_read_lock { _has?(key) }
     end
 
     def fetch(key, &fallback)
-      has?(key) ? read(key) : write(key, fallback.call)
+      @lock.with_read_lock do
+        _has?(key) ? _read(key) : write(key, fallback.call)
+      end
     end
 
     def forget(key)
+      @lock.with_write_lock { _forget(key) }
+    end
+
+    def reset!
+      @lock.with_write_lock { _reset! }
+    end
+
+    def keys
+      @lock.with_read_lock { _keys }
+    end
+
+    def inspect
+      "#<#{ self.class.name } keys=[#{ keys.map(&:inspect).join(', ') }]>"
+    end
+
+    private
+
+    def _write(key, value)
+      @data[key] = value
+    end
+
+    def _read(key)
+      @data[key]
+    end
+
+    def _has?(key)
+      @data.include?(key)
+    end
+
+    def _forget(key)
       @data.delete(key)
       nil
     end
 
-    def reset!
+    def _reset!
       @data.clear
+      nil
     end
 
-    def inspect
-      "#<#{ self.class.name } keys=[#{ @data.keys.map(&:inspect).join(', ') }]>"
+    def _keys
+      @data.keys
     end
 
   end
