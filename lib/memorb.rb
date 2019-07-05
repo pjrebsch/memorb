@@ -1,5 +1,4 @@
 require_relative 'memorb/store'
-require_relative 'memorb/class_methods'
 require_relative 'memorb/mixin'
 require_relative 'memorb/cache'
 

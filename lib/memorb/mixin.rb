@@ -1,5 +1,12 @@
 module Memorb
   module Mixin
+
+    module ClassMethods
+      def inherited(child)
+        Mixin.mixin(child)
+      end
+    end
+
     class << self
 
       @@mixins = Store.new
