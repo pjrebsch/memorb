@@ -30,6 +30,10 @@ class DuplicateIntegration < Counter
   include Memorb
 end
 
+class ChildDuplicateIntegration < SimpleIntegration
+  include Memorb
+end
+
 class EnumerativeWithBracketsIntegration < Counter
   include Memorb[:increment]
 end

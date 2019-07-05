@@ -31,6 +31,17 @@ RSpec.shared_examples 'a registered integration' do |klass|
   end
 end
 
+RSpec.shared_examples 'a duplicate integration' do |klass|
+  describe 'ancestors' do
+    it 'includes its memorb integration once' do
+      ancestors = DuplicateIntegration.ancestors
+      valid = "Memorb(#{ DuplicateIntegration.name })"
+      mixins = ancestors.map(&:inspect).select { |a| a == valid }
+      expect(mixins).to match_array([valid])
+    end
+  end
+end
+
 RSpec.describe SimpleIntegration do
   it_behaves_like 'an integration', SimpleIntegration
 end
@@ -40,16 +51,15 @@ RSpec.describe ChildIntegration do
 end
 
 RSpec.describe DuplicateIntegration do
-  it_behaves_like 'an integration', DuplicateIntegration
+  klass = DuplicateIntegration
+  it_behaves_like 'an integration', klass
+  it_behaves_like 'a duplicate integration', klass
+end
 
-  describe 'ancestors' do
-    it 'includes its memorb integration once' do
-      ancestors = DuplicateIntegration.ancestors
-      valid = "Memorb(#{ DuplicateIntegration.name })"
-      mixins = ancestors.map(&:inspect).select { |a| a == valid }
-      expect(mixins).to match_array([valid])
-    end
-  end
+RSpec.describe ChildDuplicateIntegration do
+  klass = ChildDuplicateIntegration
+  it_behaves_like 'an integration', klass
+  it_behaves_like 'a duplicate integration', klass
 end
 
 RSpec.describe EnumerativeWithBracketsIntegration do
