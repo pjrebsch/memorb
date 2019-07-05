@@ -81,6 +81,12 @@ RSpec.describe Memorb::Cache do
         cache = klass.new(integration: integration)
         expect { cache.register(:undefined_method) }.not_to raise_error
       end
+      it 'responds to the method' do
+        cache = klass.new(integration: integration)
+        cache.register(:undefined_method)
+        instance = integration.new
+        expect(instance).to respond_to(:undefined_method)
+      end
       it 'raises an error when trying to call it' do
         cache = klass.new(integration: integration)
         cache.register(:undefined_method)
