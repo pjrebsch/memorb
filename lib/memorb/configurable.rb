@@ -4,7 +4,8 @@ module Memorb
     def included(base)
       super
       @integration = base
-      Mixin.mixin(base)
+      mixin = Mixin.mixin(base)
+      @methods.each { |name| mixin.register(name) }
     end
 
     def initialize(*args)

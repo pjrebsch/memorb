@@ -24,16 +24,27 @@ RSpec.shared_examples 'an implementation' do |klass|
   end
 end
 
+RSpec.shared_examples 'a registered integration' do |klass|
+  it 'registers #increment' do
+    mixin = Memorb::Mixin.for(klass)
+    expect(mixin.public_instance_methods).to include(:increment)
+  end
+end
+
 RSpec.describe SimpleImplementation do
   it_behaves_like 'an implementation', SimpleImplementation
 end
 
 RSpec.describe EnumerativeWithBracketsImplementation do
-  it_behaves_like 'an implementation', EnumerativeWithBracketsImplementation
+  klass = EnumerativeWithBracketsImplementation
+  it_behaves_like 'an implementation', klass
+  it_behaves_like 'a registered integration', klass
 end
 
 RSpec.describe EnumerativeWithParenthesesImplementation do
-  it_behaves_like 'an implementation', EnumerativeWithParenthesesImplementation
+  klass = EnumerativeWithParenthesesImplementation
+  it_behaves_like 'an implementation', klass
+  it_behaves_like 'a registered integration', klass
 end
 
 RSpec.describe ChildImplementation do
