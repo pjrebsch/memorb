@@ -7,7 +7,3 @@
   #   Memorb(ImplementationKlass)  #=> returns mixin for given class
   #   Memorb(:method1, :method2)  #=> returns mixin for given methods
   #   Memorb(method: :memorb_is_awesome!)  #=> returns mixin with option of different method name
-- handle inspected name better when included in an anonymous class:
-  klass = Class.new { include Memorb }
-  klass.ancestors.inspect
-  #=> [Memorb(), #<Class:0x00007ff3f9139a30>, Memorb, ...]

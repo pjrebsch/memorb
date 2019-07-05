@@ -9,7 +9,7 @@ module Memorb
 
     module MixinClassMethods
       def prepended(base)
-        @base_name = base.name
+        @base_name = base.name || base.inspect
       end
 
       def name
