@@ -21,7 +21,7 @@ module Memorb
     end
 
     def register(base)
-      mixin = Mixin.mixin(base)
+      mixin = Mixin.mixin!(base)
       @methods.each { |name| mixin.register(name) }
     end
 

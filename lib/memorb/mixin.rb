@@ -3,7 +3,7 @@ module Memorb
 
     module IntegrationClassMethods
       def inherited(child)
-        Mixin.mixin(child)
+        Mixin.mixin!(child)
       end
     end
 
@@ -44,8 +44,13 @@ module Memorb
 
     class << self
 
-      def mixin(base)
-        @@mixins.fetch(base) { mixin! base }
+      def mixin!(base)
+        @@mixins.fetch(base) do
+          new.tap do |mixin|
+            base.extend IntegrationClassMethods
+            base.prepend mixin
+          end
+        end
       end
 
       def for(klass)
@@ -53,13 +58,6 @@ module Memorb
       end
 
       private
-
-      def mixin!(base)
-        new.tap do |m|
-          base.extend IntegrationClassMethods
-          base.prepend m
-        end
-      end
 
       def new
         Module.new do
