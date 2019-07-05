@@ -43,7 +43,7 @@ class Rectangle
 end
 ```
 
-The common and succinct way of accomplishing this in most cases is to memoize the result in an instance variable:
+A common way of accomplishing memoization in most cases is to memoize the result in an instance variable:
 
 ```ruby
 def square?
@@ -51,10 +51,11 @@ def square?
 end
 ```
 
-But this approach has a few problems:
+But this simplistic approach has a few problems:
 
 - if the result is falsey, the cached value is bypassed and the computation re-executed on subsequent calls
-- concurrent calls to the method could result in its repeated computation when that may not be desirable (race condition between checking instance variable)
+- method calls aren't distinguished by their arguments
+- concurrent calls to the method could result in more than multiple executions when that may not be desirable (race condition between checking instance variable and running the computation)
 - having many methods saved in instance variables could make inspection of the instance a harder to read
 - if the chosen variable name is long, it could cause line wrapping when that would otherwise be unnecessary
 - the instance variable name is often chosen to match the name of the method, but method name punctuation can make this impossible
@@ -80,3 +81,11 @@ include Memorb[:area, :perimeter, :square?, :memory_address]
 ```
 
 Each registered method will execute once and have its result cached to be returned immediately on every call thereafter.
+
+## Advisories
+
+### Registering methods that aren't (yet) defined
+
+Memorb will allow you to register a method to be memoized before that method is actually defined. In fact, this is the normal behavior when specifying method registrations as part of the Memorb module inclusion. However, since registration of a method adds it to the prepended mixin for the class, `respond_to?` will return true on all instances, even if the method never actually gets defined on them.
+
+**There are plans to change automatic method overriding upon registration which would resolve this.**
