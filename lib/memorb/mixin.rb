@@ -33,9 +33,12 @@ module Memorb
           remove_method(name)
         rescue NameError
           # If attempting to unregister a method that isn't currently
-          # registered, Ruby will raise an exception. Simply catching
-          # it here makes the process of registering and unregistering
-          # thread-safe.
+          # registered, Ruby will raise an exception. Catching the
+          # exception is the safest thing to do for thread-safety.
+          # The alternative would be to check the register if it were
+          # added or not, but the read could be outdated by the time
+          # that we tried to remove the method and this exception
+          # wouldn't be caught.
         end
       end
     end
