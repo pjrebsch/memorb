@@ -9,37 +9,35 @@ Memoize instance methods more succinctly.
 Sometimes you want to execute an instance method and have its result cached for future calls. You may want this because the method:
 
 - is computationally expensive and caching its result would increase application performance
-- returns a newly instantiated object which shouldn't be recreated on subsequent calls
+- should only be executed once (perhaps it returns a newly instantiated object which shouldn't be recreated on subsequent calls)
 - makes calls to an external service which should be limited for performance, API rate limiting, etc.
 
 ### What's the problem?
 
-Below is a simple, contrived `Rectangle` class that will be used for demonstration. The methods represent computationally expensive methods that can't be calculated before instantiation, but whose results won't change for the lifetime of the instance and can therefore be cached.
+Below is a simple, contrived class that will be used for demonstration.
 
 ```ruby
-class Rectangle
+class WeekForecast
 
-  def initialize(width:, height:)
-    @width = width
-    @height = height
+  def initialize(starting:)
+    @date = starting
   end
 
-  attr_reader :width, :height
-
-  def area
-    width * height
+  def payload
+    API::Payload.get '/weather/week', { date: @date }
   end
 
-  def perimeter
-    2 * (width + height)
+  def rain_on?(week_day)
+    percent_chance = payload.dig('days', week_day.to_s, 'rain')
+    percent_chance > 75 if percent_chance
   end
 
-  def square?
-    width == height
+  def week_days
+    Date::ABBR_DAYNAMES.rotate(@date)
   end
 
-  def memory_address
-    (object_id << 1).to_s(16)
+  def will_rain?
+    week_days.any? { |wd| rain_on? wd }
   end
 
 end
@@ -48,16 +46,16 @@ end
 A common way of accomplishing memoization in most cases is to memoize the result in an instance variable:
 
 ```ruby
-def square?
-  @square ||= width == height
+def will_rain?
+  @will_rain ||= ...
 end
 ```
 
 But this simplistic approach has a few problems:
 
 - if the result is falsey, the cached value is bypassed and the computation re-executed on subsequent calls
-- method calls aren't distinguished by their arguments
-- concurrent calls to the method could result in more than multiple executions when that may not be desirable (race condition between checking instance variable and running the computation)
+- results from methods aren't distinguished by their arguments
+- concurrent calls to the method could result in more than multiple executions when that may not be desirable
 - having many methods saved in instance variables could make inspection of the instance a harder to read
 - if the chosen variable name is long, it could cause line wrapping when that would otherwise be unnecessary
 - the instance variable name is often chosen to match the name of the method, but method name punctuation can make this impossible
@@ -65,8 +63,8 @@ But this simplistic approach has a few problems:
 The falsey result problem could be solved by checking if the instance variable is `defined?` instead:
 
 ```ruby
-def square?
-  defined?(@square) ? @square : @square = width == height
+def will_rain?
+  defined?(@will_rain) ? @will_rain : @will_rain = ...
 end
 ```
 
@@ -87,7 +85,10 @@ At a minimum, you just need specify which methods should be cached and you're do
 This approach registers methods along with the inclusion of Memorb. It is still possible to register additional methods later. You may use parentheses instead of brackets if you wish—they are functionally equivalent.
 
 ```ruby
-include Memorb[:area, :perimeter, :square?, :memory_address]
+class WeekForecast
+  include Memorb[:payload, :week_days, :rain_on?, :will_rain?]
+  ...
+end
 ```
 
 ## Advisories
