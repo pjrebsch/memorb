@@ -5,6 +5,10 @@ module Memorb
       def inherited(child)
         Mixin.mixin!(child)
       end
+
+      def memorb
+        Mixin.for(self)
+      end
     end
 
     module MixinClassMethods
