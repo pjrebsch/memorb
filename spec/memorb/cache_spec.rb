@@ -2,6 +2,7 @@ RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
   let(:store_mock) { instance_double(Memorb::KeyValueStore) }
   let(:integration) { BasicIntegration }
+  let(:mixin) { instance_double(Memorb::Mixin::MixinClassMethods) }
   let(:key) { :key }
   let(:value) { 'value' }
   subject { klass.new(integration: integration, store: store_mock) }
@@ -10,6 +11,10 @@ RSpec.describe Memorb::Cache do
     it 'takes an integration class' do
       cache = klass.new(integration: integration)
       expect(cache.integration).to equal(integration)
+    end
+    it 'can take a mixin' do
+      cache = klass.new(integration: integration, mixin: mixin)
+      expect(cache.mixin).to equal(mixin)
     end
     it 'can take a store' do
       cache = klass.new(integration: integration, store: store_mock)
@@ -54,73 +59,21 @@ RSpec.describe Memorb::Cache do
     end
   end
   describe '#register' do
-    let(:integration) do
-      Class.new(Counter) { include Memorb }
-    end
-    it 'caches the registered method' do
-      cache = klass.new(integration: integration)
-      cache.register(:increment)
-      instance = integration.new
-      result1 = instance.increment
-      result2 = instance.increment
-      expect(result1).to eq(result2)
-    end
-    context 'when registering a method multiple times' do
-      it 'still caches the registered method' do
-        cache = klass.new(integration: integration)
-        cache.register(:increment)
-        cache.register(:increment)
-        instance = integration.new
-        result1 = instance.increment
-        result2 = instance.increment
-        expect(result1).to eq(result2)
-      end
-    end
-    context 'when registering a method that does not exist' do
-      it 'still allows the method to be registered' do
-        cache = klass.new(integration: integration)
-        expect { cache.register(:undefined_method) }.not_to raise_error
-      end
-      it 'responds to the method' do
-        cache = klass.new(integration: integration)
-        cache.register(:undefined_method)
-        instance = integration.new
-        expect(instance).to respond_to(:undefined_method)
-      end
-      it 'raises an error when trying to call it' do
-        cache = klass.new(integration: integration)
-        cache.register(:undefined_method)
-        instance = integration.new
-        expect { instance.undefined_method }.to raise_error(NoMethodError)
-      end
+    it 'calls register on the mixin' do
+      integration = Class.new(Counter) { include Memorb }
+      cache = klass.new(integration: integration, mixin: mixin)
+      method_name = :increment
+      expect(mixin).to receive(:register).with(method_name)
+      cache.register(method_name)
     end
   end
   describe '#unregister' do
-    let(:integration) do
-      Class.new(Counter) { include Memorb }
-    end
-    it 'removes the override method for the given method' do
-      cache = klass.new(integration: integration)
-      cache.register(:increment)
-      cache.unregister(:increment)
-      mixin = Memorb::Mixin.for(integration)
-      expect(mixin.public_instance_methods).not_to include(:increment)
-    end
-    context 'when there is no override method defined' do
-      it 'does not raise an error' do
-        cache = klass.new(integration: integration)
-        expect { cache.unregister(:undefined_method!) }.not_to raise_error
-      end
-    end
-    context 'when a method is registered multiple times' do
-      it 'still unregisters the method' do
-        cache = klass.new(integration: integration)
-        cache.register(:increment)
-        cache.register(:increment)
-        cache.unregister(:increment)
-        mixin = Memorb::Mixin.for(integration)
-        expect(mixin.public_instance_methods).not_to include(:increment)
-      end
+    it 'calls unregister on the mixin' do
+      integration = Class.new(Counter) { include Memorb }
+      cache = klass.new(integration: integration, mixin: mixin)
+      method_name = :increment
+      expect(mixin).to receive(:unregister).with(method_name)
+      cache.unregister(method_name)
     end
   end
   describe '#inspect' do

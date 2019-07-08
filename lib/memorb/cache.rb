@@ -1,9 +1,9 @@
 module Memorb
   class Cache
 
-    def initialize(integration:, store: KeyValueStore.new)
+    def initialize(integration:, mixin: nil, store: KeyValueStore.new)
       @integration = integration
-      @mixin = Mixin.for(integration)
+      @mixin = mixin || Mixin.for(integration)
       @store = store
     end
 
@@ -31,12 +31,10 @@ module Memorb
 
     def register(method_name)
       mixin.register(method_name)
-      nil
     end
 
     def unregister(method_name)
       mixin.unregister(method_name)
-      nil
     end
 
     def inspect
