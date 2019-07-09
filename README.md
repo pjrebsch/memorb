@@ -55,7 +55,7 @@ But this simplistic approach has a few problems:
 
 - if the result is falsey, the cached value is bypassed and the computation re-executed on subsequent calls
 - results from methods aren't distinguished by their arguments
-- concurrent calls to the method could result in more than multiple executions when that may not be desirable
+- concurrent calls to the method could result in multiple executions when that may not be desirable
 - having many methods saved in instance variables could make inspection of the instance a harder to read
 - if the chosen variable name is long, it could cause line wrapping when that would otherwise be unnecessary
 - the instance variable name is often chosen to match the name of the method, but method name punctuation can make this impossible
