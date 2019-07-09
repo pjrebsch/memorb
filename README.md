@@ -80,7 +80,7 @@ Specifying methods to be memoized by Memorb is referred to as "registering" them
 
 At a minimum, you just need specify which methods should be cached and you're done! The following are supported ways to register methods:
 
-### Immediate Registration
+### Inline Registration
 
 This approach registers methods along with the inclusion of Memorb. It is still possible to register additional methods later. You may use parentheses instead of brackets if you wish—they are functionally equivalent.
 
@@ -95,6 +95,6 @@ end
 
 ### Registering methods that aren't (yet) defined
 
-Memorb will allow you to register a method to be memoized before that method is actually defined. In fact, this is the normal behavior when specifying method registrations as part of the Memorb module inclusion. However, since registration of a method adds it to the prepended mixin for the class, `respond_to?` will return true on all instances, even if the method never actually gets defined on them.
+Memorb will allow you to register a method to be memoized before that method is actually defined. In fact, this is the normal behavior when using inline registration. However, since registration of a method adds it to the prepended mixin for the class, `respond_to?` will return true on all instances, even if the method never actually gets defined on them.
 
 **There are plans to change automatic method overriding upon registration which would resolve this.**
