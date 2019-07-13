@@ -6,7 +6,7 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
 
   describe '#name' do
     it 'includes the name of the integrating class' do
-      integration = BasicIntegration
+      integration.define_singleton_method(:name) { 'IntegrationKlass' }
       mixin = Memorb::Mixin.for(integration)
       expect(mixin.name).to eq("Memorb:#{ integration.name }")
     end

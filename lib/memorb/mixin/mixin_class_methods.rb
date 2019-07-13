@@ -3,11 +3,11 @@ module Memorb
     module MixinClassMethods
 
       def prepended(base)
-        @base_name = base.name || base.inspect
+        @base = base
       end
 
       def name
-        "Memorb:#{ @base_name }"
+        "Memorb:#{ @base.name || @base.inspect }"
       end
 
       alias_method :inspect, :name
