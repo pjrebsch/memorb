@@ -4,6 +4,18 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
     Class.new(Counter) { include Memorb }
   }
 
+  describe '#name' do
+    it 'includes the name of the integrating class' do
+      integration = BasicIntegration
+      mixin = Memorb::Mixin.for(integration)
+      expect(mixin.name).to eq("Memorb:#{ integration.name }")
+    end
+    context 'when integrating class does not have a name' do
+      it 'uses the inspection of the integrating class' do
+        expect(mixin.name).to eq("Memorb:#{ integration.inspect }")
+      end
+    end
+  end
   describe '#register' do
     it 'caches the registered method' do
       mixin.register(:increment)
@@ -46,7 +58,7 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
     end
     context 'when there is no override method defined' do
       it 'does not raise an error' do
-        expect { mixin.unregister(:undefined_method!) }.not_to raise_error
+        expect { mixin.unregister(:an_undefined_method!) }.not_to raise_error
       end
     end
     context 'when a method is registered multiple times' do
