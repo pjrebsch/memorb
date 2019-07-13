@@ -1,5 +1,6 @@
 require_relative 'memorb/key_value_store'
 require_relative 'memorb/mixin'
+require_relative 'memorb/mixin/integration_class_methods'
 require_relative 'memorb/cache'
 require_relative 'memorb/configurable'
 

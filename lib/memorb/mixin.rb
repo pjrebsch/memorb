@@ -1,16 +1,6 @@
 module Memorb
   module Mixin
 
-    module IntegrationClassMethods
-      def inherited(child)
-        Mixin.mixin!(child)
-      end
-
-      def memorb
-        Mixin.for(self)
-      end
-    end
-
     module MixinClassMethods
       def prepended(base)
         @base_name = base.name || base.inspect
