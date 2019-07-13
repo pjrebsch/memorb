@@ -1,13 +1,13 @@
 module Memorb
   class Cache
 
-    def initialize(integration:, mixin: nil, store: KeyValueStore.new)
+    def initialize(integration:, store: KeyValueStore.new)
       @integration = integration
-      @mixin = mixin || Mixin.for(integration)
+      @mixin = Mixin.for(integration)
       @store = store
     end
 
-    attr_reader :integration, :mixin
+    attr_reader :integration
 
     def write(*key, value)
       @store.write(key, value)
@@ -30,11 +30,11 @@ module Memorb
     end
 
     def register(method_name)
-      mixin.register(method_name)
+      @mixin.register(method_name)
     end
 
     def unregister(method_name)
-      mixin.unregister(method_name)
+      @mixin.unregister(method_name)
     end
 
     def inspect

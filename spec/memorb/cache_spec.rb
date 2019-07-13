@@ -1,7 +1,7 @@
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
   let(:store_mock) { instance_double(Memorb::KeyValueStore) }
-  let(:integration) { BasicIntegration }
+  let(:integration) { Class.new(Counter) { include Memorb } }
   let(:mixin) { instance_double(Memorb::Mixin::MixinClassMethods) }
   let(:key) { :key }
   let(:value) { 'value' }
@@ -11,10 +11,6 @@ RSpec.describe Memorb::Cache do
     it 'takes an integration class' do
       cache = klass.new(integration: integration)
       expect(cache.integration).to equal(integration)
-    end
-    it 'can take a mixin' do
-      cache = klass.new(integration: integration, mixin: mixin)
-      expect(cache.mixin).to equal(mixin)
     end
     it 'can take a store' do
       cache = klass.new(integration: integration, store: store_mock)
@@ -61,7 +57,8 @@ RSpec.describe Memorb::Cache do
   describe '#register' do
     it 'calls register on the mixin' do
       integration = Class.new(Counter) { include Memorb }
-      cache = klass.new(integration: integration, mixin: mixin)
+      cache = klass.new(integration: integration)
+      cache.instance_variable_set(:@mixin, mixin)
       method_name = :increment
       expect(mixin).to receive(:register).with(method_name)
       cache.register(method_name)
@@ -70,7 +67,8 @@ RSpec.describe Memorb::Cache do
   describe '#unregister' do
     it 'calls unregister on the mixin' do
       integration = Class.new(Counter) { include Memorb }
-      cache = klass.new(integration: integration, mixin: mixin)
+      cache = klass.new(integration: integration)
+      cache.instance_variable_set(:@mixin, mixin)
       method_name = :increment
       expect(mixin).to receive(:unregister).with(method_name)
       cache.unregister(method_name)
