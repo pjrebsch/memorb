@@ -15,6 +15,12 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
         expect(mixin.name).to eq("Memorb:#{ integration.inspect }")
       end
     end
+    context 'when integrating class does not have an inspection' do
+      it 'uses the object ID of the integrating class' do
+        integration.define_singleton_method(:inspect) { nil }
+        expect(mixin.name).to eq("Memorb:#{ integration.object_id }")
+      end
+    end
   end
   describe '#register' do
     it 'caches the registered method' do

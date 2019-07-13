@@ -7,7 +7,10 @@ module Memorb
       end
 
       def name
-        "Memorb:#{ @base.name || @base.inspect }"
+        [:name, :inspect, :object_id].each do |m|
+          base_name = @base.respond_to?(m) && @base.public_send(m)
+          return "Memorb:#{ base_name }" if base_name
+        end
       end
 
       alias_method :inspect, :name
