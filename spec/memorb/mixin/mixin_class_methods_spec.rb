@@ -1,11 +1,9 @@
 RSpec.describe Memorb::Mixin::MixinClassMethods do
   let(:mixin) { Memorb::Mixin.for(integration) }
   let(:integration_singleton) { integration.singleton_class }
-  let(:integration) {
-    Class.new(Counter) { include Memorb }
-  }
+  let(:integration) { Class.new(Counter) { include Memorb } }
 
-  describe '#name' do
+  describe '::name' do
     it 'includes the name of the integrating class' do
       name = 'IntegratingKlass'
       expectation = "Memorb:#{ name }"
@@ -31,7 +29,7 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
       end
     end
   end
-  describe '#register' do
+  describe '::register' do
     it 'caches the registered method' do
       mixin.register(:increment)
       instance = integration.new
@@ -65,7 +63,7 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
       end
     end
   end
-  describe '#unregister' do
+  describe '::unregister' do
     it 'removes the override method for the given method' do
       mixin.register(:increment)
       mixin.unregister(:increment)
