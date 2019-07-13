@@ -42,7 +42,6 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
     it 'removes the override method for the given method' do
       mixin.register(:increment)
       mixin.unregister(:increment)
-      mixin = Memorb::Mixin.for(integration)
       expect(mixin.public_instance_methods).not_to include(:increment)
     end
     context 'when there is no override method defined' do
@@ -55,7 +54,6 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
         mixin.register(:increment)
         mixin.register(:increment)
         mixin.unregister(:increment)
-        mixin = Memorb::Mixin.for(integration)
         expect(mixin.public_instance_methods).not_to include(:increment)
       end
     end
