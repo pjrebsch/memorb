@@ -1,24 +1,33 @@
 RSpec.describe Memorb::Mixin::MixinClassMethods do
   let(:mixin) { Memorb::Mixin.for(integration) }
+  let(:integration_singleton) { integration.singleton_class }
   let(:integration) {
     Class.new(Counter) { include Memorb }
   }
 
   describe '#name' do
     it 'includes the name of the integrating class' do
-      integration.define_singleton_method(:name) { 'IntegrationKlass' }
-      mixin = Memorb::Mixin.for(integration)
-      expect(mixin.name).to eq("Memorb:#{ integration.name }")
+      name = 'IntegratingKlass'
+      expectation = "Memorb:#{ name }"
+      integration_singleton.define_method(:name) { name }
+      expect(mixin.name).to eq(expectation)
     end
     context 'when integrating class does not have a name' do
       it 'uses the inspection of the integrating class' do
-        expect(mixin.name).to eq("Memorb:#{ integration.inspect }")
+        expectation = "Memorb:#{ integration.inspect }"
+        integration_singleton.define_method(:name) { nil }
+        expect(mixin.name).to eq(expectation)
+        integration_singleton.undef_method(:name)
+        expect(mixin.name).to eq(expectation)
       end
     end
     context 'when integrating class does not have an inspection' do
       it 'uses the object ID of the integrating class' do
-        integration.define_singleton_method(:inspect) { nil }
-        expect(mixin.name).to eq("Memorb:#{ integration.object_id }")
+        expectation = "Memorb:#{ integration.object_id }"
+        integration_singleton.define_method(:inspect) { nil }
+        expect(mixin.name).to eq(expectation)
+        integration_singleton.undef_method(:inspect)
+        expect(mixin.name).to eq(expectation)
       end
     end
   end
