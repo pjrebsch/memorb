@@ -1,8 +1,8 @@
 RSpec.describe Memorb::Mixin::MixinClassMethods do
   let(:mixin) { Memorb::Mixin.for(integration) }
-  let(:integration) do
+  let(:integration) {
     Class.new(Counter) { include Memorb }
-  end
+  }
 
   describe '#register' do
     it 'caches the registered method' do
