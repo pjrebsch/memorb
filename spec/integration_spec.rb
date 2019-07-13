@@ -4,7 +4,9 @@ RSpec.shared_examples 'an integration' do |klass|
       instance = klass.new
       expect(instance.counter).to eq(123)
     end
-    it 'initializes the memorb cache' do
+  end
+  describe '#memorb' do
+    it 'returns the memorb cache' do
       instance = klass.new
       cache = instance.memorb
       expect(cache).to be_an_instance_of(Memorb::Cache)
@@ -15,11 +17,6 @@ RSpec.shared_examples 'an integration' do |klass|
       cache1 = klass.new.memorb
       cache2 = klass.new.memorb
       expect(cache1).not_to equal(cache2)
-    end
-  end
-  describe 'ancestors' do
-    it '...' do
-      puts klass.ancestors.inspect
     end
   end
 end
