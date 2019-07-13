@@ -1,11 +1,4 @@
 RSpec.shared_examples 'an integration' do |klass|
-  describe '::memorb' do
-    it 'returns the mixin for the class' do
-      result = klass.memorb
-      mixin = Memorb::Mixin.for(klass)
-      expect(result).to equal(mixin)
-    end
-  end
   describe '#initialize' do
     it 'retains its original behavior' do
       instance = klass.new
