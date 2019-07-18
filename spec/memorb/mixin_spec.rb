@@ -46,4 +46,16 @@ RSpec.describe Memorb::Mixin do
       end
     end
   end
+  context 'when mixing in with another class' do
+    let(:error) { Memorb::InvalidMixinError }
+
+    it 'raises an error when using prepend' do
+      mixin = subject.mixin! klass
+      expect { Class.new { prepend mixin } }.to raise_error(error)
+    end
+    it 'raises an error when using include' do
+      mixin = subject.mixin! klass
+      expect { Class.new { include mixin } }.to raise_error(error)
+    end
+  end
 end

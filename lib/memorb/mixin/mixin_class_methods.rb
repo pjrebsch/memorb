@@ -3,12 +3,15 @@ module Memorb
     module MixinClassMethods
 
       def prepended(base)
-        @base = base
+        check! base
       end
 
+      alias_method :included, :prepended
+
       def name
+        base = integrating_class
         [:name, :inspect, :object_id].each do |m|
-          base_name = @base.respond_to?(m) && @base.public_send(m)
+          base_name = base.respond_to?(m) && base.public_send(m)
           return "Memorb:#{ base_name }" if base_name
         end
       end
@@ -36,6 +39,14 @@ module Memorb
           # added or not, but the read could be outdated by the time
           # that we tried to remove the method and this exception
           # wouldn't be caught.
+        end
+      end
+
+      private
+
+      def check!(base)
+        unless base.equal?(integrating_class)
+          raise InvalidMixinError
         end
       end
 
