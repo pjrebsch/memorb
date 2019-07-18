@@ -6,7 +6,7 @@ module Memorb
 
       def mixin!(base)
         @@mixins.fetch(base) do
-          new.tap do |mixin|
+          new(base).tap do |mixin|
             base.extend IntegrationClassMethods
             base.prepend mixin
           end
@@ -19,8 +19,8 @@ module Memorb
 
       private
 
-      def new
-        Module.new do
+      def new(integrating_class)
+        mixin = Module.new do
           extend MixinClassMethods
 
           def initialize(*)
@@ -32,6 +32,12 @@ module Memorb
             @memorb_cache
           end
         end
+
+        mixin.singleton_class.define_method(:integrating_class) do
+          integrating_class
+        end
+
+        mixin
       end
 
     end
