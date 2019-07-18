@@ -9,9 +9,8 @@ module Memorb
       alias_method :included, :prepended
 
       def name
-        base = integrating_class
         [:name, :inspect, :object_id].each do |m|
-          base_name = base.respond_to?(m) && base.public_send(m)
+          base_name = integration.respond_to?(m) && integration.public_send(m)
           return "Memorb:#{ base_name }" if base_name
         end
       end
@@ -45,7 +44,7 @@ module Memorb
       private
 
       def check!(base)
-        unless base.equal?(integrating_class)
+        unless base.equal?(integration)
           raise InvalidMixinError
         end
       end

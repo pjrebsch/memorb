@@ -19,7 +19,7 @@ module Memorb
 
       private
 
-      def new(integrating_class)
+      def new(integration)
         mixin = Module.new do
           extend MixinClassMethods
 
@@ -33,9 +33,7 @@ module Memorb
           end
         end
 
-        mixin.singleton_class.define_method(:integrating_class) do
-          integrating_class
-        end
+        mixin.singleton_class.define_method(:integration) { integration }
 
         mixin
       end

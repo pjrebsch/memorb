@@ -40,9 +40,9 @@ RSpec.describe Memorb::Mixin do
   describe 'class methods of an instance of Mixin' do
     subject { Memorb::Mixin.mixin! klass }
 
-    describe '::integrating_class' do
+    describe '::integration' do
       it 'returns its integrating class' do
-        expect(subject.integrating_class).to be(klass)
+        expect(subject.integration).to be(klass)
       end
     end
   end
