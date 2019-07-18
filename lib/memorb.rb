@@ -7,8 +7,8 @@ require_relative 'memorb/cache'
 require_relative 'memorb/configurable'
 
 module Memorb
-
   class << self
+
     def [](*args)
       Configurable.new(*args)
     end
@@ -20,8 +20,8 @@ module Memorb
     def prepended(base)
       Mixin.mixin!(base)
     end
-  end
 
+  end
 end
 
 def Memorb(*args)
