@@ -17,9 +17,7 @@ module Memorb
       Mixin.mixin!(base)
     end
 
-    def prepended(base)
-      Mixin.mixin!(base)
-    end
+    alias_method :prepended, :included
 
   end
 end
