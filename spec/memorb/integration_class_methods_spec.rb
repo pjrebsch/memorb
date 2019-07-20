@@ -1,4 +1,4 @@
-RSpec.describe Memorb::Mixin::IntegrationClassMethods do
+RSpec.describe Memorb::IntegrationClassMethods do
   let(:integration) { Class.new(Counter) { include Memorb } }
 
   describe '::inherited' do
