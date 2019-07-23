@@ -1,73 +1,69 @@
-RSpec.shared_examples 'an integrator' do |klass|
+RSpec.shared_examples 'an integrator' do
+  let(:integrator) { described_class }
+  let(:instance) { integrator.new }
+
   describe '#initialize' do
     it 'retains its original behavior' do
-      instance = klass.new
       expect(instance.counter).to eq(123)
     end
   end
   describe '#memorb' do
     it 'returns the memorb cache' do
-      instance = klass.new
       cache = instance.memorb
       expect(cache).to be_an_instance_of(Memorb::Cache)
     end
-  end
-  describe 'memorb cache' do
     it 'is not shared across instances' do
-      cache1 = klass.new.memorb
-      cache2 = klass.new.memorb
+      cache1 = integrator.new.memorb
+      cache2 = integrator.new.memorb
       expect(cache1).not_to equal(cache2)
     end
   end
 end
 
-RSpec.shared_examples 'a registered integrator' do |klass|
+RSpec.shared_examples 'a registered integrator' do
+  let(:integrator) { described_class }
+
   it 'registers #increment' do
-    mixin = Memorb::Mixin.for(klass)
+    mixin = Memorb::Mixin.for(integrator)
     expect(mixin.public_instance_methods).to include(:increment)
   end
   it 'registers #double' do
-    mixin = Memorb::Mixin.for(klass)
+    mixin = Memorb::Mixin.for(integrator)
     expect(mixin.public_instance_methods).to include(:double)
   end
 end
 
 RSpec.describe BasicIntegrator do
-  it_behaves_like 'an integrator', BasicIntegrator
+  it_behaves_like 'an integrator'
 end
 
 RSpec.describe ChildIntegrator do
-  it_behaves_like 'an integrator', ChildIntegrator
+  it_behaves_like 'an integrator'
 end
 
 RSpec.describe DuplicateIntegrator do
-  klass = DuplicateIntegrator
-  it_behaves_like 'an integrator', klass
+  it_behaves_like 'an integrator'
 end
 
 RSpec.describe ChildDuplicateIntegrator do
-  klass = ChildDuplicateIntegrator
-  it_behaves_like 'an integrator', klass
+  it_behaves_like 'an integrator'
 end
 
 RSpec.describe EnumerativeWithBracketsIntegrator do
-  klass = EnumerativeWithBracketsIntegrator
-  it_behaves_like 'an integrator', klass
-  it_behaves_like 'a registered integrator', klass
+  it_behaves_like 'an integrator'
+  it_behaves_like 'a registered integrator'
 end
 
 RSpec.describe EnumerativeWithParenthesesIntegrator do
-  klass = EnumerativeWithParenthesesIntegrator
-  it_behaves_like 'an integrator', klass
-  it_behaves_like 'a registered integrator', klass
+  it_behaves_like 'an integrator'
+  it_behaves_like 'a registered integrator'
 end
 
 RSpec.describe PrependedBasicIntegrator do
-  it_behaves_like 'an integrator', PrependedBasicIntegrator
+  it_behaves_like 'an integrator'
 end
 
 RSpec.describe PrependedEnumerativeIntegrator do
-  klass = PrependedEnumerativeIntegrator
-  it_behaves_like 'an integrator', klass
-  it_behaves_like 'a registered integrator', klass
+  it_behaves_like 'an integrator'
+  it_behaves_like 'a registered integrator'
 end
