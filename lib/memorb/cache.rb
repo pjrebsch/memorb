@@ -3,7 +3,7 @@ module Memorb
 
     def initialize(integrator:)
       @integrator = integrator
-      @mixin = Memorb.integration(integrator)
+      @integration = Memorb.integration(integrator)
       @store = KeyValueStore.new
     end
 
@@ -30,11 +30,11 @@ module Memorb
     end
 
     def register(method_name)
-      @mixin.register(method_name)
+      @integration.register(method_name)
     end
 
     def unregister(method_name)
-      @mixin.unregister(method_name)
+      @integration.unregister(method_name)
     end
 
     def inspect

@@ -2,13 +2,13 @@ RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
   let(:integrator) { Class.new(Counter) { include Memorb } }
   let(:store) { instance_double(Memorb::KeyValueStore) }
-  let(:mixin) { instance_double(Memorb::Mixin::MixinClassMethods) }
+  let(:integration) { double(register: nil, unregister: nil) }
   let(:key) { :key }
   let(:value) { 'value' }
   subject {
     klass.new(integrator: integrator).tap { |x|
       x.instance_variable_set(:@store, store)
-      x.instance_variable_set(:@mixin, mixin)
+      x.instance_variable_set(:@integration, integration)
     }
   }
 
@@ -50,16 +50,16 @@ RSpec.describe Memorb::Cache do
     end
   end
   describe '#register' do
-    it 'calls register on the mixin' do
+    it 'calls register on the integration' do
       method_name = :increment
-      expect(mixin).to receive(:register).with(method_name)
+      expect(integration).to receive(:register).with(method_name)
       subject.register(method_name)
     end
   end
   describe '#unregister' do
-    it 'calls unregister on the mixin' do
+    it 'calls unregister on the integration' do
       method_name = :increment
-      expect(mixin).to receive(:unregister).with(method_name)
+      expect(integration).to receive(:unregister).with(method_name)
       subject.unregister(method_name)
     end
   end

@@ -25,8 +25,8 @@ module Memorb
     end
 
     def register!(base)
-      mixin = Memorb.integrate! base
-      @methods.each { |name| mixin.register(name) }
+      integration = Memorb.integrate!(base)
+      @methods.each { |name| integration.register(name) }
     end
 
   end

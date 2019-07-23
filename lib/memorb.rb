@@ -1,8 +1,7 @@
 require_relative 'memorb/errors'
 require_relative 'memorb/key_value_store'
-require_relative 'memorb/mixin'
 require_relative 'memorb/integrator_class_methods'
-require_relative 'memorb/mixin/mixin_class_methods'
+require_relative 'memorb/integration'
 require_relative 'memorb/cache'
 require_relative 'memorb/configurable'
 
@@ -23,9 +22,9 @@ module Memorb
 
     def integrate!(integrator)
       @@integrations.fetch(integrator) do
-        Mixin.new(integrator).tap do |mixin|
+        Integration.new(integrator).tap do |integration|
           integrator.extend IntegratorClassMethods
-          integrator.prepend mixin
+          integrator.prepend integration
         end
       end
     end

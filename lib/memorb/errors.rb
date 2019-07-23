@@ -1,6 +1,6 @@
 module Memorb
 
-  class InvalidMixinError < StandardError
+  class InvalidIntegrationError < StandardError
   end
 
 end
