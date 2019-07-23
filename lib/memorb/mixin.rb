@@ -4,27 +4,27 @@ module Memorb
 
       @@mixins = KeyValueStore.new
 
-      def mixin!(base)
-        @@mixins.fetch(base) do
-          new(base).tap do |mixin|
-            base.extend IntegrationClassMethods
-            base.prepend mixin
+      def mixin!(integrator)
+        @@mixins.fetch(integrator) do
+          new(integrator).tap do |mixin|
+            integrator.extend IntegratorClassMethods
+            integrator.prepend mixin
           end
         end
       end
 
-      def for(klass)
-        @@mixins.read(klass)
+      def for(integrator)
+        @@mixins.read(integrator)
       end
 
       private
 
-      def new(integration)
+      def new(integrator)
         mixin = Module.new do
           extend MixinClassMethods
 
           def initialize(*)
-            @memorb_cache = Memorb::Cache.new(integration: self.class)
+            @memorb_cache = Memorb::Cache.new(integrator: self.class)
             super
           end
 
@@ -33,7 +33,7 @@ module Memorb
           end
         end
 
-        mixin.singleton_class.define_method(:integration) { integration }
+        mixin.singleton_class.define_method(:integrator) { integrator }
 
         mixin
       end

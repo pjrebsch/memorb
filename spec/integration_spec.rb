@@ -1,4 +1,4 @@
-RSpec.shared_examples 'an integration' do |klass|
+RSpec.shared_examples 'an integrator' do |klass|
   describe '#initialize' do
     it 'retains its original behavior' do
       instance = klass.new
@@ -21,7 +21,7 @@ RSpec.shared_examples 'an integration' do |klass|
   end
 end
 
-RSpec.shared_examples 'a registered integration' do |klass|
+RSpec.shared_examples 'a registered integrator' do |klass|
   it 'registers #increment' do
     mixin = Memorb::Mixin.for(klass)
     expect(mixin.public_instance_methods).to include(:increment)
@@ -32,42 +32,42 @@ RSpec.shared_examples 'a registered integration' do |klass|
   end
 end
 
-RSpec.describe BasicIntegration do
-  it_behaves_like 'an integration', BasicIntegration
+RSpec.describe BasicIntegrator do
+  it_behaves_like 'an integrator', BasicIntegrator
 end
 
-RSpec.describe ChildIntegration do
-  it_behaves_like 'an integration', ChildIntegration
+RSpec.describe ChildIntegrator do
+  it_behaves_like 'an integrator', ChildIntegrator
 end
 
-RSpec.describe DuplicateIntegration do
-  klass = DuplicateIntegration
-  it_behaves_like 'an integration', klass
+RSpec.describe DuplicateIntegrator do
+  klass = DuplicateIntegrator
+  it_behaves_like 'an integrator', klass
 end
 
-RSpec.describe ChildDuplicateIntegration do
-  klass = ChildDuplicateIntegration
-  it_behaves_like 'an integration', klass
+RSpec.describe ChildDuplicateIntegrator do
+  klass = ChildDuplicateIntegrator
+  it_behaves_like 'an integrator', klass
 end
 
-RSpec.describe EnumerativeWithBracketsIntegration do
-  klass = EnumerativeWithBracketsIntegration
-  it_behaves_like 'an integration', klass
-  it_behaves_like 'a registered integration', klass
+RSpec.describe EnumerativeWithBracketsIntegrator do
+  klass = EnumerativeWithBracketsIntegrator
+  it_behaves_like 'an integrator', klass
+  it_behaves_like 'a registered integrator', klass
 end
 
-RSpec.describe EnumerativeWithParenthesesIntegration do
-  klass = EnumerativeWithParenthesesIntegration
-  it_behaves_like 'an integration', klass
-  it_behaves_like 'a registered integration', klass
+RSpec.describe EnumerativeWithParenthesesIntegrator do
+  klass = EnumerativeWithParenthesesIntegrator
+  it_behaves_like 'an integrator', klass
+  it_behaves_like 'a registered integrator', klass
 end
 
-RSpec.describe PrependedBasicIntegration do
-  it_behaves_like 'an integration', PrependedBasicIntegration
+RSpec.describe PrependedBasicIntegrator do
+  it_behaves_like 'an integrator', PrependedBasicIntegrator
 end
 
-RSpec.describe PrependedEnumerativeIntegration do
-  klass = PrependedEnumerativeIntegration
-  it_behaves_like 'an integration', klass
-  it_behaves_like 'a registered integration', klass
+RSpec.describe PrependedEnumerativeIntegrator do
+  klass = PrependedEnumerativeIntegrator
+  it_behaves_like 'an integrator', klass
+  it_behaves_like 'a registered integrator', klass
 end

@@ -1,13 +1,13 @@
 module Memorb
   class Cache
 
-    def initialize(integration:)
-      @integration = integration
-      @mixin = Mixin.for(integration)
+    def initialize(integrator:)
+      @integrator = integrator
+      @mixin = Mixin.for(integrator)
       @store = KeyValueStore.new
     end
 
-    attr_reader :integration
+    attr_reader :integrator
 
     def write(*key, value)
       @store.write(key, value)

@@ -1,21 +1,21 @@
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
-  let(:integration) { Class.new(Counter) { include Memorb } }
+  let(:integrator) { Class.new(Counter) { include Memorb } }
   let(:store) { instance_double(Memorb::KeyValueStore) }
   let(:mixin) { instance_double(Memorb::Mixin::MixinClassMethods) }
   let(:key) { :key }
   let(:value) { 'value' }
   subject {
-    klass.new(integration: integration).tap { |x|
+    klass.new(integrator: integrator).tap { |x|
       x.instance_variable_set(:@store, store)
       x.instance_variable_set(:@mixin, mixin)
     }
   }
 
   describe '#initialize' do
-    it 'takes an integration class' do
-      cache = klass.new(integration: integration)
-      expect(cache.integration).to equal(integration)
+    it 'takes an integrator' do
+      cache = klass.new(integrator: integrator)
+      expect(cache.integrator).to equal(integrator)
     end
   end
   describe '#write' do

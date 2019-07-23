@@ -1,30 +1,30 @@
 RSpec.describe Memorb::Mixin::MixinClassMethods do
-  let(:mixin) { Memorb::Mixin.for(integration) }
-  let(:integration_singleton) { integration.singleton_class }
-  let(:integration) { Class.new(Counter) { include Memorb } }
+  let(:mixin) { Memorb::Mixin.for(integrator) }
+  let(:integrator_singleton) { integrator.singleton_class }
+  let(:integrator) { Class.new(Counter) { include Memorb } }
 
   describe '::name' do
     it 'includes the name of the integrating class' do
       name = 'IntegratingKlass'
       expectation = "Memorb:#{ name }"
-      integration_singleton.define_method(:name) { name }
+      integrator_singleton.define_method(:name) { name }
       expect(mixin.name).to eq(expectation)
     end
     context 'when integrating class does not have a name' do
       it 'uses the inspection of the integrating class' do
-        expectation = "Memorb:#{ integration.inspect }"
-        integration_singleton.define_method(:name) { nil }
+        expectation = "Memorb:#{ integrator.inspect }"
+        integrator_singleton.define_method(:name) { nil }
         expect(mixin.name).to eq(expectation)
-        integration_singleton.undef_method(:name)
+        integrator_singleton.undef_method(:name)
         expect(mixin.name).to eq(expectation)
       end
     end
     context 'when integrating class does not have an inspection' do
       it 'uses the object ID of the integrating class' do
-        expectation = "Memorb:#{ integration.object_id }"
-        integration_singleton.define_method(:inspect) { nil }
+        expectation = "Memorb:#{ integrator.object_id }"
+        integrator_singleton.define_method(:inspect) { nil }
         expect(mixin.name).to eq(expectation)
-        integration_singleton.undef_method(:inspect)
+        integrator_singleton.undef_method(:inspect)
         expect(mixin.name).to eq(expectation)
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
   describe '::register' do
     it 'caches the registered method' do
       mixin.register(:increment)
-      instance = integration.new
+      instance = integrator.new
       result1 = instance.increment
       result2 = instance.increment
       expect(result1).to eq(result2)
@@ -41,7 +41,7 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
       it 'still caches the registered method' do
         mixin.register(:increment)
         mixin.register(:increment)
-        instance = integration.new
+        instance = integrator.new
         result1 = instance.increment
         result2 = instance.increment
         expect(result1).to eq(result2)
@@ -53,12 +53,12 @@ RSpec.describe Memorb::Mixin::MixinClassMethods do
       end
       it 'responds to the method' do
         mixin.register(:undefined_method)
-        instance = integration.new
+        instance = integrator.new
         expect(instance).to respond_to(:undefined_method)
       end
       it 'raises an error when trying to call it' do
         mixin.register(:undefined_method)
-        instance = integration.new
+        instance = integrator.new
         expect { instance.undefined_method }.to raise_error(NoMethodError)
       end
     end

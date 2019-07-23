@@ -10,7 +10,8 @@ module Memorb
 
       def name
         [:name, :inspect, :object_id].each do |m|
-          base_name = integration.respond_to?(m) && integration.public_send(m)
+          next unless integrator.respond_to?(m)
+          base_name = integrator.public_send(m)
           return "Memorb:#{ base_name }" if base_name
         end
       end
@@ -44,7 +45,7 @@ module Memorb
       private
 
       def check!(base)
-        unless base.equal?(integration)
+        unless base.equal?(integrator)
           raise InvalidMixinError
         end
       end

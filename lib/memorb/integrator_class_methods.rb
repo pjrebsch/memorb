@@ -1,5 +1,5 @@
 module Memorb
-  module IntegrationClassMethods
+  module IntegratorClassMethods
 
     def inherited(child)
       Mixin.mixin!(child)

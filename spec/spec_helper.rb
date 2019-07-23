@@ -22,34 +22,34 @@ class Counter
 
 end
 
-class BasicIntegration < Counter
+class BasicIntegrator < Counter
   include Memorb
 end
 
-class ChildIntegration < BasicIntegration
+class ChildIntegrator < BasicIntegrator
 end
 
-class DuplicateIntegration < Counter
+class DuplicateIntegrator < Counter
   include Memorb
   include Memorb
 end
 
-class ChildDuplicateIntegration < BasicIntegration
+class ChildDuplicateIntegrator < BasicIntegrator
   include Memorb
 end
 
-class EnumerativeWithBracketsIntegration < Counter
+class EnumerativeWithBracketsIntegrator < Counter
   include Memorb[:increment, :double]
 end
 
-class EnumerativeWithParenthesesIntegration < Counter
+class EnumerativeWithParenthesesIntegrator < Counter
   include Memorb(:increment, :double)
 end
 
-class PrependedBasicIntegration < Counter
+class PrependedBasicIntegrator < Counter
   prepend Memorb
 end
 
-class PrependedEnumerativeIntegration < Counter
+class PrependedEnumerativeIntegrator < Counter
   prepend Memorb[:increment, :double]
 end
