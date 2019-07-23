@@ -14,10 +14,25 @@ module Memorb
     end
 
     def included(base)
-      Mixin.mixin!(base)
+      integrate! base
     end
 
     alias_method :prepended, :included
+
+    @@integrations = KeyValueStore.new
+
+    def integrate!(integrator)
+      @@integrations.fetch(integrator) do
+        Mixin.new(integrator).tap do |mixin|
+          integrator.extend IntegratorClassMethods
+          integrator.prepend mixin
+        end
+      end
+    end
+
+    def integration(integrator)
+      @@integrations.read(integrator)
+    end
 
   end
 end

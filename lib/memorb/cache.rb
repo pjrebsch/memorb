@@ -3,7 +3,7 @@ module Memorb
 
     def initialize(integrator:)
       @integrator = integrator
-      @mixin = Mixin.for(integrator)
+      @mixin = Memorb.integration(integrator)
       @store = KeyValueStore.new
     end
 

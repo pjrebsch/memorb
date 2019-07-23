@@ -1,5 +1,5 @@
 RSpec.describe Memorb::Mixin::MixinClassMethods do
-  let(:mixin) { Memorb::Mixin.for(integrator) }
+  let(:mixin) { Memorb.integration(integrator) }
   let(:integrator_singleton) { integrator.singleton_class }
   let(:integrator) { Class.new(Counter) { include Memorb } }
 

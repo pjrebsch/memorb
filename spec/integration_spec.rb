@@ -24,12 +24,12 @@ RSpec.shared_examples 'a registered integrator' do
   let(:integrator) { described_class }
 
   it 'registers #increment' do
-    mixin = Memorb::Mixin.for(integrator)
-    expect(mixin.public_instance_methods).to include(:increment)
+    integration = Memorb.integration(integrator)
+    expect(integration.public_instance_methods).to include(:increment)
   end
   it 'registers #double' do
-    mixin = Memorb::Mixin.for(integrator)
-    expect(mixin.public_instance_methods).to include(:double)
+    integration = Memorb.integration(integrator)
+    expect(integration.public_instance_methods).to include(:double)
   end
 end
 
