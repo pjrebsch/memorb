@@ -1,8 +1,25 @@
 RSpec.describe Memorb::Integration do
   let(:integrator) { Class.new(Counter) { include Memorb } }
   let(:integrator_singleton) { integrator.singleton_class }
+  let(:instance) { integrator.new }
   subject { Memorb.integration(integrator) }
 
+  describe '#initialize' do
+    it 'retains its original behavior' do
+      expect(instance.counter).to eq(123)
+    end
+  end
+  describe '#memorb' do
+    it 'returns the memorb cache' do
+      cache = instance.memorb
+      expect(cache).to be_an_instance_of(Memorb::Cache)
+    end
+    it 'does not share the cache across instances' do
+      cache1 = integrator.new.memorb
+      cache2 = integrator.new.memorb
+      expect(cache1).not_to equal(cache2)
+    end
+  end
   describe '::integrator' do
     it 'returns its integrating class' do
       expect(subject.integrator).to be(integrator)

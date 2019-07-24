@@ -1,7 +1,7 @@
 module Memorb
   module Integration
-    def self.new(integrator)
 
+    def self.new(integrator)
       mixin = Module.new do
         def initialize(*)
           @memorb_cache = Memorb::Cache.new(integrator: self.class)
@@ -68,7 +68,7 @@ module Memorb
       mixin.singleton_class.define_method(:integrator) { integrator }
 
       mixin
-
     end
+
   end
 end

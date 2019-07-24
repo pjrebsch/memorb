@@ -1,22 +1,45 @@
+class BasicIntegrator < Counter
+  include Memorb
+end
+
+class ChildIntegrator < BasicIntegrator
+end
+
+class DuplicateIntegrator < Counter
+  include Memorb
+  include Memorb
+end
+
+class ChildDuplicateIntegrator < BasicIntegrator
+  include Memorb
+end
+
+class EnumerativeWithBracketsIntegrator < Counter
+  include Memorb[:increment, :double]
+end
+
+class EnumerativeWithParenthesesIntegrator < Counter
+  include Memorb(:increment, :double)
+end
+
+class PrependedBasicIntegrator < Counter
+  prepend Memorb
+end
+
+class PrependedEnumerativeIntegrator < Counter
+  prepend Memorb[:increment, :double]
+end
+
 RSpec.shared_examples 'an integrator' do
   let(:integrator) { described_class }
   let(:instance) { integrator.new }
+  let(:integration) { Memorb.integration(integrator) }
 
-  describe '#initialize' do
-    it 'retains its original behavior' do
-      expect(instance.counter).to eq(123)
-    end
-  end
-  describe '#memorb' do
-    it 'returns the memorb cache' do
-      cache = instance.memorb
-      expect(cache).to be_an_instance_of(Memorb::Cache)
-    end
-    it 'is not shared across instances' do
-      cache1 = integrator.new.memorb
-      cache2 = integrator.new.memorb
-      expect(cache1).not_to equal(cache2)
-    end
+  it 'has the correct ancestry' do
+    ancestors = integrator.ancestors
+    expected_ancestry = [integration, integrator]
+    relevant_ancestors = ancestors.select { |a| expected_ancestry.include? a }
+    expect(relevant_ancestors).to match_array(expected_ancestry)
   end
 end
 
