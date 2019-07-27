@@ -1,38 +1,4 @@
-class BasicIntegrator < Counter
-  include Memorb
-end
-
-class ChildIntegrator < BasicIntegrator
-end
-
-class DuplicateIntegrator < Counter
-  include Memorb
-  include Memorb
-end
-
-class ChildDuplicateIntegrator < BasicIntegrator
-  include Memorb
-end
-
-class EnumerativeWithBracketsIntegrator < Counter
-  include Memorb[:increment, :double]
-end
-
-class EnumerativeWithParenthesesIntegrator < Counter
-  include Memorb(:increment, :double)
-end
-
-class PrependedBasicIntegrator < Counter
-  prepend Memorb
-end
-
-class PrependedEnumerativeIntegrator < Counter
-  prepend Memorb[:increment, :double]
-end
-
-RSpec.shared_examples 'an integrator' do
-  let(:integrator) { described_class }
-  let(:instance) { integrator.new }
+RSpec.shared_examples 'for ancestry verification' do
   let(:integration) { Memorb::Integration[integrator] }
 
   it 'has the correct ancestry' do
@@ -43,9 +9,7 @@ RSpec.shared_examples 'an integrator' do
   end
 end
 
-RSpec.shared_examples 'a registered integrator' do
-  let(:integrator) { described_class }
-
+RSpec.shared_examples 'for method registration verification' do
   it 'registers #increment' do
     integration = Memorb::Integration[integrator]
     expect(integration.public_instance_methods).to include(:increment)
@@ -56,37 +20,78 @@ RSpec.shared_examples 'a registered integrator' do
   end
 end
 
-RSpec.describe BasicIntegrator do
-  it_behaves_like 'an integrator'
-end
+RSpec.describe 'integrators of Memorb' do
+  describe 'a basic integrator' do
+    let(:integrator) {
+      Class.new do
+        include Memorb
+      end
+    }
+    include_examples 'for ancestry verification'
+  end
 
-RSpec.describe ChildIntegrator do
-  it_behaves_like 'an integrator'
-end
+  describe 'a basic integrator that uses prepend' do
+    let(:integrator) {
+      Class.new do
+        prepend Memorb
+      end
+    }
+    include_examples 'for ancestry verification'
+  end
 
-RSpec.describe DuplicateIntegrator do
-  it_behaves_like 'an integrator'
-end
+  describe 'an integrator that includes Memorb more than once' do
+    let(:integrator) {
+      Class.new do
+        include Memorb
+        include Memorb
+      end
+    }
+    include_examples 'for ancestry verification'
+  end
 
-RSpec.describe ChildDuplicateIntegrator do
-  it_behaves_like 'an integrator'
-end
+  describe 'a child of an integrator' do
+    let(:parent_integrator) {
+      Class.new do
+        include Memorb
+      end
+    }
+    let(:integrator) {
+      Class.new(parent_integrator)
+    }
+    include_examples 'for ancestry verification'
+  end
 
-RSpec.describe EnumerativeWithBracketsIntegrator do
-  it_behaves_like 'an integrator'
-  it_behaves_like 'a registered integrator'
-end
+  describe 'a child of an integrator that includes Memorb again' do
+    let(:parent_integrator) {
+      Class.new do
+        include Memorb
+      end
+    }
+    let(:integrator) {
+      Class.new(parent_integrator) do
+        include Memorb
+      end
+    }
+    include_examples 'for ancestry verification'
+  end
 
-RSpec.describe EnumerativeWithParenthesesIntegrator do
-  it_behaves_like 'an integrator'
-  it_behaves_like 'a registered integrator'
-end
+  describe 'an integrator that registers methods with inclusion' do
+    let(:integrator) {
+      Class.new(Counter) do
+        include Memorb[:increment, :double]
+      end
+    }
+    include_examples 'for ancestry verification'
+    include_examples 'for method registration verification'
+  end
 
-RSpec.describe PrependedBasicIntegrator do
-  it_behaves_like 'an integrator'
-end
-
-RSpec.describe PrependedEnumerativeIntegrator do
-  it_behaves_like 'an integrator'
-  it_behaves_like 'a registered integrator'
+  describe 'an integrator that registers methods with inclusion using parentheses' do
+    let(:integrator) {
+      Class.new(Counter) do
+        include Memorb(:increment, :double)
+      end
+    }
+    include_examples 'for ancestry verification'
+    include_examples 'for method registration verification'
+  end
 end
