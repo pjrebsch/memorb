@@ -1,13 +1,19 @@
 RSpec.describe Memorb::Configurable do
-  let(:klass) { Memorb::Configurable }
-
-  describe '::[]' do
-    it 'returns a new Configurable with the given arguments' do
+  describe '::new' do
+    it 'returns a new instance with the given arguments' do
       args = [:one, :two, :three]
-      result = klass[*args]
-      expect(result).to be_an_instance_of(klass)
+      result = described_class.new(*args)
+      expect(result).to be_an_instance_of(described_class)
       instance_args = result.instance_variable_get(:@args)
       expect(instance_args).to eq(args)
+    end
+  end
+  context 'when included in a class' do
+    it 'does not add its own methods to that class' do
+      instance = described_class.new
+      these_methods = Class.new { include instance }.public_instance_methods
+      typical_methods = Class.new { include Memorb }.public_instance_methods
+      expect(these_methods).to match_array(typical_methods)
     end
   end
 end
