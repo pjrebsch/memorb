@@ -2,10 +2,8 @@ module Memorb
   module Integration
     class << self
 
-      @@integrations = KeyValueStore.new
-
       def integrate_with!(target)
-        @@integrations.fetch(target) do
+        INTEGRATIONS.fetch(target) do
           new(target).tap do |integration|
             target.extend IntegratorClassMethods
             target.prepend integration
@@ -14,10 +12,12 @@ module Memorb
       end
 
       def [](integrator)
-        @@integrations.read(integrator)
+        INTEGRATIONS.read(integrator)
       end
 
       private
+
+      INTEGRATIONS = KeyValueStore.new
 
       def new(integrator)
         mixin = Module.new do
