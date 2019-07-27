@@ -4,7 +4,7 @@ module Memorb
     def self.new(integrator)
       mixin = Module.new do
         def initialize(*)
-          @memorb_cache = Memorb::Cache.new(integrator: self.class)
+          @memorb_cache = Memorb::Cache.new
           super
         end
 

@@ -1,13 +1,9 @@
 module Memorb
   class Cache
 
-    def initialize(integrator:)
-      @integrator = integrator
-      @integration = Memorb.integration(integrator)
+    def initialize
       @store = KeyValueStore.new
     end
-
-    attr_reader :integrator
 
     def write(*key, value)
       @store.write(key, value)
@@ -27,14 +23,6 @@ module Memorb
 
     def reset!
       @store.reset!
-    end
-
-    def register(method_name)
-      @integration.register(method_name)
-    end
-
-    def unregister(method_name)
-      @integration.unregister(method_name)
     end
 
     def inspect
