@@ -13,25 +13,10 @@ module Memorb
     end
 
     def included(base)
-      integrate! base
+      Integration.integrate_with!(base)
     end
 
     alias_method :prepended, :included
-
-    @@integrations = KeyValueStore.new
-
-    def integrate!(integrator)
-      @@integrations.fetch(integrator) do
-        Integration.new(integrator).tap do |integration|
-          integrator.extend IntegratorClassMethods
-          integrator.prepend integration
-        end
-      end
-    end
-
-    def integration(integrator)
-      @@integrations.read(integrator)
-    end
 
   end
 end

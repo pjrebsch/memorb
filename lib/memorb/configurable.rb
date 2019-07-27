@@ -25,7 +25,7 @@ module Memorb
     end
 
     def register!(base)
-      integration = Memorb.integrate!(base)
+      integration = Integration.integrate_with!(base)
       @methods.each { |name| integration.register(name) }
     end
 

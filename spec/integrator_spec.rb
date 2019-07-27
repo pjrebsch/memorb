@@ -33,7 +33,7 @@ end
 RSpec.shared_examples 'an integrator' do
   let(:integrator) { described_class }
   let(:instance) { integrator.new }
-  let(:integration) { Memorb.integration(integrator) }
+  let(:integration) { Memorb::Integration[integrator] }
 
   it 'has the correct ancestry' do
     ancestors = integrator.ancestors
@@ -47,11 +47,11 @@ RSpec.shared_examples 'a registered integrator' do
   let(:integrator) { described_class }
 
   it 'registers #increment' do
-    integration = Memorb.integration(integrator)
+    integration = Memorb::Integration[integrator]
     expect(integration.public_instance_methods).to include(:increment)
   end
   it 'registers #double' do
-    integration = Memorb.integration(integrator)
+    integration = Memorb::Integration[integrator]
     expect(integration.public_instance_methods).to include(:double)
   end
 end

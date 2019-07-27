@@ -2,11 +2,11 @@ module Memorb
   module IntegratorClassMethods
 
     def inherited(child)
-      Memorb.integrate! child
+      Integration.integrate_with!(child)
     end
 
     def memorb
-      Memorb.integration(self)
+      Integration[self]
     end
 
   end
