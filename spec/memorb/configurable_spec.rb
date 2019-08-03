@@ -8,11 +8,11 @@ RSpec.describe Memorb::Configurable do
       expect(instance_args).to eq(args)
     end
   end
-  context 'when included in a class' do
+  context 'when extended in a class' do
     it 'does not add its own methods to that class' do
       instance = described_class.new
-      these_methods = Class.new { include instance }.public_instance_methods
-      typical_methods = Class.new { include Memorb }.public_instance_methods
+      these_methods = Class.new { extend instance }.methods
+      typical_methods = Class.new { extend Memorb }.methods
       expect(these_methods).to match_array(typical_methods)
     end
   end

@@ -1,6 +1,6 @@
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
-  let(:integrator) { Class.new(Counter) { include Memorb } }
+  let(:integrator) { Class.new(Counter) { extend Memorb } }
   let(:store) { instance_double(Memorb::KeyValueStore) }
   let(:key) { :key }
   let(:value) { 'value' }

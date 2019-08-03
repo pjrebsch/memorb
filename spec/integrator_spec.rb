@@ -2,6 +2,7 @@ RSpec.shared_examples 'for ancestry verification' do
   let(:integration) { Memorb::Integration[integrator] }
 
   it 'has the correct ancestry' do
+    expect(integration).not_to be(nil)
     ancestors = integrator.ancestors
     expected_ancestry = [integration, integrator]
     relevant_ancestors = ancestors.select { |a| expected_ancestry.include? a }
@@ -24,16 +25,7 @@ RSpec.describe 'integrators of Memorb' do
   describe 'a basic integrator' do
     let(:integrator) {
       Class.new do
-        include Memorb
-      end
-    }
-    include_examples 'for ancestry verification'
-  end
-
-  describe 'a basic integrator that uses prepend' do
-    let(:integrator) {
-      Class.new do
-        prepend Memorb
+        extend Memorb
       end
     }
     include_examples 'for ancestry verification'
@@ -42,8 +34,8 @@ RSpec.describe 'integrators of Memorb' do
   describe 'an integrator that includes Memorb more than once' do
     let(:integrator) {
       Class.new do
-        include Memorb
-        include Memorb
+        extend Memorb
+        extend Memorb
       end
     }
     include_examples 'for ancestry verification'
@@ -52,7 +44,7 @@ RSpec.describe 'integrators of Memorb' do
   describe 'a child of an integrator' do
     let(:parent_integrator) {
       Class.new do
-        include Memorb
+        extend Memorb
       end
     }
     let(:integrator) {
@@ -64,12 +56,12 @@ RSpec.describe 'integrators of Memorb' do
   describe 'a child of an integrator that includes Memorb again' do
     let(:parent_integrator) {
       Class.new do
-        include Memorb
+        extend Memorb
       end
     }
     let(:integrator) {
       Class.new(parent_integrator) do
-        include Memorb
+        extend Memorb
       end
     }
     include_examples 'for ancestry verification'
@@ -78,7 +70,7 @@ RSpec.describe 'integrators of Memorb' do
   describe 'an integrator that registers methods' do
     let(:integrator) {
       Class.new(Counter) do
-        include Memorb
+        extend Memorb
         memorb.register(:increment)
         memorb.register(:double)
       end
@@ -90,7 +82,7 @@ RSpec.describe 'integrators of Memorb' do
   describe 'an integrator that registers methods with inclusion' do
     let(:integrator) {
       Class.new(Counter) do
-        include Memorb[:increment, :double]
+        extend Memorb[:increment, :double]
       end
     }
     include_examples 'for ancestry verification'
@@ -100,7 +92,7 @@ RSpec.describe 'integrators of Memorb' do
   describe 'an integrator that registers methods with inclusion using parentheses' do
     let(:integrator) {
       Class.new(Counter) do
-        include Memorb(:increment, :double)
+        extend Memorb(:increment, :double)
       end
     }
     include_examples 'for ancestry verification'

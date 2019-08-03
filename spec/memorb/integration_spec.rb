@@ -36,7 +36,7 @@ RSpec.describe Memorb::Integration do
   end
 
   describe 'an integration' do
-    let(:integrator) { target.tap { |x| x.include(Memorb) } }
+    let(:integrator) { target.tap { |x| x.extend(Memorb) } }
     let(:integrator_singleton) { integrator.singleton_class }
     let(:instance) { integrator.new }
     subject { described_class[integrator] }

@@ -6,12 +6,7 @@ module Memorb
       @methods = args
     end
 
-    def included(base)
-      super
-      register!(base)
-    end
-
-    def prepended(base)
+    def extended(base)
       super
       register!(base)
     end

@@ -1,5 +1,5 @@
 RSpec.describe Memorb::IntegratorClassMethods do
-  let(:integrator) { Class.new(Counter) { include Memorb } }
+  let(:integrator) { Class.new(Counter) { extend Memorb } }
 
   describe '::inherited' do
     it 'makes children of integrators get their own integration' do

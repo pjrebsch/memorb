@@ -12,11 +12,9 @@ module Memorb
       Configurable.new(*args)
     end
 
-    def included(base)
+    def extended(base)
       Integration.integrate_with!(base)
     end
-
-    alias_method :prepended, :included
 
   end
 end

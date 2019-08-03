@@ -86,7 +86,7 @@ This approach registers methods along with the inclusion of Memorb. It is still 
 
 ```ruby
 class WeekForecast
-  include Memorb[:payload, :week_days, :rain_on?, :will_rain?]
+  extend Memorb[:payload, :week_days, :rain_on?, :will_rain?]
   ...
 end
 ```
