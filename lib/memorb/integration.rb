@@ -5,8 +5,8 @@ module Memorb
       def integrate_with!(target)
         INTEGRATIONS.fetch(target) do
           new(target).tap do |integration|
-            target.extend IntegratorClassMethods
-            target.prepend integration
+            target.singleton_class.prepend(IntegratorClassMethods)
+            target.prepend(integration)
           end
         end
       end
