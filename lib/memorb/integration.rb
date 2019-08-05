@@ -53,13 +53,11 @@ module Memorb
             def register(name)
               REGISTRATIONS.write(name, nil)
 
-              class_eval <<-RUBY, __FILE__, __LINE__ + 1
-                def #{ name }(*args, &block)
-                  memorb.fetch(:"#{ name }", *args, block) do
-                    super
-                  end
+              define_method(name) do |*args, &block|
+                memorb.fetch(:"#{ name }", *args, block) do
+                  super(*args, &block)
                 end
-              RUBY
+              end
             end
 
             def unregister(name)
