@@ -96,6 +96,10 @@ RSpec.describe Memorb::Integration do
         result2 = instance.increment
         expect(result1).to eq(result2)
       end
+      it 'records the registration of the method' do
+        subject.register(:increment)
+        expect(subject.registered_methods).to include(:increment)
+      end
       context 'when registering a method multiple times' do
         it 'still caches the registered method' do
           subject.register(:increment)
@@ -128,6 +132,11 @@ RSpec.describe Memorb::Integration do
         subject.unregister(:increment)
         expect(subject.public_instance_methods).not_to include(:increment)
       end
+      it 'removes record of the registered method' do
+        subject.register(:increment)
+        subject.unregister(:increment)
+        expect(subject.registered_methods).not_to include(:increment)
+      end
       context 'when there is no override method defined' do
         it 'does not raise an error' do
           expect { subject.unregister(:an_undefined_method!) }.not_to raise_error
@@ -140,6 +149,14 @@ RSpec.describe Memorb::Integration do
           subject.unregister(:increment)
           expect(subject.public_instance_methods).not_to include(:increment)
         end
+      end
+    end
+    describe '::registered_methods' do
+      it 'returns an array of registered methods' do
+        methods = [:a, :b, :c]
+        registrations = subject.singleton_class::REGISTRATIONS
+        methods.each { |m| registrations.write(m, nil) }
+        expect(subject.registered_methods).to match_array(methods)
       end
     end
     context 'when mixing in with another class' do

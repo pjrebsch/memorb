@@ -32,6 +32,8 @@ module Memorb
 
           class << self
 
+            REGISTRATIONS = KeyValueStore.new
+
             def prepended(base)
               check! base
             end
@@ -49,6 +51,8 @@ module Memorb
             alias_method :inspect, :name
 
             def register(name)
+              REGISTRATIONS.write(name, nil)
+
               class_eval <<-RUBY, __FILE__, __LINE__ + 1
                 def #{ name }(*args, &block)
                   memorb.fetch(:"#{ name }", *args, block) do
@@ -59,6 +63,8 @@ module Memorb
             end
 
             def unregister(name)
+              REGISTRATIONS.forget(name)
+
               begin
                 remove_method(name)
               rescue NameError
@@ -70,6 +76,10 @@ module Memorb
                 # that we tried to remove the method and this exception
                 # wouldn't be caught.
               end
+            end
+
+            def registered_methods
+              REGISTRATIONS.keys
             end
 
             private
