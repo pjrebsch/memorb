@@ -34,11 +34,8 @@ module Memorb
 
             REGISTRATIONS = KeyValueStore.new
 
-            def prepended(base)
-              check! base
-            end
-
-            alias_method :included, :prepended
+            def prepended(base); check!(base); end
+            def included(base); check!(base); end
 
             def name
               [:name, :inspect, :object_id].each do |m|
