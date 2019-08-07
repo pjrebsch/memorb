@@ -159,6 +159,21 @@ RSpec.describe Memorb::Integration do
         expect(subject.registered_methods).to match_array(methods)
       end
     end
+    describe '::registered?' do
+      context 'when the named method is registered' do
+        it 'returns true' do
+          subject.register(:increment)
+          result = subject.registered?(:increment)
+          expect(result).to be(true)
+        end
+      end
+      context 'when the named method is not registered' do
+        it 'returns false' do
+          result = subject.registered?(:increment)
+          expect(result).to be(false)
+        end
+      end
+    end
     context 'when mixing in with another class' do
       let(:error) { Memorb::InvalidIntegrationError }
 

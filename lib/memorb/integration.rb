@@ -80,6 +80,10 @@ module Memorb
               REGISTRATIONS.keys
             end
 
+            def registered?(name)
+              registered_methods.include?(name)
+            end
+
             private
 
             def check!(base)
