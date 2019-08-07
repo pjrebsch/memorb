@@ -112,7 +112,8 @@ RSpec.describe Memorb::Integration do
       end
       context 'when registering a method that does not exist' do
         it 'still allows the method to be registered' do
-          expect { subject.register(:undefined_method) }.not_to raise_error
+          subject.register(:undefined_method)
+          expect(subject.registered_methods).to include(:undefined_method)
         end
         it 'responds to the method' do
           subject.register(:undefined_method)
@@ -153,9 +154,8 @@ RSpec.describe Memorb::Integration do
     end
     describe '::registered_methods' do
       it 'returns an array of registered methods' do
-        methods = [:a, :b, :c]
-        registrations = subject.singleton_class::REGISTRATIONS
-        methods.each { |m| registrations.write(m, nil) }
+        methods = [:increment, :decrement]
+        methods.each { |m| subject.register(m) }
         expect(subject.registered_methods).to match_array(methods)
       end
     end
