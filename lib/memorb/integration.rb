@@ -108,8 +108,9 @@ module Memorb
 
             def override!(name)
               OVERRIDES.fetch(name) do
+                name = :"#{ name }"
                 define_method(name) do |*args, &block|
-                  memorb.fetch(:"#{ name }", *args, block) do
+                  memorb.fetch(name, *args, block) do
                     super(*args, &block)
                   end
                 end
