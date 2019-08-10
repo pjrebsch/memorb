@@ -82,8 +82,11 @@ module Memorb
 
             def override_if_possible(name)
               return unless registered?(name)
-              return unless integrator_instance_method?(name)
-              override!(name)
+
+              visibility = integrator_instance_method?(name)
+              return if visibility.nil?
+
+              override!(name, visibility)
             end
 
             def overridden_methods
@@ -106,7 +109,7 @@ module Memorb
               REGISTRATIONS.write(name, nil)
             end
 
-            def override!(name)
+            def override!(name, visibility)
               OVERRIDES.fetch(name) do
                 name = :"#{ name }"
                 define_method(name) do |*args, &block|
@@ -114,17 +117,15 @@ module Memorb
                     super(*args, &block)
                   end
                 end
-                :public
+                send(visibility, name)
+                visibility
               end
             end
 
             def integrator_instance_method?(name)
-              %i[
-                public_instance_methods
-                protected_instance_methods
-                private_instance_methods
-              ].any? do |collection|
-                integrator.send(collection).include?(name)
+              [:public, :protected, :private].find do |visibility|
+                methods = integrator.send(:"#{ visibility }_instance_methods")
+                methods.include?(name)
               end
             end
 

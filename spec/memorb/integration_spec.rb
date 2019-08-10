@@ -209,19 +209,45 @@ RSpec.describe Memorb::Integration do
           subject.override_if_possible(method_name)
           expect(subject.overridden_methods).to include(method_name)
         end
+        it 'preserves the visibility of the method that it overrides' do
+          visibilities = [:public, :protected, :private]
+          method_names = visibilities.map { |vis| :"#{ vis }_method" }
+
+          integrator = Class.new.tap do |target|
+            eval_string = visibilities.map.with_index do |vis, i|
+              "#{ vis }; def #{ method_names[i] }; end;"
+            end.join("\n")
+            target.class_eval(eval_string)
+            target.extend(Memorb)
+          end
+
+          subject = described_class[integrator]
+
+          method_names.each do |m|
+            subject.send(:register!, m)
+            subject.override_if_possible(m)
+          end
+
+          visibilities.each.with_index do |vis, i|
+            overrides = subject.send(:"#{ vis }_instance_methods", false)
+            expect(overrides).to include(method_names[i])
+            other_methods = method_names.reject { |m| m === method_names[i] }
+            expect(overrides).not_to include(*other_methods)
+          end
+        end
       end
     end
     describe '::overridden_methods' do
       it 'returns an array of overridden methods' do
         methods = [:increment, :decrement]
-        methods.each { |m| subject.send(:override!, m) }
+        methods.each { |m| subject.send(:override!, m, :public) }
         expect(subject.overridden_methods).to match_array(methods)
       end
     end
     describe '::overridden?' do
       context 'when the named method is overridden' do
         it 'returns true' do
-          subject.send(:override!, :increment)
+          subject.send(:override!, :increment, :public)
           result = subject.overridden?(:increment)
           expect(result).to be(true)
         end
