@@ -10,5 +10,10 @@ module Memorb
       Integration[self]
     end
 
+    def method_added(name)
+      memorb.override_if_possible(name)
+      super
+    end
+
   end
 end
