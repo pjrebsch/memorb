@@ -91,7 +91,6 @@ RSpec.describe Memorb::Integration do
     describe '::register' do
       it 'caches the registered method' do
         subject.register(:increment)
-        instance = integrator.new
         result1 = instance.increment
         result2 = instance.increment
         expect(result1).to eq(result2)
@@ -104,7 +103,6 @@ RSpec.describe Memorb::Integration do
         it 'still caches the registered method' do
           subject.register(:increment)
           subject.register(:increment)
-          instance = integrator.new
           result1 = instance.increment
           result2 = instance.increment
           expect(result1).to eq(result2)
@@ -123,12 +121,10 @@ RSpec.describe Memorb::Integration do
         end
         it 'an integrator instance does not respond to the method' do
           subject.register(method_name)
-          instance = integrator.new
           expect(instance).not_to respond_to(method_name)
         end
         it 'raises an error when trying to call it' do
           subject.register(method_name)
-          instance = integrator.new
           expect { instance.undefined_method }.to raise_error(NoMethodError)
         end
         context 'once the method is defined' do
@@ -137,7 +133,6 @@ RSpec.describe Memorb::Integration do
           it 'responds to the the method' do
             subject.register(method_name)
             integrator.define_method(method_name) { nil }
-            instance = integrator.new
             expect(instance).to respond_to(method_name)
           end
         end
