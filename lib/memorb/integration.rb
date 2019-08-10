@@ -52,8 +52,8 @@ module Memorb
             alias_method :inspect, :name
 
             def register(name)
-              REGISTRATIONS.write(name, nil)
-              override!(name)
+              register!(name)
+              override_if_possible(name)
             end
 
             def unregister(name)
@@ -80,6 +80,12 @@ module Memorb
               registered_methods.include?(name)
             end
 
+            def override_if_possible(name)
+              return unless registered?(name)
+              return unless integrator_instance_method?(name)
+              override!(name)
+            end
+
             def overridden_methods
               OVERRIDES.keys
             end
@@ -96,6 +102,10 @@ module Memorb
               end
             end
 
+            def register!(name)
+              REGISTRATIONS.write(name, nil)
+            end
+
             def override!(name)
               OVERRIDES.fetch(name) do
                 define_method(name) do |*args, &block|
@@ -104,6 +114,16 @@ module Memorb
                   end
                 end
                 :public
+              end
+            end
+
+            def integrator_instance_method?(name)
+              %i[
+                public_instance_methods
+                protected_instance_methods
+                private_instance_methods
+              ].any? do |collection|
+                integrator.send(collection).include?(name)
               end
             end
 

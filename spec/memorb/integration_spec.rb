@@ -111,19 +111,35 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'when registering a method that does not exist' do
+        let(:method_name) { :undefined_method }
+
         it 'still allows the method to be registered' do
-          subject.register(:undefined_method)
-          expect(subject.registered_methods).to include(:undefined_method)
+          subject.register(method_name)
+          expect(subject.registered_methods).to include(method_name)
         end
-        it 'responds to the method' do
-          subject.register(:undefined_method)
+        it 'does not override the method' do
+          subject.register(method_name)
+          expect(subject.overridden_methods).not_to include(method_name)
+        end
+        it 'an integrator instance does not respond to the method' do
+          subject.register(method_name)
           instance = integrator.new
-          expect(instance).to respond_to(:undefined_method)
+          expect(instance).not_to respond_to(method_name)
         end
         it 'raises an error when trying to call it' do
-          subject.register(:undefined_method)
+          subject.register(method_name)
           instance = integrator.new
           expect { instance.undefined_method }.to raise_error(NoMethodError)
+        end
+        context 'once the method is defined' do
+          let(:method_name) { :some_method }
+
+          it 'responds to the the method' do
+            subject.register(method_name)
+            integrator.define_method(method_name) { nil }
+            instance = integrator.new
+            expect(instance).to respond_to(method_name)
+          end
         end
       end
     end
@@ -171,6 +187,32 @@ RSpec.describe Memorb::Integration do
         it 'returns false' do
           result = subject.registered?(:increment)
           expect(result).to be(false)
+        end
+      end
+    end
+    describe '::override_if_possible' do
+      context 'when a given method is not registered' do
+        it 'does not override the method' do
+          method_name = :increment
+          subject.override_if_possible(method_name)
+          expect(subject.overridden_methods).not_to include(method_name)
+        end
+      end
+      context 'when a given method is registered but not defined' do
+        it 'does not override the method' do
+          method_name = :undefined_method
+          subject.send(:register!, method_name)
+          subject.override_if_possible(method_name)
+          expect(subject.overridden_methods).not_to include(method_name)
+        end
+      end
+      context 'when all conditions are satisfied' do
+        it 'overrides the method' do
+          method_name = :some_method
+          subject.send(:register!, method_name)
+          integrator.define_method(method_name) { nil }
+          subject.override_if_possible(method_name)
+          expect(subject.overridden_methods).to include(method_name)
         end
       end
     end
