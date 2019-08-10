@@ -1,8 +1,7 @@
 require 'concurrent'
 
 module Memorb
-  # KeyValueStore is a key-value store that can be used as a thread-safe
-  # alternative to a Hash, but uses a different, limited interface.
+  # KeyValueStore is a thread-safe key-value store.
   #
   # Thread safety is important here because an implementing class may
   # be using Memorb and expecting that a cacheable method be executed
@@ -20,6 +19,8 @@ module Memorb
       @data = {}
       @lock = Concurrent::ReentrantReadWriteLock.new
     end
+
+    attr_reader :lock
 
     def write(key, value)
       @lock.with_write_lock { _write(key, value) }
