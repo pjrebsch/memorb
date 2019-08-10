@@ -2,8 +2,8 @@ module Memorb
   module IntegratorClassMethods
 
     def inherited(child)
-      super
       Integration.integrate_with!(child)
+      super
     end
 
     def memorb

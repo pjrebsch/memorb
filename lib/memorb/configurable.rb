@@ -7,8 +7,8 @@ module Memorb
     end
 
     def extended(base)
-      super
       register!(base)
+      super
     end
 
     def inspect
