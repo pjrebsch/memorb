@@ -140,7 +140,7 @@ RSpec.describe Memorb::Integration do
       end
       context 'when there is no override method defined' do
         it 'does not raise an error' do
-          expect { subject.unregister(:an_undefined_method!) }.not_to raise_error
+          expect { subject.unregister(:undefined_method) }.not_to raise_error
         end
       end
       context 'when a method is registered multiple times' do
@@ -170,6 +170,28 @@ RSpec.describe Memorb::Integration do
       context 'when the named method is not registered' do
         it 'returns false' do
           result = subject.registered?(:increment)
+          expect(result).to be(false)
+        end
+      end
+    end
+    describe '::overridden_methods' do
+      it 'returns an array of overridden methods' do
+        methods = [:increment, :decrement]
+        methods.each { |m| subject.send(:override!, m) }
+        expect(subject.overridden_methods).to match_array(methods)
+      end
+    end
+    describe '::overridden?' do
+      context 'when the named method is overridden' do
+        it 'returns true' do
+          subject.send(:override!, :increment)
+          result = subject.overridden?(:increment)
+          expect(result).to be(true)
+        end
+      end
+      context 'when the named method is not overridden' do
+        it 'returns false' do
+          result = subject.overridden?(:increment)
           expect(result).to be(false)
         end
       end

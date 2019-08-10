@@ -33,6 +33,10 @@ module Memorb
           class << self
 
             REGISTRATIONS = KeyValueStore.new
+            private_constant :REGISTRATIONS
+
+            OVERRIDES = KeyValueStore.new
+            private_constant :OVERRIDES
 
             def prepended(base); check!(base); end
             def included(base); check!(base); end
@@ -49,12 +53,7 @@ module Memorb
 
             def register(name)
               REGISTRATIONS.write(name, nil)
-
-              define_method(name) do |*args, &block|
-                memorb.fetch(:"#{ name }", *args, block) do
-                  super(*args, &block)
-                end
-              end
+              override!(name)
             end
 
             def unregister(name)
@@ -81,11 +80,30 @@ module Memorb
               registered_methods.include?(name)
             end
 
+            def overridden_methods
+              OVERRIDES.keys
+            end
+
+            def overridden?(name)
+              overridden_methods.include?(name)
+            end
+
             private
 
             def check!(base)
               unless base.equal?(integrator)
                 raise InvalidIntegrationError
+              end
+            end
+
+            def override!(name)
+              OVERRIDES.fetch(name) do
+                define_method(name) do |*args, &block|
+                  memorb.fetch(:"#{ name }", *args, block) do
+                    super(*args, &block)
+                  end
+                end
+                :public
               end
             end
 
