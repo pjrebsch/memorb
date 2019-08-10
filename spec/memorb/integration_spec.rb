@@ -243,14 +243,13 @@ RSpec.describe Memorb::Integration do
     end
     context 'when mixing in with another class' do
       let(:error) { Memorb::InvalidIntegrationError }
+      let(:klass) { Class.new.singleton_class }
 
       it 'raises an error when using prepend' do
-        integration = subject
-        expect { Class.new { prepend integration } }.to raise_error(error)
+        expect { klass.prepend(subject) }.to raise_error(error)
       end
       it 'raises an error when using include' do
-        integration = subject
-        expect { Class.new { include integration } }.to raise_error(error)
+        expect { klass.include(subject) }.to raise_error(error)
       end
     end
   end
