@@ -233,6 +233,14 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
+    it 'supports regularly invalid method names' do
+      method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'
+      subject.register(method_name)
+      integrator.define_method(method_name) { nil }
+      expect(subject.registered_methods).to include(method_name)
+      expect(subject.overridden_methods).to include(method_name)
+      expect { instance.send(method_name) }.not_to raise_error
+    end
     context 'when mixing in with another class' do
       let(:error) { Memorb::InvalidIntegrationError }
 
