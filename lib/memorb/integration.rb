@@ -112,12 +112,16 @@ module Memorb
             def override!(name, visibility)
               OVERRIDES.fetch(name) do
                 name = :"#{ name }"
-                define_method(name) do |*args, &block|
-                  memorb.fetch(name, *args, block) do
-                    super(*args, &block)
-                  end
-                end
+                define_override!(name)
                 set_visibility!(name, visibility)
+              end
+            end
+
+            def define_override!(name)
+              define_method(name) do |*args, &block|
+                memorb.fetch(name, *args, block) do
+                  super(*args, &block)
+                end
               end
             end
 
