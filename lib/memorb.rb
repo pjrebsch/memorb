@@ -1,3 +1,4 @@
+require_relative 'memorb/version'
 require_relative 'memorb/errors'
 require_relative 'memorb/key_value_store'
 require_relative 'memorb/integrator_class_methods'
