@@ -97,6 +97,11 @@ module Memorb
               overridden_methods.include?(name)
             end
 
+            def set_visibility!(name, visibility)
+              send(visibility, name)
+              visibility
+            end
+
             private
 
             def check!(base)
@@ -123,11 +128,6 @@ module Memorb
                   super(*args, &block)
                 end
               end
-            end
-
-            def set_visibility!(name, visibility)
-              send(visibility, name)
-              visibility
             end
 
             def integrator_instance_method?(name)

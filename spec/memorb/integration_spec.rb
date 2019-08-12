@@ -259,6 +259,14 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
+    describe '::set_visibility!' do
+      it 'updates the visibility of the given override method' do
+        target.class_eval { public; def some_method; end }
+        subject.register(:some_method)
+        subject.set_visibility!(:some_method, :private)
+        expect(subject.private_instance_methods).to include(:some_method)
+      end
+    end
     it 'supports regularly invalid method names' do
       method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'
       subject.register(method_name)
