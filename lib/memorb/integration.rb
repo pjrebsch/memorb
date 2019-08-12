@@ -117,9 +117,13 @@ module Memorb
                     super(*args, &block)
                   end
                 end
-                send(visibility, name)
-                visibility
+                set_visibility!(name, visibility)
               end
+            end
+
+            def set_visibility!(name, visibility)
+              send(visibility, name)
+              visibility
             end
 
             def integrator_instance_method?(name)
