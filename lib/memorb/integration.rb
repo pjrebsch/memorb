@@ -11,6 +11,10 @@ module Memorb
         end
       end
 
+      def integrated?(target)
+        INTEGRATIONS.has?(target)
+      end
+
       def [](integrator)
         INTEGRATIONS.read(integrator)
       end

@@ -21,6 +21,21 @@ RSpec.describe Memorb::Integration do
       end
     end
   end
+  describe '::integrated?' do
+    context 'when a given class has not integrated Memorb' do
+      it 'returns false' do
+        result = described_class.integrated?(target)
+        expect(result).to be(false)
+      end
+    end
+    context 'when a given class has integrated with Memorb' do
+      it 'returns true' do
+        described_class.integrate_with!(target)
+        result = described_class.integrated?(target)
+        expect(result).to be(true)
+      end
+    end
+  end
   describe '::[]' do
     it 'returns the integration for the given class' do
       integration = described_class.integrate_with!(target)
