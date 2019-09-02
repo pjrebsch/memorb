@@ -87,7 +87,7 @@ module Memorb
             def override_if_possible(name)
               return unless registered?(name)
 
-              visibility = integrator_instance_method?(name)
+              visibility = integrator_instance_method_visibility(name)
               return if visibility.nil?
 
               override!(name, visibility)
@@ -135,7 +135,7 @@ module Memorb
               end
             end
 
-            def integrator_instance_method?(name)
+            def integrator_instance_method_visibility(name)
               [:public, :protected, :private].find do |visibility|
                 methods = integrator.send(:"#{ visibility }_instance_methods")
                 methods.include?(name)
