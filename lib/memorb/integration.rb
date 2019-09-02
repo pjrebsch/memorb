@@ -101,9 +101,9 @@ module Memorb
               overridden_methods.include?(name)
             end
 
-            def set_visibility!(visibility, name)
+            def set_visibility!(visibility, *names)
               return unless [:public, :protected, :private].include?(visibility)
-              send(visibility, name)
+              send(visibility, *names)
               visibility
             end
 

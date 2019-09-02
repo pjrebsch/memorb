@@ -281,6 +281,15 @@ RSpec.describe Memorb::Integration do
         subject.set_visibility!(:private, :some_method)
         expect(subject.private_instance_methods).to include(:some_method)
       end
+      it 'updates the visibility of multiple given override methods' do
+        methods = [:method_1, :method_2]
+        methods.each do |m|
+          target.class_eval "protected; def #{ m }; end"
+          subject.register(m)
+        end
+        subject.set_visibility!(:private, *methods)
+        expect(subject.private_instance_methods).to include(*methods)
+      end
       context 'when given an invalid visibility' do
         it 'returns nil' do
           target.class_eval { def some_method; end }
