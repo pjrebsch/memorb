@@ -278,14 +278,14 @@ RSpec.describe Memorb::Integration do
       it 'updates the visibility of the given override method' do
         target.class_eval { public; def some_method; end }
         subject.register(:some_method)
-        subject.set_visibility!(:some_method, :private)
+        subject.set_visibility!(:private, :some_method)
         expect(subject.private_instance_methods).to include(:some_method)
       end
       context 'when given an invalid visibility' do
         it 'returns nil' do
           target.class_eval { def some_method; end }
           subject.register(:some_method)
-          result = subject.set_visibility!(:some_method, :invalid_visibility)
+          result = subject.set_visibility!(:invalid_visibility, :some_method)
           expect(result).to be(nil)
         end
       end

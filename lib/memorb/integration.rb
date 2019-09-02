@@ -101,7 +101,7 @@ module Memorb
               overridden_methods.include?(name)
             end
 
-            def set_visibility!(name, visibility)
+            def set_visibility!(visibility, name)
               return unless [:public, :protected, :private].include?(visibility)
               send(visibility, name)
               visibility
@@ -123,7 +123,7 @@ module Memorb
               OVERRIDES.fetch(name) do
                 name = :"#{ name }"
                 define_override!(name)
-                set_visibility!(name, visibility)
+                set_visibility!(visibility, name)
               end
             end
 
