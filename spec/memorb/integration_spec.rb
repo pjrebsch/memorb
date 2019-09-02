@@ -281,6 +281,14 @@ RSpec.describe Memorb::Integration do
         subject.set_visibility!(:some_method, :private)
         expect(subject.private_instance_methods).to include(:some_method)
       end
+      context 'when given an invalid visibility' do
+        it 'returns nil' do
+          target.class_eval { def some_method; end }
+          subject.register(:some_method)
+          result = subject.set_visibility!(:some_method, :invalid_visibility)
+          expect(result).to be(nil)
+        end
+      end
     end
     it 'supports regularly invalid method names' do
       method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'

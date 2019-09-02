@@ -102,6 +102,7 @@ module Memorb
             end
 
             def set_visibility!(name, visibility)
+              return unless [:public, :protected, :private].include?(visibility)
               send(visibility, name)
               visibility
             end
