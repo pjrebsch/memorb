@@ -114,6 +114,13 @@ RSpec.describe Memorb::Integration do
         subject.register(:increment)
         expect(subject.registered_methods).to include(:increment)
       end
+      # context 'when the method name is supplied as a string' do
+      #   it 'converts the name to a symbol' do
+      #     subject.register('increment')
+      #     result = subject.registered?(:increment)
+      #     expect(result).to be(true)
+      #   end
+      # end
       context 'when registering a method multiple times' do
         it 'still caches the registered method' do
           subject.register(:increment)
@@ -164,6 +171,14 @@ RSpec.describe Memorb::Integration do
         subject.unregister(:increment)
         expect(subject.registered_methods).not_to include(:increment)
       end
+      # context 'when the method name is supplied as a string' do
+      #   it 'converts the name to a symbol' do
+      #     subject.register(:increment)
+      #     subject.unregister('increment')
+      #     result = subject.registered?(:increment)
+      #     expect(result).to be(false)
+      #   end
+      # end
       context 'when there is no override method defined' do
         it 'does not raise an error' do
           expect { subject.unregister(:undefined_method) }.not_to raise_error
@@ -219,7 +234,7 @@ RSpec.describe Memorb::Integration do
       context 'when all conditions are satisfied' do
         it 'overrides the method' do
           method_name = :some_method
-          subject.send(:register!, method_name)
+          subject.send(:register!, Memorb::MethodIdentifier.new(method_name))
           integrator.define_method(method_name) { nil }
           subject.override_if_possible(method_name)
           expect(subject.overridden_methods).to include(method_name)
@@ -239,7 +254,7 @@ RSpec.describe Memorb::Integration do
           subject = described_class[integrator]
 
           method_names.each do |m|
-            subject.send(:register!, m)
+            subject.send(:register!, Memorb::MethodIdentifier.new(m))
             subject.override_if_possible(m)
           end
 
@@ -262,7 +277,8 @@ RSpec.describe Memorb::Integration do
     describe '::overridden?' do
       context 'when the named method is overridden' do
         it 'returns true' do
-          subject.send(:override!, :increment, :public)
+          method_id = Memorb::MethodIdentifier.new(:increment)
+          subject.send(:override!, method_id, :public)
           result = subject.overridden?(:increment)
           expect(result).to be(true)
         end
