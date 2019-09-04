@@ -1,21 +1,31 @@
 module Memorb
   class MethodIdentifier
 
-    class << self
-
-      def normalize(name)
-        name.to_s.to_sym
-      end
-
-      def normalize_local_variables!(context, *variable_names)
-        variable_names.each do |n|
-          m = context.local_variable_get(n)
-          normalized = normalize(m)
-          context.local_variable_set(n, normalized)
-        end
-      end
-
+    def initialize(method_name)
+      @method_name = method_name.to_sym
     end
+
+    def hash
+      self.class.hash ^ method_name.hash
+    end
+
+    def ==(other)
+      to_sym === other.to_sym
+    end
+
+    alias_method :eql?, :==
+
+    def to_s
+      method_name.to_s
+    end
+
+    def to_sym
+      method_name
+    end
+
+    protected
+
+    attr_reader :method_name
 
   end
 end
