@@ -10,7 +10,7 @@ module Memorb
     end
 
     def ==(other)
-      to_sym === other.to_sym
+      hash === other.hash
     end
 
     alias_method :eql?, :==
