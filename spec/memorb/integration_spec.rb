@@ -167,6 +167,7 @@ RSpec.describe Memorb::Integration do
         context 'when the method is registered' do
           it 'overrides the method' do
             subject.register(method_name)
+            subject.disable(provided_name)
             subject.enable(provided_name)
             expect(subject.overridden_methods).to include(method_name)
           end
