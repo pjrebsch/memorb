@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples 'for ancestry verification' do
-  let(:integration) { Memorb::Integration[integrator] }
-
   it 'has the correct ancestry' do
     expect(integration).not_to be(nil)
     ancestors = integrator.ancestors
@@ -12,18 +10,16 @@ RSpec.shared_examples 'for ancestry verification' do
   end
 end
 
-RSpec.shared_examples 'for method registration verification' do
-  it 'registers #increment' do
-    integration = Memorb::Integration[integrator]
-    expect(integration.public_instance_methods).to include(:increment)
-  end
-  it 'registers #double' do
-    integration = Memorb::Integration[integrator]
-    expect(integration.public_instance_methods).to include(:double)
+RSpec.shared_examples 'for method registration verification' do |methods|
+  it 'registers the correct methods' do
+    expect(integration.registered_methods).to include(:increment, :double)
   end
 end
 
 RSpec.describe 'integrators of Memorb' do
+  let(:target) { SpecHelper.basic_target_class }
+  let(:integration) { Memorb::Integration[integrator] }
+
   describe 'a basic integrator' do
     let(:integrator) {
       Class.new do
@@ -71,7 +67,7 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'an integrator that registers methods' do
     let(:integrator) {
-      Class.new(Counter) do
+      Class.new(target) do
         extend Memorb
         memorb.register(:increment)
         memorb.register(:double)
@@ -83,7 +79,7 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'an integrator that registers methods with inclusion' do
     let(:integrator) {
-      Class.new(Counter) do
+      Class.new(target) do
         extend Memorb[:increment, :double]
       end
     }
@@ -93,7 +89,7 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'an integrator that registers methods with inclusion using parentheses' do
     let(:integrator) {
-      Class.new(Counter) do
+      Class.new(target) do
         extend Memorb(:increment, :double)
       end
     }
