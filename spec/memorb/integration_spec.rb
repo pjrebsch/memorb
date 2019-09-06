@@ -204,6 +204,31 @@ RSpec.describe Memorb::Integration do
       end
     end
     describe '::registered?' do
+      it 'preserves the visibility of the method that it overrides' do
+        visibilities = [:public, :protected, :private]
+        method_names = visibilities.map { |vis| :"#{ vis }_method" }
+
+        integrator = Class.new.tap do |target|
+          eval_string = visibilities.map.with_index do |vis, i|
+            "#{ vis }; def #{ method_names[i] }; end;"
+          end.join("\n")
+          target.class_eval(eval_string)
+          target.extend(Memorb)
+        end
+
+        subject = described_class[integrator]
+
+        method_names.each do |m|
+          subject.register(m)
+        end
+
+        visibilities.each.with_index do |vis, i|
+          overrides = subject.send(:"#{ vis }_instance_methods", false)
+          expect(overrides).to include(method_names[i])
+          other_methods = method_names.reject { |m| m === method_names[i] }
+          expect(overrides).not_to include(*other_methods)
+        end
+      end
       shared_examples :_ do |provided_name|
         let(:method_name) { :increment }
 
@@ -226,65 +251,6 @@ RSpec.describe Memorb::Integration do
       end
       context 'with method name supplied as a string' do
         it_behaves_like :_, 'increment'
-      end
-    end
-    describe '::override_if_possible' do
-      shared_examples :_ do |provided_name|
-        let(:method_name) { :increment }
-
-        context 'when a given method is not registered' do
-          it 'does not override the method' do
-            subject.override_if_possible(provided_name)
-            expect(subject.overridden_methods).not_to include(method_name)
-          end
-        end
-        context 'when a given method is registered but not defined' do
-          let(:target) { Class.new }
-
-          it 'does not override the method' do
-            subject.register(method_name)
-            subject.override_if_possible(provided_name)
-            expect(subject.overridden_methods).not_to include(method_name)
-          end
-        end
-      end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :increment
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like :_, 'increment'
-      end
-      it 'overrides the method' do
-        method_name = :increment
-        subject.send(:register!, Memorb::MethodIdentifier.new(method_name))
-        subject.override_if_possible(method_name)
-        expect(subject.overridden_methods).to include(method_name)
-      end
-      it 'preserves the visibility of the method that it overrides' do
-        visibilities = [:public, :protected, :private]
-        method_names = visibilities.map { |vis| :"#{ vis }_method" }
-
-        integrator = Class.new.tap do |target|
-          eval_string = visibilities.map.with_index do |vis, i|
-            "#{ vis }; def #{ method_names[i] }; end;"
-          end.join("\n")
-          target.class_eval(eval_string)
-          target.extend(Memorb)
-        end
-
-        subject = described_class[integrator]
-
-        method_names.each do |m|
-          subject.send(:register!, Memorb::MethodIdentifier.new(m))
-          subject.override_if_possible(m)
-        end
-
-        visibilities.each.with_index do |vis, i|
-          overrides = subject.send(:"#{ vis }_instance_methods", false)
-          expect(overrides).to include(method_names[i])
-          other_methods = method_names.reject { |m| m === method_names[i] }
-          expect(overrides).not_to include(*other_methods)
-        end
       end
     end
     describe '::overridden_methods' do

@@ -11,8 +11,10 @@ module Memorb
     end
 
     def method_added(name)
-      memorb.override_if_possible(name)
-      super
+      super.tap do
+        # Re-register the method so that it now gets overridden.
+        memorb.register(name) if memorb.registered?(name)
+      end
     end
 
   end

@@ -76,16 +76,6 @@ module Memorb
               REGISTRATIONS.keys.include?(method_id)
             end
 
-            def override_if_possible(name)
-              method_id = MethodIdentifier.new(name)
-              return unless registered?(method_id)
-
-              visibility = integrator_instance_method_visibility(method_id)
-              return if visibility.nil?
-
-              override!(method_id, visibility)
-            end
-
             def overridden_methods
               OVERRIDES.keys.map(&:to_sym)
             end
@@ -123,6 +113,15 @@ module Memorb
               # added or not, but the read could be outdated by the time
               # that we tried to remove the method and this exception
               # wouldn't be caught.
+            end
+
+            def override_if_possible(method_id)
+              return unless registered?(method_id)
+
+              visibility = integrator_instance_method_visibility(method_id)
+              return if visibility.nil?
+
+              override!(method_id, visibility)
             end
 
             def override!(method_id, visibility)

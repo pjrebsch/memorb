@@ -1,5 +1,5 @@
 RSpec.describe Memorb::IntegratorClassMethods do
-  let(:integrator) { Class.new(Counter) { extend Memorb } }
+  let(:integrator) { Class.new { extend Memorb } }
   let(:integration) { Memorb::Integration[integrator] }
 
   describe '::inherited' do
@@ -17,17 +17,23 @@ RSpec.describe Memorb::IntegratorClassMethods do
     end
   end
   describe '::method_added' do
-    def class_method_overrides(integrator)
-      Module.new.tap { |m| m.define_method(:memorb) { integrator } }
-    end
+    let(:method_name) { :method_1 }
 
-    it 'calls override_if_possible on the integration' do
-      expected_message = :override_if_possible
-      method_name = :some_method
-      integration = double('integration', expected_message => nil)
-      integrator.singleton_class.prepend(class_method_overrides(integration))
-      expect(integration).to receive(expected_message).with(method_name)
+    it 'retains the upstream behavior' do
+      spy = double('spy', spy!: nil)
+      integrator.singleton_class.define_method(:method_added) do |m|
+        spy.spy!(m)
+      end
+      expect(spy).to receive(:spy!).with(method_name)
       integrator.define_method(method_name) { nil }
+    end
+    context 'when the method has been registered' do
+      it 'overrides the method' do
+        integration.register(method_name)
+        expect(integration.overridden_methods).not_to include(method_name)
+        integrator.define_method(method_name) { nil }
+        expect(integration.overridden_methods).to include(method_name)
+      end
     end
   end
 end
