@@ -104,7 +104,7 @@ RSpec.describe Memorb::Integration do
       end
     end
     describe '::register' do
-      shared_examples :_ do |provided_name|
+      shared_examples '::register' do |provided_name|
         let(:method_name) { :increment }
 
         it 'caches the registered method' do
@@ -154,20 +154,20 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :increment
+        it_behaves_like '::register', :increment
       end
       context 'with method name supplied as a string' do
-        it_behaves_like :_, 'increment'
+        it_behaves_like '::register', 'increment'
       end
     end
     describe '::enable' do
-      shared_examples :_ do |provided_name|
+      shared_examples '::enable' do |provided_name|
         let(:method_name) { :increment }
 
         context 'when the method is registered' do
           it 'overrides the method' do
             subject.register(method_name)
-            subject.disable(provided_name)
+            subject.disable(method_name)
             subject.enable(provided_name)
             expect(subject.overridden_methods).to include(method_name)
           end
@@ -203,14 +203,14 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :increment
+        it_behaves_like '::enable', :increment
       end
       context 'with method name supplied as a string' do
-        it_behaves_like :_, 'increment'
+        it_behaves_like '::enable', 'increment'
       end
     end
     describe '::disable' do
-      shared_examples :_ do |provided_name|
+      shared_examples '::disable' do |provided_name|
         let(:method_name) { :increment }
 
         it 'removes the override method for the given method' do
@@ -227,10 +227,10 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :increment
+        it_behaves_like '::disable', :increment
       end
       context 'with method name supplied as a string' do
-        it_behaves_like :_, 'increment'
+        it_behaves_like '::disable', 'increment'
       end
     end
     describe '::registered_methods' do
@@ -266,7 +266,7 @@ RSpec.describe Memorb::Integration do
           expect(overrides).not_to include(*other_methods)
         end
       end
-      shared_examples :_ do |provided_name|
+      shared_examples '::registered?' do |provided_name|
         let(:method_name) { :increment }
 
         context 'when the named method is registered' do
@@ -284,10 +284,10 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :increment
+        it_behaves_like '::registered?', :increment
       end
       context 'with method name supplied as a string' do
-        it_behaves_like :_, 'increment'
+        it_behaves_like '::registered?', 'increment'
       end
     end
     describe '::overridden_methods' do
@@ -298,7 +298,7 @@ RSpec.describe Memorb::Integration do
       end
     end
     describe '::overridden?' do
-      shared_examples :_ do |provided_name|
+      shared_examples '::overridden?' do |provided_name|
         let(:method_name) { :increment }
 
         context 'when the named method is overridden' do
@@ -317,14 +317,14 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :increment
+        it_behaves_like '::overridden?', :increment
       end
       context 'with method name supplied as a string' do
-        it_behaves_like :_, 'increment'
+        it_behaves_like '::overridden?', 'increment'
       end
     end
     describe '::set_visibility!' do
-      shared_examples :_ do |provided_name|
+      shared_examples '::set_visibility!' do |provided_name|
         let(:method_name) { :some_method }
         let(:target) { Class.new }
 
@@ -350,10 +350,10 @@ RSpec.describe Memorb::Integration do
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like :_, :some_method
+        it_behaves_like '::set_visibility!', :some_method
       end
       context 'with method name supplied as a string' do
-        it_behaves_like :_, 'some_method'
+        it_behaves_like '::set_visibility!', 'some_method'
       end
       it 'updates the visibility of multiple given override methods' do
         methods = [:method_1, :method_2]
