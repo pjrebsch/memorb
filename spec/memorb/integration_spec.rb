@@ -322,48 +322,6 @@ RSpec.describe Memorb::Integration do
         it_behaves_like '::overridden?', 'increment'
       end
     end
-    describe '::set_visibility!' do
-      shared_examples '::set_visibility!' do |provided_name|
-        let(:method_name) { :some_method }
-        let(:target) { Class.new }
-
-        it 'updates the visibility of the given override method' do
-          target.class_eval("public; def #{ method_name }; end")
-          subject.register(method_name)
-          subject.set_visibility!(:private, provided_name)
-          expect(subject.private_instance_methods).to include(method_name)
-        end
-        it 'returns the visibility that was provided' do
-          target.class_eval("public; def #{ method_name }; end")
-          subject.register(method_name)
-          result = subject.set_visibility!(:private, provided_name)
-          expect(result).to be(:private)
-        end
-        context 'when given an invalid visibility' do
-          it 'returns nil' do
-            target.class_eval("public; def #{ method_name }; end")
-            subject.register(method_name)
-            result = subject.set_visibility!(:invalid_visibility, provided_name)
-            expect(result).to be(nil)
-          end
-        end
-      end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::set_visibility!', :some_method
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::set_visibility!', 'some_method'
-      end
-      it 'updates the visibility of multiple given override methods' do
-        methods = [:method_1, :method_2]
-        methods.each do |m|
-          target.class_eval "protected; def #{ m }; end"
-          subject.register(m)
-        end
-        subject.set_visibility!(:private, *methods)
-        expect(subject.private_instance_methods).to include(*methods)
-      end
-    end
     it 'supports regularly invalid method names' do
       method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'
       subject.register(method_name)

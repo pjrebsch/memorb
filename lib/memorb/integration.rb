@@ -83,12 +83,6 @@ module Memorb
               _overridden?(_identifier(name))
             end
 
-            def set_visibility!(visibility, *names)
-              return unless [:public, :protected, :private].include?(visibility)
-              send(visibility, *names)
-              visibility
-            end
-
             private
 
             def _check_integrator!(base)
@@ -118,7 +112,7 @@ module Memorb
 
               OVERRIDES.fetch(method_id) do
                 _define_override(method_id)
-                set_visibility!(visibility, method_id.to_sym)
+                _set_visibility(visibility, method_id.to_sym)
               end
             end
 
@@ -155,6 +149,11 @@ module Memorb
                 methods = integrator.send(:"#{ visibility }_instance_methods")
                 methods.include?(method_id.to_sym)
               end
+            end
+
+            def _set_visibility(visibility, name)
+              send(visibility, name)
+              visibility
             end
 
           end
