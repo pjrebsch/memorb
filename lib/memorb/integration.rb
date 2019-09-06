@@ -60,7 +60,7 @@ module Memorb
             end
 
             def registered_methods
-              REGISTRATIONS.keys.map(&:to_sym)
+              _identifiers_to_symbols(REGISTRATIONS.keys)
             end
 
             def registered?(name)
@@ -76,7 +76,7 @@ module Memorb
             end
 
             def overridden_methods
-              OVERRIDES.keys.map(&:to_sym)
+              _identifiers_to_symbols(OVERRIDES.keys)
             end
 
             def overridden?(name)
@@ -93,6 +93,10 @@ module Memorb
 
             def _identifier(name)
               MethodIdentifier.new(name)
+            end
+
+            def _identifiers_to_symbols(method_ids)
+              method_ids.map(&:to_sym)
             end
 
             def _register(method_id)
