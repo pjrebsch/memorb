@@ -20,21 +20,3 @@ module SpecHelper
 
   end
 end
-
-class Counter
-
-  def initialize
-    @counter = 123
-  end
-
-  attr_reader :counter
-
-  def increment
-    @counter += 1
-  end
-
-  def double
-    @counter *= 2
-  end
-
-end

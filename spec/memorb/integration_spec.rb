@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Memorb::Integration do
-  let(:target) { Class.new(Counter) }
+  let(:target) { SpecHelper.basic_target_class }
 
   describe '::integrate_with!' do
     it 'returns the integration for the given class' do
@@ -60,7 +60,7 @@ RSpec.describe Memorb::Integration do
 
     describe '#initialize' do
       it 'retains its original behavior' do
-        expect(instance.counter).to eq(123)
+        expect(instance.counter).to be(0)
       end
     end
     describe '#memorb' do
