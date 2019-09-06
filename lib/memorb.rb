@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'memorb/version'
 require_relative 'memorb/errors'
 require_relative 'memorb/method_identifier'

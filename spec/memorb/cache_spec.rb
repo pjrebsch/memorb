@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Memorb::Cache do
   let(:klass) { Memorb::Cache }
   let(:integrator) { Class.new(Counter) { extend Memorb } }

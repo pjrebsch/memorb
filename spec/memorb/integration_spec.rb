@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Memorb::Integration do
   let(:target) { Class.new(Counter) }
 

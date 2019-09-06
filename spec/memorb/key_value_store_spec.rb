@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Memorb::KeyValueStore do
   let(:key) { :key }
   let(:value) { 'value' }

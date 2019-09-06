@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Memorb::Configurable do
   describe '::new' do
     it 'returns a new instance with the given arguments' do

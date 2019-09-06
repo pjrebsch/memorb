@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Memorb::IntegratorClassMethods do
   let(:integrator) { Class.new { extend Memorb } }
   let(:integration) { Memorb::Integration[integrator] }

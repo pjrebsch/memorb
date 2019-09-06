@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../lib/memorb'
 
 seed = RSpec.configuration.seed || Random.new_seed

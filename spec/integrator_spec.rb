@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_examples 'for ancestry verification' do
   let(:integration) { Memorb::Integration[integrator] }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Memorb::MethodIdentifier do
   let(:method_name) { :method_1 }
   subject { described_class.new(method_name) }
