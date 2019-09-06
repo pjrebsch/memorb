@@ -57,14 +57,14 @@ module Memorb
 
             def register(name)
               method_id = MethodIdentifier.new(name)
-              register!(method_id)
+              REGISTRATIONS.write(method_id, nil)
               override_if_possible(method_id)
             end
 
-            def unregister(name)
+            def disable(name)
               method_id = MethodIdentifier.new(name)
-              REGISTRATIONS.forget(method_id)
-              unregister!(method_id)
+              OVERRIDES.forget(method_id)
+              remove_override!(method_id)
             end
 
             def registered_methods
@@ -99,22 +99,6 @@ module Memorb
               end
             end
 
-            def register!(method_id)
-              REGISTRATIONS.write(method_id, nil)
-            end
-
-            def unregister!(method_id)
-              remove_method(method_id.to_sym)
-            rescue NameError
-              # If attempting to unregister a method that isn't currently
-              # registered, Ruby will raise an exception. Catching the
-              # exception is the safest thing to do for thread-safety.
-              # The alternative would be to check the register if it were
-              # added or not, but the read could be outdated by the time
-              # that we tried to remove the method and this exception
-              # wouldn't be caught.
-            end
-
             def override_if_possible(method_id)
               return unless registered?(method_id)
 
@@ -129,6 +113,17 @@ module Memorb
                 define_override!(method_id)
                 set_visibility!(visibility, method_id.to_sym)
               end
+            end
+
+            def remove_override!(method_id)
+              remove_method(method_id.to_sym)
+            rescue NameError
+              # Ruby will raise an exception if the method doesn't exist.
+              # Catching it is the safest thing to do for thread-safety.
+              # The alternative would be to check the list if it were
+              # present or not, but the read could be outdated by the time
+              # that we tried to remove the method and this exception
+              # wouldn't be caught.
             end
 
             def define_override!(method_id)

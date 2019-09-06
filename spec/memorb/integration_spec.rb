@@ -160,32 +160,20 @@ RSpec.describe Memorb::Integration do
         it_behaves_like :_, 'increment'
       end
     end
-    describe '::unregister' do
+    describe '::disable' do
       shared_examples :_ do |provided_name|
         let(:method_name) { :increment }
 
         it 'removes the override method for the given method' do
           subject.register(method_name)
-          subject.unregister(provided_name)
-          expect(subject.public_instance_methods).not_to include(method_name)
-        end
-        it 'removes record of the registered method' do
-          subject.register(method_name)
-          subject.unregister(provided_name)
-          expect(subject.registered_methods).not_to include(method_name)
+          subject.disable(provided_name)
+          expect(subject.overridden_methods).not_to include(method_name)
         end
         context 'when there is no override method defined' do
           let(:target) { Class.new }
 
           it 'does not raise an error' do
-            expect { subject.unregister(method_name) }.not_to raise_error
-          end
-        end
-        context 'when a method is registered multiple times' do
-          it 'still unregisters the method' do
-            2.times { subject.register(method_name) }
-            subject.unregister(provided_name)
-            expect(subject.public_instance_methods).not_to include(method_name)
+            expect { subject.disable(provided_name) }.not_to raise_error
           end
         end
       end
