@@ -160,6 +160,56 @@ RSpec.describe Memorb::Integration do
         it_behaves_like '::register', 'increment'
       end
     end
+    describe '::registered?' do
+      it 'preserves the visibility of the method that it overrides' do
+        visibilities = [:public, :protected, :private]
+        method_names = visibilities.map { |vis| :"#{ vis }_method" }
+
+        integrator = Class.new.tap do |target|
+          eval_string = visibilities.map.with_index do |vis, i|
+            "#{ vis }; def #{ method_names[i] }; end;"
+          end.join("\n")
+          target.class_eval(eval_string)
+          target.extend(Memorb)
+        end
+
+        subject = described_class[integrator]
+
+        method_names.each do |m|
+          subject.register(m)
+        end
+
+        visibilities.each.with_index do |vis, i|
+          overrides = subject.send(:"#{ vis }_instance_methods", false)
+          expect(overrides).to include(method_names[i])
+          other_methods = method_names.reject { |m| m === method_names[i] }
+          expect(overrides).not_to include(*other_methods)
+        end
+      end
+      shared_examples '::registered?' do |provided_name|
+        let(:method_name) { :increment }
+
+        context 'when the named method is registered' do
+          it 'returns true' do
+            subject.register(method_name)
+            result = subject.registered?(provided_name)
+            expect(result).to be(true)
+          end
+        end
+        context 'when the named method is not registered' do
+          it 'returns false' do
+            result = subject.registered?(provided_name)
+            expect(result).to be(false)
+          end
+        end
+      end
+      context 'with method name supplied as a symbol' do
+        it_behaves_like '::registered?', :increment
+      end
+      context 'with method name supplied as a string' do
+        it_behaves_like '::registered?', 'increment'
+      end
+    end
     describe '::enable' do
       shared_examples '::enable' do |provided_name|
         let(:method_name) { :increment }
@@ -240,60 +290,10 @@ RSpec.describe Memorb::Integration do
         expect(subject.registered_methods).to match_array(methods)
       end
     end
-    describe '::registered?' do
-      it 'preserves the visibility of the method that it overrides' do
-        visibilities = [:public, :protected, :private]
-        method_names = visibilities.map { |vis| :"#{ vis }_method" }
-
-        integrator = Class.new.tap do |target|
-          eval_string = visibilities.map.with_index do |vis, i|
-            "#{ vis }; def #{ method_names[i] }; end;"
-          end.join("\n")
-          target.class_eval(eval_string)
-          target.extend(Memorb)
-        end
-
-        subject = described_class[integrator]
-
-        method_names.each do |m|
-          subject.register(m)
-        end
-
-        visibilities.each.with_index do |vis, i|
-          overrides = subject.send(:"#{ vis }_instance_methods", false)
-          expect(overrides).to include(method_names[i])
-          other_methods = method_names.reject { |m| m === method_names[i] }
-          expect(overrides).not_to include(*other_methods)
-        end
-      end
-      shared_examples '::registered?' do |provided_name|
-        let(:method_name) { :increment }
-
-        context 'when the named method is registered' do
-          it 'returns true' do
-            subject.register(method_name)
-            result = subject.registered?(provided_name)
-            expect(result).to be(true)
-          end
-        end
-        context 'when the named method is not registered' do
-          it 'returns false' do
-            result = subject.registered?(provided_name)
-            expect(result).to be(false)
-          end
-        end
-      end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::registered?', :increment
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::registered?', 'increment'
-      end
-    end
     describe '::overridden_methods' do
       it 'returns an array of overridden methods' do
-        methods = [:increment, :decrement]
-        methods.each { |m| subject.send(:override!, m, :public) }
+        methods = [:increment, :double]
+        methods.each { |m| subject.register(m) }
         expect(subject.overridden_methods).to match_array(methods)
       end
     end
@@ -303,15 +303,14 @@ RSpec.describe Memorb::Integration do
 
         context 'when the named method is overridden' do
           it 'returns true' do
-            method_id = Memorb::MethodIdentifier.new(method_name)
-            subject.send(:override!, method_id, :public)
-            result = subject.overridden?(method_name)
+            subject.register(method_name)
+            result = subject.overridden?(provided_name)
             expect(result).to be(true)
           end
         end
         context 'when the named method is not overridden' do
           it 'returns false' do
-            result = subject.overridden?(method_name)
+            result = subject.overridden?(provided_name)
             expect(result).to be(false)
           end
         end
