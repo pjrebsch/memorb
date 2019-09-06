@@ -56,20 +56,7 @@ module Memorb
             alias_method :inspect, :name
 
             def register(name)
-              method_id = MethodIdentifier.new(name)
-              REGISTRATIONS.write(method_id, nil)
-              override_if_possible(method_id)
-            end
-
-            def enable(name)
-              method_id = MethodIdentifier.new(name)
-              override_if_possible(method_id)
-            end
-
-            def disable(name)
-              method_id = MethodIdentifier.new(name)
-              OVERRIDES.forget(method_id)
-              remove_override!(method_id)
+              _register(_identifier(name))
             end
 
             def registered_methods
@@ -77,8 +64,15 @@ module Memorb
             end
 
             def registered?(name)
-              method_id = MethodIdentifier.new(name)
-              REGISTRATIONS.keys.include?(method_id)
+              _registered?(_identifier(name))
+            end
+
+            def enable(name)
+              _override_if_possible(_identifier(name))
+            end
+
+            def disable(name)
+              _disable(_identifier(name))
             end
 
             def overridden_methods
@@ -104,13 +98,31 @@ module Memorb
               end
             end
 
-            def override_if_possible(method_id)
-              return unless registered?(method_id)
+            def _identifier(name)
+              MethodIdentifier.new(name)
+            end
+
+            def _register(method_id)
+              REGISTRATIONS.write(method_id, nil)
+              _override_if_possible(method_id)
+            end
+
+            def _registered?(method_id)
+              REGISTRATIONS.keys.include?(method_id)
+            end
+
+            def _override_if_possible(method_id)
+              return unless _registered?(method_id)
 
               visibility = integrator_instance_method_visibility(method_id)
               return if visibility.nil?
 
               override!(method_id, visibility)
+            end
+
+            def _disable(method_id)
+              OVERRIDES.forget(method_id)
+              remove_override!(method_id)
             end
 
             def override!(method_id, visibility)
