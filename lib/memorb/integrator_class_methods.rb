@@ -17,5 +17,11 @@ module Memorb
       end
     end
 
+    def method_removed(name)
+      super.tap do
+        memorb.disable(name)
+      end
+    end
+
   end
 end
