@@ -61,6 +61,11 @@ module Memorb
               override_if_possible(method_id)
             end
 
+            def enable(name)
+              method_id = MethodIdentifier.new(name)
+              override_if_possible(method_id)
+            end
+
             def disable(name)
               method_id = MethodIdentifier.new(name)
               OVERRIDES.forget(method_id)

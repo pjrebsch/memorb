@@ -160,6 +160,54 @@ RSpec.describe Memorb::Integration do
         it_behaves_like :_, 'increment'
       end
     end
+    describe '::enable' do
+      shared_examples :_ do |provided_name|
+        let(:method_name) { :increment }
+
+        context 'when the method is registered' do
+          it 'overrides the method' do
+            subject.register(method_name)
+            subject.enable(provided_name)
+            expect(subject.overridden_methods).to include(method_name)
+          end
+          it 'returns the visibility of the method' do
+            subject.register(method_name)
+            result = subject.enable(provided_name)
+            expect(result).to be(:public)
+          end
+          context 'when the method is not defined' do
+            let(:target) { Class.new }
+
+            it 'does not override the method' do
+              subject.register(method_name)
+              subject.enable(provided_name)
+              expect(subject.overridden_methods).not_to include(method_name)
+            end
+            it 'returns nil' do
+              subject.register(method_name)
+              result = subject.enable(provided_name)
+              expect(result).to be(nil)
+            end
+          end
+        end
+        context 'when the method is not registered' do
+          it 'does not override the method' do
+            subject.enable(provided_name)
+            expect(subject.overridden_methods).not_to include(method_name)
+          end
+          it 'returns nil' do
+            result = subject.enable(provided_name)
+            expect(result).to be(nil)
+          end
+        end
+      end
+      context 'with method name supplied as a symbol' do
+        it_behaves_like :_, :increment
+      end
+      context 'with method name supplied as a string' do
+        it_behaves_like :_, 'increment'
+      end
+    end
     describe '::disable' do
       shared_examples :_ do |provided_name|
         let(:method_name) { :increment }
