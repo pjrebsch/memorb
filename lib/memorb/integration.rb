@@ -51,7 +51,6 @@ module Memorb
 
             CACHES = KeyValueStore.new
             private_constant :CACHES
-            # TODO: create a `caches` method that returns all values from this
 
             def prepended(base); _check_integrator!(base); end
             def included(base); _check_integrator!(base); end
