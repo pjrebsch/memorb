@@ -361,6 +361,8 @@ RSpec.describe Memorb::Integration do
     end
     context 'when freed by the garbage collector' do
       it 'removes its cache from the global registry' do
+        # At the time of writing, RSpec blocks aren't allowing out-of-scope
+        # variables to be garbage collected, so `WeakRef` is used to fix that.
         require 'weakref'
         ref = WeakRef.new(integrator.new)
         cache = ref.__getobj__.memorb
