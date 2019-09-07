@@ -4,6 +4,11 @@ RSpec.describe Memorb::IntegratorClassMethods do
   let(:integrator) { Class.new { extend Memorb } }
   let(:integration) { Memorb::Integration[integrator] }
 
+  describe '::memorb' do
+    it 'returns the integration for the integrator' do
+      expect(integrator.memorb).to be(integration)
+    end
+  end
   describe '::inherited' do
     it 'makes children of integrators get their own integration' do
       child_integrator = Class.new(integrator)
@@ -11,11 +16,6 @@ RSpec.describe Memorb::IntegratorClassMethods do
       expect(integration).not_to be(nil)
       expected_ancestry = [integration, child_integrator]
       expect(child_integrator.ancestors).to start_with(*expected_ancestry)
-    end
-  end
-  describe '::memorb' do
-    it 'returns the integration for the integrator' do
-      expect(integrator.memorb).to be(integration)
     end
   end
   describe '::method_added' do

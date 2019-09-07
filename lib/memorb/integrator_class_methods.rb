@@ -3,14 +3,16 @@
 module Memorb
   module IntegratorClassMethods
 
+    def memorb
+      Integration[self]
+    end
+
+    private
+
     def inherited(child)
       super.tap do
         Integration.integrate_with!(child)
       end
-    end
-
-    def memorb
-      Integration[self]
     end
 
     def method_added(name)
