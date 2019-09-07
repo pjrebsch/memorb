@@ -4,8 +4,9 @@ module Memorb
   module IntegratorClassMethods
 
     def inherited(child)
-      Integration.integrate_with!(child)
-      super
+      super.tap do
+        Integration.integrate_with!(child)
+      end
     end
 
     def memorb
