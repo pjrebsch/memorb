@@ -3,9 +3,12 @@
 module Memorb
   class Cache
 
-    def initialize
+    def initialize(id)
       @store = KeyValueStore.new
+      @id = id
     end
+
+    attr_reader :id
 
     def write(*key, value)
       @store.write(key, value)

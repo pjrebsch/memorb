@@ -56,17 +56,20 @@ RSpec.describe Memorb::Integration do
     let(:integrator) { target.tap { |x| x.extend(Memorb) } }
     let(:integrator_singleton) { integrator.singleton_class }
     let(:instance) { integrator.new }
+    let(:cache_registry) { subject.singleton_class.const_get(:CACHES) }
     subject { described_class[integrator] }
 
     describe '#initialize' do
       it 'retains its original behavior' do
         expect(instance.counter).to be(0)
       end
+      it 'initializes the cache with its object ID' do
+        cache = instance.memorb
+        expect(cache.id).to equal(instance.object_id)
+      end
       it 'adds the cache to the global registry' do
         cache = instance.memorb
-        registry = subject.singleton_class.const_get(:CACHES)
-        key = '%016x' % (instance.object_id << 1)
-        expect(registry.keys).to match_array([key])
+        expect(cache_registry.keys).to match_array([cache.id])
       end
     end
     describe '#memorb' do
@@ -352,12 +355,11 @@ RSpec.describe Memorb::Integration do
     context 'when freed by the garbage collector' do
       it 'removes its cache from the global registry' do
         require 'weakref'
-        registry = subject.singleton_class.const_get(:CACHES)
         ref = WeakRef.new(integrator.new)
-        key = '%016x' % (ref.__getobj__.object_id << 1)
-        expect(registry.keys).to include(key)
+        cache = ref.__getobj__.memorb
+        expect(cache_registry.keys).to include(cache.id)
         SpecHelper.force_garbage_collection
-        expect(registry.keys).to be_empty
+        expect(cache_registry.keys).to be_empty
       end
     end
   end

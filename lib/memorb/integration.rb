@@ -28,14 +28,12 @@ module Memorb
       def new(integrator)
         mixin = Module.new do
           def initialize(*)
-            # TODO: save the object ID of this instance in the cache
-            cache = Memorb::Cache.new
-            key = '%016x' % (object_id << 1)
+            cache = Memorb::Cache.new(object_id)
             integration = Integration[self.class]
             registry = integration.singleton_class.const_get(:CACHES)
-            finalizer = integration.cache_finalizer_proc(key)
+            finalizer = integration.cache_finalizer(cache.id)
 
-            @memorb_cache = registry.write(key, cache)
+            @memorb_cache = registry.write(cache.id, cache)
             ObjectSpace.define_finalizer(self, finalizer)
             super
           end
@@ -56,7 +54,7 @@ module Memorb
             private_constant :CACHES
             # TODO: create a `caches` method that returns all values from this
 
-            def cache_finalizer_proc(cache_key)
+            def cache_finalizer(cache_key)
               proc { CACHES.forget(cache_key) }
             end
 

@@ -1,18 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.describe Memorb::Cache do
-  let(:klass) { Memorb::Cache }
   let(:target) { SpecHelper.basic_target_class }
   let(:integrator) { Class.new(target) { extend Memorb } }
+  let(:integrator_instance) { integrator.new }
   let(:store) { instance_double(Memorb::KeyValueStore) }
   let(:key) { :key }
   let(:value) { 'value' }
   subject {
-    klass.new.tap { |x|
+    described_class.new(integrator_instance.object_id).tap { |x|
       x.instance_variable_set(:@store, store)
     }
   }
 
+  describe '#id' do
+    it 'returns the value provided upon initialization' do
+      expect(subject.id).to equal(integrator_instance.object_id)
+    end
+  end
   describe '#write' do
     it 'writes to the store' do
       expect(store).to receive(:write).with([key], value)
