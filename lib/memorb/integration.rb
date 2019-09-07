@@ -54,10 +54,6 @@ module Memorb
             private_constant :CACHES
             # TODO: create a `caches` method that returns all values from this
 
-            def cache_finalizer(cache_key)
-              proc { CACHES.forget(cache_key) }
-            end
-
             def prepended(base); _check_integrator!(base); end
             def included(base); _check_integrator!(base); end
 
@@ -70,6 +66,10 @@ module Memorb
             end
 
             alias_method :inspect, :name
+
+            def cache_finalizer(cache_key)
+              proc { CACHES.forget(cache_key) }
+            end
 
             def register(name)
               _register(_identifier(name))

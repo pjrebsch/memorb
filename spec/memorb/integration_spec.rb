@@ -114,6 +114,13 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
+    describe '::cache_finalizer' do
+      it 'returns a proc that is not a lambda' do
+        result = subject.cache_finalizer(nil)
+        expect(result).to be_an_instance_of(::Proc)
+        expect(result.lambda?).to be(false)
+      end
+    end
     describe '::register' do
       shared_examples '::register' do |provided_name|
         let(:method_name) { :increment }
