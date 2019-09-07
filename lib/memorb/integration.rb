@@ -57,7 +57,7 @@ module Memorb
             # TODO: create a `caches` method that returns all values from this
 
             def cache_finalizer_proc(cache_key)
-              proc { CACHES.forget(cache_key); puts "FINALIZED #{ cache_key.inspect }" }
+              proc { CACHES.forget(cache_key) }
             end
 
             def prepended(base); _check_integrator!(base); end
