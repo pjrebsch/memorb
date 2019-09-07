@@ -30,6 +30,12 @@ RSpec.describe Memorb::Cache do
       subject.read(key)
     end
   end
+  describe '#has?' do
+    it 'checks with the store' do
+      expect(store).to receive(:has?).with([key])
+      subject.has?(key)
+    end
+  end
   describe '#fetch' do
     it 'fetches from the store' do
       block = Proc.new { value }

@@ -18,6 +18,10 @@ module Memorb
       @store.read(key)
     end
 
+    def has?(*key)
+      @store.has?(key)
+    end
+
     def fetch(*key, &fallback)
       @store.fetch(key, &fallback)
     end

@@ -16,9 +16,20 @@ RSpec.shared_examples 'for method registration verification' do |methods|
   end
 end
 
+RSpec.shared_examples 'for cache key verification' do
+  it 'records the cache key correctly' do
+    method_name = :increment
+    method_id = Memorb::MethodIdentifier.new(method_name)
+    instance.send(method_name)
+    store = instance.memorb.instance_variable_get(:@store)
+    expect(store.keys).to match_array([[method_id, nil]])
+  end
+end
+
 RSpec.describe 'integrators of Memorb' do
   let(:target) { SpecHelper.basic_target_class }
   let(:integration) { Memorb::Integration[integrator] }
+  let(:instance) { integrator.new }
 
   describe 'a basic integrator' do
     let(:integrator) {
@@ -75,6 +86,7 @@ RSpec.describe 'integrators of Memorb' do
     }
     include_examples 'for ancestry verification'
     include_examples 'for method registration verification'
+    include_examples 'for cache key verification'
   end
 
   describe 'an integrator that registers methods with inclusion' do
@@ -85,6 +97,7 @@ RSpec.describe 'integrators of Memorb' do
     }
     include_examples 'for ancestry verification'
     include_examples 'for method registration verification'
+    include_examples 'for cache key verification'
   end
 
   describe 'an integrator that registers methods with inclusion using parentheses' do
@@ -95,5 +108,6 @@ RSpec.describe 'integrators of Memorb' do
     }
     include_examples 'for ancestry verification'
     include_examples 'for method registration verification'
+    include_examples 'for cache key verification'
   end
 end
