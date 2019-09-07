@@ -4,8 +4,8 @@ module Memorb
   class Cache
 
     def initialize(id)
-      @store = KeyValueStore.new
       @id = id
+      @store = KeyValueStore.new
     end
 
     attr_reader :id
