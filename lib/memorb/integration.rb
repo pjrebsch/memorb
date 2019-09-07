@@ -34,12 +34,11 @@ module Memorb
             finalizer = integration.cache_finalizer(cache.id)
 
             @memorb_cache = registry.write(cache.id, cache)
-            ObjectSpace.define_finalizer(self, finalizer)
-            super
-          end
+            define_singleton_method(:memorb) { @memorb_cache }
 
-          def memorb
-            @memorb_cache
+            ObjectSpace.define_finalizer(self, finalizer)
+
+            super
           end
 
           class << self
