@@ -18,5 +18,19 @@ module SpecHelper
       end
     end
 
+    def force_garbage_collection(wait_cycle: 0, gc_min: 1)
+      ::GC.stress = true
+      ::GC.start
+
+      # Wait for a garbage collection to occur.
+      a = b = ::GC.count
+      while b < a + gc_min
+        sleep wait_cycle
+        b = ::GC.count
+      end
+
+      ::GC.stress = false
+    end
+
   end
 end

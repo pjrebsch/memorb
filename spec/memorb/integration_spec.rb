@@ -58,9 +58,27 @@ RSpec.describe Memorb::Integration do
     let(:instance) { integrator.new }
     subject { described_class[integrator] }
 
+    context 'when freed by the garbage collector' do
+      it 'removes its cache from the global registry' do
+        require 'weakref'
+        registry = subject.singleton_class.const_get(:CACHES)
+        ref = WeakRef.new(integrator.new)
+        key = '%016x' % (ref.__getobj__.object_id << 1)
+        expect(registry.keys).to include(key)
+        SpecHelper.force_garbage_collection
+        expect(registry.keys).to be_empty
+      end
+    end
+
     describe '#initialize' do
       it 'retains its original behavior' do
         expect(instance.counter).to be(0)
+      end
+      it 'adds the cache to the global registry' do
+        cache = instance.memorb
+        registry = subject.singleton_class.const_get(:CACHES)
+        key = '%016x' % (instance.object_id << 1)
+        expect(registry.keys).to match_array([key])
       end
     end
     describe '#memorb' do
