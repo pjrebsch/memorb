@@ -10,23 +10,23 @@ module Memorb
 
     attr_reader :id
 
-    def write(*key, value)
+    def write(key, value)
       @store.write(key, value)
     end
 
-    def read(*key)
+    def read(key)
       @store.read(key)
     end
 
-    def has?(*key)
+    def has?(key)
       @store.has?(key)
     end
 
-    def fetch(*key, &fallback)
+    def fetch(key, &fallback)
       @store.fetch(key, &fallback)
     end
 
-    def forget(*key)
+    def forget(key)
       @store.forget(key)
     end
 

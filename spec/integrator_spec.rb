@@ -22,7 +22,7 @@ RSpec.shared_examples 'for cache key verification' do
     method_id = Memorb::MethodIdentifier.new(method_name)
     instance.send(method_name)
     store = instance.memorb.instance_variable_get(:@store)
-    expect(store.keys).to match_array([[method_id, nil]])
+    expect(store.keys).to match_array([method_id])
   end
 end
 

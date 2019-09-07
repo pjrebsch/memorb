@@ -156,9 +156,9 @@ module Memorb
 
             def _define_override(method_id)
               define_method(method_id.to_sym) do |*args, &block|
-                memorb.fetch(method_id, *args, block) do
-                  super(*args, &block)
-                end
+                memorb
+                  .fetch(method_id) { KeyValueStore.new }
+                  .fetch([*args, block]) { super(*args, &block) }
               end
             end
 

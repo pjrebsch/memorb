@@ -20,32 +20,32 @@ RSpec.describe Memorb::Cache do
   end
   describe '#write' do
     it 'writes to the store' do
-      expect(store).to receive(:write).with([key], value)
+      expect(store).to receive(:write).with(key, value)
       subject.write(key, value)
     end
   end
   describe '#read' do
     it 'reads from the store' do
-      expect(store).to receive(:read).with([key])
+      expect(store).to receive(:read).with(key)
       subject.read(key)
     end
   end
   describe '#has?' do
     it 'checks with the store' do
-      expect(store).to receive(:has?).with([key])
+      expect(store).to receive(:has?).with(key)
       subject.has?(key)
     end
   end
   describe '#fetch' do
     it 'fetches from the store' do
       block = Proc.new { value }
-      expect(store).to receive(:fetch).with([key], &block)
+      expect(store).to receive(:fetch).with(key, &block)
       subject.fetch(key, &block)
     end
   end
   describe '#forget' do
     it 'forgets from the store' do
-      expect(store).to receive(:forget).with([key])
+      expect(store).to receive(:forget).with(key)
       subject.forget(key)
     end
   end
