@@ -340,6 +340,27 @@ RSpec.describe Memorb::Integration do
         it_behaves_like '::overridden?', 'increment'
       end
     end
+    describe '::purge' do
+      let(:method_name) { :increment }
+      let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
+
+      it 'clears cached data for the given method in all instances' do
+        subject.register(method_name)
+        instance.send(method_name)
+        store = instance.memorb.read(method_id)
+        expect(store.keys).not_to be_empty
+        subject.purge(method_name)
+        expect(store.keys).to be_empty
+      end
+      context 'when the given method has no cache record' do
+        it 'does not raise an error' do
+          subject.register(method_name)
+          store = instance.memorb.read(method_id)
+          expect(store).to be(nil)
+          expect { subject.purge(method_name) }.not_to raise_error
+        end
+      end
+    end
     it 'supports regularly invalid method names' do
       method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'
       subject.register(method_name)

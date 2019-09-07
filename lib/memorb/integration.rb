@@ -97,6 +97,10 @@ module Memorb
               _overridden?(_identifier(name))
             end
 
+            def purge(name)
+              _purge(_identifier(name))
+            end
+
             private
 
             def _check_integrator!(base)
@@ -141,6 +145,14 @@ module Memorb
 
             def _overridden?(method_id)
               OVERRIDES.keys.include?(method_id)
+            end
+
+            def _purge(method_id)
+              CACHES.keys.each do |id|
+                cache = CACHES.read(id)
+                store = cache&.read(method_id)
+                store&.reset!
+              end
             end
 
             def _remove_override(method_id)
