@@ -27,5 +27,11 @@ module Memorb
       end
     end
 
+    def method_undefined(name)
+      super.tap do
+        memorb.disable(name)
+      end
+    end
+
   end
 end

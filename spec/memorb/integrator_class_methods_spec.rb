@@ -52,16 +52,38 @@ RSpec.describe Memorb::IntegratorClassMethods do
       expect(spy).to receive(:spy!).with(method_name)
       integrator.remove_method(method_name)
     end
-    context 'when the method has been registered' do
-      it 'removes the override for the method' do
-        integrator.define_method(method_name) { nil }
-        integration.register(method_name)
-        expect(integration.overridden_methods).to include(method_name)
-        expect(integration.public_instance_methods).to include(method_name)
-        integrator.remove_method(method_name)
-        expect(integration.overridden_methods).not_to include(method_name)
-        expect(integration.public_instance_methods).not_to include(method_name)
+    it 'removes the override for the method' do
+      integrator.define_method(method_name) { nil }
+      integration.register(method_name)
+      expect(integration.overridden_methods).to include(method_name)
+      expect(integration.public_instance_methods).to include(method_name)
+      integrator.remove_method(method_name)
+      expect(integration.overridden_methods).not_to include(method_name)
+      expect(integration.public_instance_methods).not_to include(method_name)
+    end
+  end
+  describe '::method_undefined' do
+    let(:method_name) { :method_1 }
+
+    it 'retains upstream behavior' do
+      integrator.define_method(method_name) { nil }
+      spy = double('spy', spy!: nil)
+      integrator.singleton_class.define_method(:method_undefined) do |m|
+        spy.spy!(m)
       end
+      expect(spy).to receive(:spy!).with(method_name)
+      integrator.undef_method(method_name)
+    end
+    it 'undefines the override for the method' do
+      integrator.define_method(method_name) { nil }
+      integration.register(method_name)
+      integrator.undef_method(method_name)
+      instance = integrator.new
+      expect(integration.overridden_methods).not_to include(method_name)
+      expect(integration.public_instance_methods).not_to include(method_name)
+      expect {
+        instance.send(method_name)
+      }.to raise_error(NoMethodError, /undefined method/)
     end
   end
 end
