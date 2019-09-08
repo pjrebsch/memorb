@@ -28,9 +28,8 @@ module Memorb
       def new(integrator)
         mixin = Module.new do
           def initialize(*)
-            ivar_name = :"@memorb_#{ '%016x' % (object_id << 1) }"
-            instance_variable_set(ivar_name, self.class.memorb.create_cache(self))
-            define_singleton_method(:memorb) { instance_variable_get(ivar_name) }
+            cache = self.class.memorb.create_cache(self)
+            define_singleton_method(:memorb) { cache }
             super
           end
 

@@ -68,10 +68,6 @@ RSpec.describe Memorb::Integration do
           cache = instance.memorb
           expect(cache.id).to equal(instance.object_id)
         end
-        it 'sets the cache to an instance variable named based on the instance' do
-          var_name = :"@memorb_#{ '%016x' % (instance.object_id << 1) }"
-          expect(instance.instance_variables).to include(var_name)
-        end
         it 'adds the cache to the global registry' do
           cache = instance.memorb
           expect(cache_registry.keys).to match_array([cache.id])
