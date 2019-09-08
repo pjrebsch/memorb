@@ -3,6 +3,7 @@
 RSpec.describe Memorb::IntegratorClassMethods do
   let(:integrator) { Class.new { extend Memorb } }
   let(:integration) { Memorb::Integration[integrator] }
+  let(:instance) { integrator.new }
 
   describe '::memorb' do
     it 'returns the integration for the integrator' do
@@ -42,6 +43,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
   end
   describe '::method_removed' do
     let(:method_name) { :method_1 }
+    let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
 
     it 'retains upstream behavior' do
       integrator.define_method(method_name) { nil }
@@ -60,6 +62,15 @@ RSpec.describe Memorb::IntegratorClassMethods do
       integrator.remove_method(method_name)
       expect(integration.overridden_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
+    end
+    it 'clears cached data for the method in all instances' do
+      integrator.define_method(method_name) { nil }
+      integration.register(method_name)
+      instance.send(method_name)
+      store = instance.memorb.read(method_id)
+      expect(store.keys).not_to be_empty
+      integrator.remove_method(method_name)
+      expect(store.keys).to be_empty
     end
   end
   describe '::method_undefined' do
