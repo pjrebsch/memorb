@@ -59,32 +59,34 @@ RSpec.describe Memorb::Integration do
     let(:cache_registry) { subject.singleton_class.const_get(:CACHES) }
     subject { described_class[integrator] }
 
-    describe '#initialize' do
-      it 'retains the behavior of the instance' do
-        expect(instance.counter).to be(0)
+    describe 'integrator instance methods' do
+      describe '#initialize' do
+        it 'retains the behavior of the instance' do
+          expect(instance.counter).to be(0)
+        end
+        it 'initializes the cache with the object ID of the instance' do
+          cache = instance.memorb
+          expect(cache.id).to equal(instance.object_id)
+        end
+        it 'sets the cache to an instance variable named based on the instance' do
+          var_name = :"@memorb_#{ '%016x' % (instance.object_id << 1) }"
+          expect(instance.instance_variables).to include(var_name)
+        end
+        it 'adds the cache to the global registry' do
+          cache = instance.memorb
+          expect(cache_registry.keys).to match_array([cache.id])
+        end
       end
-      it 'initializes the cache with the object ID of the instance' do
-        cache = instance.memorb
-        expect(cache.id).to equal(instance.object_id)
-      end
-      it 'sets the cache to an instance variable named based on the instance' do
-        var_name = :"@memorb_#{ '%016x' % (instance.object_id << 1) }"
-        expect(instance.instance_variables).to include(var_name)
-      end
-      it 'adds the cache to the global registry' do
-        cache = instance.memorb
-        expect(cache_registry.keys).to match_array([cache.id])
-      end
-    end
-    describe '#memorb' do
-      it 'returns the memorb cache' do
-        cache = instance.memorb
-        expect(cache).to be_an_instance_of(Memorb::Cache)
-      end
-      it 'does not share the cache across instances' do
-        cache1 = integrator.new.memorb
-        cache2 = integrator.new.memorb
-        expect(cache1).not_to equal(cache2)
+      describe '#memorb' do
+        it 'returns the memorb cache' do
+          cache = instance.memorb
+          expect(cache).to be_an_instance_of(Memorb::Cache)
+        end
+        it 'does not share the cache across instances' do
+          cache1 = integrator.new.memorb
+          cache2 = integrator.new.memorb
+          expect(cache1).not_to equal(cache2)
+        end
       end
     end
     describe '::integrator' do
