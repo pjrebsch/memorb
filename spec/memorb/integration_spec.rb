@@ -85,6 +85,26 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
+    describe '::define' do
+      context 'when given a block' do
+        it 'adds those methods to the integrator' do
+          subject.define do
+            def method_1; end
+            def method_2; end
+          end
+          methods = integrator.public_instance_methods(false)
+          expect(methods).to include(:method_1, :method_2)
+        end
+        it 'registers and enables the methods defined in that block' do
+          subject.define do
+            def method_1; end
+            def method_2; end
+          end
+          expect(subject.registered_methods).to include(:method_1, :method_2)
+          expect(subject.overridden_methods).to include(:method_1, :method_2)
+        end
+      end
+    end
     describe '::integrator' do
       it 'returns its integrating class' do
         expect(subject.integrator).to be(integrator)

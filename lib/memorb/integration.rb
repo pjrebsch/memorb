@@ -44,6 +44,12 @@ module Memorb
             CACHES = KeyValueStore.new
             private_constant :CACHES
 
+            def define(&block)
+              self.auto_register = true
+              integrator.class_eval(&block)
+              self.auto_register = false
+            end
+
             def register(name)
               _register(_identifier(name))
             end
