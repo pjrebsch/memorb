@@ -76,6 +76,16 @@ module Memorb
               _purge(_identifier(name))
             end
 
+            attr_reader :auto_register
+            def auto_register=(bool)
+              case bool
+              when true, false
+                @auto_register = bool
+              else
+                raise ArgumentError, 'Only boolean values are allowed'
+              end
+            end
+
             def prepended(base); _check_integrator!(base); end
             def included(base);  _check_integrator!(base); end
 
@@ -195,6 +205,7 @@ module Memorb
           end
         end
 
+        mixin.auto_register = false
         mixin.singleton_class.define_method(:integrator) { integrator }
 
         mixin
