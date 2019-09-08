@@ -17,6 +17,7 @@ module Memorb
 
     def method_added(name)
       super.tap do
+        memorb.register(name) if memorb.auto_register?
         memorb.enable(name)
       end
     end

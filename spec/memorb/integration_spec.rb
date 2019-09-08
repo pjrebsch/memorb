@@ -330,17 +330,17 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
-    describe '::auto_register' do
+    describe '::auto_register?' do
       it 'is off by default' do
-        expect(subject.auto_register).to be(false)
+        expect(subject.auto_register?).to be(false)
       end
     end
     describe '::auto_register=' do
       it 'sets the auto_register flag' do
         subject.auto_register = true
-        expect(subject.auto_register).to be(true)
+        expect(subject.auto_register?).to be(true)
         subject.auto_register = false
-        expect(subject.auto_register).to be(false)
+        expect(subject.auto_register?).to be(false)
       end
       context 'when passing in a non-boolean value' do
         it 'raises an error' do

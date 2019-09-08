@@ -40,6 +40,15 @@ RSpec.describe Memorb::IntegratorClassMethods do
         expect(integration.public_instance_methods).to include(method_name)
       end
     end
+    context 'when automatic registration is enabled' do
+      it 'registers and overrides new methods' do
+        integration.auto_register = true
+        integrator.define_method(method_name) { nil }
+        expect(integration.registered_methods).to include(method_name)
+        expect(integration.overridden_methods).to include(method_name)
+        expect(integration.public_instance_methods).to include(method_name)
+      end
+    end
   end
   describe '::method_removed' do
     let(:method_name) { :method_1 }

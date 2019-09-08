@@ -76,7 +76,7 @@ module Memorb
               _purge(_identifier(name))
             end
 
-            attr_reader :auto_register
+            def auto_register?; @auto_register; end
             def auto_register=(bool)
               case bool
               when true, false
