@@ -114,11 +114,15 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
-    describe '::cache_finalizer' do
-      it 'returns a proc that is not a lambda' do
-        result = subject.cache_finalizer(nil)
-        expect(result).to be_an_instance_of(::Proc)
-        expect(result.lambda?).to be(false)
+    describe '::create_cache' do
+      it 'returns a cache object' do
+        cache = subject.create_cache(instance)
+        expect(cache).to be_an_instance_of(::Memorb::Cache)
+      end
+      it 'writes the cache to the global cache registry' do
+        cache = subject.create_cache(instance)
+        registry = subject.singleton_class.const_get(:CACHES)
+        expect(registry.keys).to match_array([cache.id])
       end
     end
     describe '::register' do

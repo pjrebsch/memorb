@@ -28,16 +28,9 @@ module Memorb
       def new(integrator)
         mixin = Module.new do
           def initialize(*)
-            cache = Memorb::Cache.new(object_id)
             integration = Integration[self.class]
-            registry = integration.singleton_class.const_get(:CACHES)
-            finalizer = integration.cache_finalizer(cache.id)
-
-            @memorb_cache = registry.write(cache.id, cache)
+            @memorb_cache = integration.create_cache(self)
             define_singleton_method(:memorb) { @memorb_cache }
-
-            ObjectSpace.define_finalizer(self, finalizer)
-
             super
           end
 
@@ -65,8 +58,17 @@ module Memorb
 
             alias_method :inspect, :name
 
-            def cache_finalizer(cache_key)
-              proc { CACHES.forget(cache_key) }
+            # Never save reference to the integrator instance or it may
+            # never be garbage collected!
+            def create_cache(integrator_instance)
+              Cache.new(integrator_instance.object_id).tap do |cache|
+                CACHES.write(cache.id, cache)
+
+                # The proc must not be made here because it would save a
+                # reference to `integrator_instance`.
+                finalizer = _cache_finalizer(cache.id)
+                ::ObjectSpace.define_finalizer(integrator_instance, finalizer)
+              end
             end
 
             def register(name)
@@ -184,6 +186,11 @@ module Memorb
             def _set_visibility(visibility, name)
               send(visibility, name)
               visibility
+            end
+
+            def _cache_finalizer(cache_id)
+              # This must be a non-lambda proc, otherwise GC hangs!
+              Proc.new { CACHES.forget(cache_id) }
             end
 
           end
