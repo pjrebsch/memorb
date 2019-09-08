@@ -45,32 +45,6 @@ module Memorb
             CACHES = KeyValueStore.new
             private_constant :CACHES
 
-            def prepended(base); _check_integrator!(base); end
-            def included(base); _check_integrator!(base); end
-
-            def name
-              [:name, :inspect, :object_id].each do |m|
-                next unless integrator.respond_to?(m)
-                base_name = integrator.public_send(m)
-                return "Memorb:#{ base_name }" if base_name
-              end
-            end
-
-            alias_method :inspect, :name
-
-            # Never save reference to the integrator instance or it may
-            # never be garbage collected!
-            def create_cache(integrator_instance)
-              Cache.new(integrator_instance.object_id).tap do |cache|
-                CACHES.write(cache.id, cache)
-
-                # The proc must not be made here because it would save a
-                # reference to `integrator_instance`.
-                finalizer = _cache_finalizer(cache.id)
-                ::ObjectSpace.define_finalizer(integrator_instance, finalizer)
-              end
-            end
-
             def register(name)
               _register(_identifier(name))
             end
@@ -101,6 +75,32 @@ module Memorb
 
             def purge(name)
               _purge(_identifier(name))
+            end
+
+            def prepended(base); _check_integrator!(base); end
+            def included(base);  _check_integrator!(base); end
+
+            def name
+              [:name, :inspect, :object_id].each do |m|
+                next unless integrator.respond_to?(m)
+                base_name = integrator.public_send(m)
+                return "Memorb:#{ base_name }" if base_name
+              end
+            end
+
+            alias_method :inspect, :name
+
+            # Never save reference to the integrator instance or it may
+            # never be garbage collected!
+            def create_cache(integrator_instance)
+              Cache.new(integrator_instance.object_id).tap do |cache|
+                CACHES.write(cache.id, cache)
+
+                # The proc must not be made here because it would save a
+                # reference to `integrator_instance`.
+                finalizer = _cache_finalizer(cache.id)
+                ::ObjectSpace.define_finalizer(integrator_instance, finalizer)
+              end
             end
 
             private

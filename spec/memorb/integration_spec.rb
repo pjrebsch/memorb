@@ -88,43 +88,6 @@ RSpec.describe Memorb::Integration do
         expect(subject.integrator).to be(integrator)
       end
     end
-    describe '::name' do
-      it 'includes the name of the integrating class' do
-        name = 'IntegratingKlass'
-        expectation = "Memorb:#{ name }"
-        integrator_singleton.define_method(:name) { name }
-        expect(subject.name).to eq(expectation)
-      end
-      context 'when integrating class does not have a name' do
-        it 'uses the inspection of the integrating class' do
-          expectation = "Memorb:#{ integrator.inspect }"
-          integrator_singleton.define_method(:name) { nil }
-          expect(subject.name).to eq(expectation)
-          integrator_singleton.undef_method(:name)
-          expect(subject.name).to eq(expectation)
-        end
-      end
-      context 'when integrating class does not have an inspection' do
-        it 'uses the object ID of the integrating class' do
-          expectation = "Memorb:#{ integrator.object_id }"
-          integrator_singleton.define_method(:inspect) { nil }
-          expect(subject.name).to eq(expectation)
-          integrator_singleton.undef_method(:inspect)
-          expect(subject.name).to eq(expectation)
-        end
-      end
-    end
-    describe '::create_cache' do
-      it 'returns a cache object' do
-        cache = subject.create_cache(instance)
-        expect(cache).to be_an_instance_of(::Memorb::Cache)
-      end
-      it 'writes the cache to the global cache registry' do
-        cache = subject.create_cache(instance)
-        registry = subject.singleton_class.const_get(:CACHES)
-        expect(registry.keys).to match_array([cache.id])
-      end
-    end
     describe '::register' do
       shared_examples '::register' do |provided_name|
         let(:method_name) { :increment }
@@ -363,6 +326,43 @@ RSpec.describe Memorb::Integration do
           expect(store).to be(nil)
           expect { subject.purge(method_name) }.not_to raise_error
         end
+      end
+    end
+    describe '::name' do
+      it 'includes the name of the integrating class' do
+        name = 'IntegratingKlass'
+        expectation = "Memorb:#{ name }"
+        integrator_singleton.define_method(:name) { name }
+        expect(subject.name).to eq(expectation)
+      end
+      context 'when integrating class does not have a name' do
+        it 'uses the inspection of the integrating class' do
+          expectation = "Memorb:#{ integrator.inspect }"
+          integrator_singleton.define_method(:name) { nil }
+          expect(subject.name).to eq(expectation)
+          integrator_singleton.undef_method(:name)
+          expect(subject.name).to eq(expectation)
+        end
+      end
+      context 'when integrating class does not have an inspection' do
+        it 'uses the object ID of the integrating class' do
+          expectation = "Memorb:#{ integrator.object_id }"
+          integrator_singleton.define_method(:inspect) { nil }
+          expect(subject.name).to eq(expectation)
+          integrator_singleton.undef_method(:inspect)
+          expect(subject.name).to eq(expectation)
+        end
+      end
+    end
+    describe '::create_cache' do
+      it 'returns a cache object' do
+        cache = subject.create_cache(instance)
+        expect(cache).to be_an_instance_of(::Memorb::Cache)
+      end
+      it 'writes the cache to the global cache registry' do
+        cache = subject.create_cache(instance)
+        registry = subject.singleton_class.const_get(:CACHES)
+        expect(registry.keys).to match_array([cache.id])
       end
     end
     it 'supports regularly invalid method names' do
