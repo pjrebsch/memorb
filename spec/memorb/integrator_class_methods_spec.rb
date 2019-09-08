@@ -75,6 +75,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
   end
   describe '::method_undefined' do
     let(:method_name) { :method_1 }
+    let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
 
     it 'retains upstream behavior' do
       integrator.define_method(method_name) { nil }
@@ -95,6 +96,15 @@ RSpec.describe Memorb::IntegratorClassMethods do
       expect {
         instance.send(method_name)
       }.to raise_error(NoMethodError, /undefined method/)
+    end
+    it 'clears cached data for the method in all instances' do
+      integrator.define_method(method_name) { nil }
+      integration.register(method_name)
+      instance.send(method_name)
+      store = instance.memorb.read(method_id)
+      expect(store.keys).not_to be_empty
+      integrator.undef_method(method_name)
+      expect(store.keys).to be_empty
     end
   end
 end
