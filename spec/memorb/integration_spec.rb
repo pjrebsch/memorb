@@ -60,10 +60,10 @@ RSpec.describe Memorb::Integration do
     subject { described_class[integrator] }
 
     describe '#initialize' do
-      it 'retains its original behavior' do
+      it 'retains the behavior of the integrator instance' do
         expect(instance.counter).to be(0)
       end
-      it 'initializes the cache with its object ID' do
+      it 'initializes the cache with the object ID of the integrator instance' do
         cache = instance.memorb
         expect(cache.id).to equal(instance.object_id)
       end

@@ -28,8 +28,7 @@ module Memorb
       def new(integrator)
         mixin = Module.new do
           def initialize(*)
-            integration = Integration[self.class]
-            @memorb_cache = integration.create_cache(self)
+            @memorb_cache = self.class.memorb.create_cache(self)
             define_singleton_method(:memorb) { @memorb_cache }
             super
           end
@@ -189,7 +188,7 @@ module Memorb
             end
 
             def _cache_finalizer(cache_id)
-              # This must be a non-lambda proc, otherwise GC hangs!
+              # This must not be a lambda proc, otherwise GC hangs!
               Proc.new { CACHES.forget(cache_id) }
             end
 
