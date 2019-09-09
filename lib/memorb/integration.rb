@@ -44,14 +44,21 @@ module Memorb
             CACHES = KeyValueStore.new
             private_constant :CACHES
 
-            def define(&block)
-              self.auto_register = true
-              integrator.class_eval(&block)
-              self.auto_register = false
-            end
+            def register(name = nil, &block)
+              name_present = !name.nil?
+              block_present = !block.nil?
 
-            def register(name)
-              _register(_identifier(name))
+              if name_present && block_present
+                raise ArgumentError,
+                  'register may not be called with both a method name and a block'
+              elsif name_present
+                _register_from_name(_identifier(name))
+              elsif block_present
+                _register_from_block(&block)
+              else
+                raise ArgumentError,
+                  'register must be called with either a method name or a block'
+              end
             end
 
             def registered_methods
@@ -134,9 +141,15 @@ module Memorb
               method_ids.map(&:to_sym)
             end
 
-            def _register(method_id)
+            def _register_from_name(method_id)
               REGISTRATIONS.write(method_id, nil)
               _enable(method_id)
+            end
+
+            def _register_from_block(&block)
+              self.auto_register = true
+              integrator.class_eval(&block)
+              self.auto_register = false
             end
 
             def _registered?(method_id)

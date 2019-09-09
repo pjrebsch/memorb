@@ -85,48 +85,28 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
-    describe '::define' do
-      context 'when given a block' do
-        it 'adds those methods to the integrator' do
-          subject.define do
-            def method_1; end
-            def method_2; end
-          end
-          methods = integrator.public_instance_methods(false)
-          expect(methods).to include(:method_1, :method_2)
-        end
-        it 'registers and enables the methods defined in that block' do
-          subject.define do
-            def method_1; end
-            def method_2; end
-          end
-          expect(subject.registered_methods).to include(:method_1, :method_2)
-          expect(subject.overridden_methods).to include(:method_1, :method_2)
-        end
-      end
-    end
     describe '::integrator' do
       it 'returns its integrating class' do
         expect(subject.integrator).to be(integrator)
       end
     end
     describe '::register' do
-      shared_examples '::register' do |provided_name|
-        let(:method_name) { :increment }
+      let(:method_name) { :increment }
 
+      context 'when called with a single argument' do
         it 'caches the registered method' do
-          subject.register(provided_name)
+          subject.register(method_name)
           result1 = instance.send(method_name)
           result2 = instance.send(method_name)
           expect(result1).to eq(result2)
         end
         it 'records the registration of the method' do
-          subject.register(provided_name)
+          subject.register(method_name)
           expect(subject.registered_methods).to include(method_name)
         end
         context 'when registering a method multiple times' do
           it 'still caches the registered method' do
-            2.times { subject.register(provided_name) }
+            2.times { subject.register(method_name) }
             result1 = instance.send(method_name)
             result2 = instance.send(method_name)
             expect(result1).to eq(result2)
@@ -136,35 +116,59 @@ RSpec.describe Memorb::Integration do
           let(:target) { Class.new }
 
           it 'still allows the method to be registered' do
-            subject.register(provided_name)
+            subject.register(method_name)
             expect(subject.registered_methods).to include(method_name)
           end
           it 'does not override the method' do
-            subject.register(provided_name)
+            subject.register(method_name)
             expect(subject.overridden_methods).not_to include(method_name)
           end
           it 'an integrator instance does not respond to the method' do
-            subject.register(provided_name)
+            subject.register(method_name)
             expect(instance).not_to respond_to(method_name)
           end
           it 'raises an error when trying to call it' do
-            subject.register(provided_name)
+            subject.register(method_name)
             expect { instance.send(method_name) }.to raise_error(NoMethodError)
           end
           context 'once the method is defined' do
             it 'responds to the the method' do
-              subject.register(provided_name)
+              subject.register(method_name)
               integrator.define_method(method_name) { nil }
               expect(instance).to respond_to(method_name)
             end
           end
         end
       end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::register', :increment
+      context 'when called with only a block' do
+        it 'adds the methods defined in the block to the integrator' do
+          subject.register do
+            def method_1; end
+            def method_2; end
+          end
+          methods = integrator.public_instance_methods(false)
+          expect(methods).to include(:method_1, :method_2)
+        end
+        it 'registers and enables the methods defined in that block' do
+          subject.register do
+            def method_1; end
+            def method_2; end
+          end
+          expect(subject.registered_methods).to include(:method_1, :method_2)
+          expect(subject.overridden_methods).to include(:method_1, :method_2)
+        end
       end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::register', 'increment'
+      context 'when called with arguments and a block' do
+        it 'raises an error' do
+          expect {
+            subject.register(:method_1) { nil }
+          }.to raise_error(ArgumentError)
+        end
+      end
+      context 'when called without arguments or a block' do
+        it 'raises an error' do
+          expect { subject.register }.to raise_error(ArgumentError)
+        end
       end
     end
     describe '::registered?' do
