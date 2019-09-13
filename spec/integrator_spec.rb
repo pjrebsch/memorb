@@ -89,10 +89,13 @@ RSpec.describe 'integrators of Memorb' do
     include_examples 'for cache key verification'
   end
 
-  describe 'an integrator that registers methods with inclusion' do
+  describe 'an integrator that registers methods using a block when integrating' do
     let(:integrator) {
-      Class.new(target) do
-        extend Memorb[:increment, :double]
+      Class.new do
+        extend Memorb {
+          def increment; end
+          def double; end
+        }
       end
     }
     include_examples 'for ancestry verification'
@@ -100,14 +103,4 @@ RSpec.describe 'integrators of Memorb' do
     include_examples 'for cache key verification'
   end
 
-  describe 'an integrator that registers methods with inclusion using parentheses' do
-    let(:integrator) {
-      Class.new(target) do
-        extend Memorb(:increment, :double)
-      end
-    }
-    include_examples 'for ancestry verification'
-    include_examples 'for method registration verification'
-    include_examples 'for cache key verification'
-  end
 end
