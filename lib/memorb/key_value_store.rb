@@ -3,18 +3,6 @@
 require 'concurrent'
 
 module Memorb
-  # KeyValueStore is a thread-safe key-value store.
-  #
-  # Thread safety is important here because an implementing class may
-  # be using Memorb and expecting that a cacheable method be executed
-  # only once. When a cacheable method is called, Memorb calls #fetch
-  # on this KeyValueStore and expects it to be an atomic operation.
-  # Without thread safety, a TOCTOU bug exists with the #fetch method where
-  # another thread could write to a given key in the cache after #fetch
-  # has determined that the key doesn't exist yet, causing a double-write
-  # to the cache (or possibly a double-execution of the original cacheable
-  # method).
-  #
   class KeyValueStore
 
     def initialize
