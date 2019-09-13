@@ -19,7 +19,7 @@ module Memorb
 
     def initialize
       @data = {}
-      @lock = Concurrent::ReentrantReadWriteLock.new
+      @lock = ::Concurrent::ReentrantReadWriteLock.new
     end
 
     attr_reader :lock
@@ -38,7 +38,17 @@ module Memorb
 
     def fetch(key, &fallback)
       @lock.with_read_lock do
-        _has?(key) ? _read(key) : write(key, fallback.call)
+        return _read(key) if _has?(key)
+      end
+      # Concurrent readers could all see no entry if none were able to
+      # write before the others checked for the key, so they need to be
+      # synchronized below to ensure that only one of them actually
+      # executes the fallback block and writes the resulting value.
+      @lock.with_write_lock do
+        # The first thread to acquire the write lock will write the value
+        # for the key causing the other aforementioned threads that may
+        # also want to write to now see the key and return it.
+        _has?(key) ? _read(key) : _write(key, fallback.call)
       end
     end
 
