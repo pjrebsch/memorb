@@ -28,7 +28,7 @@ module Memorb
       def new(integrator)
         mixin = Module.new do
           def initialize(*)
-            agent = ::Memorb::Integration[self.class].create_agent(self)
+            agent = Integration[self.class].create_agent(self)
             define_singleton_method(:memorb) { agent }
             super
           end
@@ -49,14 +49,14 @@ module Memorb
               block_present = !block.nil?
 
               if name_present && block_present
-                raise ArgumentError,
+                raise ::ArgumentError,
                   'register may not be called with both a method name and a block'
               elsif name_present
                 _register_from_name(_identifier(name))
               elsif block_present
                 _register_from_block(&block)
               else
-                raise ArgumentError,
+                raise ::ArgumentError,
                   'register must be called with either a method name or a block'
               end
             end
@@ -95,7 +95,7 @@ module Memorb
               when true, false
                 @auto_register = bool
               else
-                raise ArgumentError, 'Only boolean values are allowed'
+                raise ::ArgumentError, 'Only boolean values are allowed'
               end
             end
 
@@ -187,7 +187,7 @@ module Memorb
 
             def _remove_override(method_id)
               remove_method(method_id.to_sym)
-            rescue NameError
+            rescue ::NameError
               # Ruby will raise an exception if the method doesn't exist.
               # Catching it is the safest thing to do for thread-safety.
               # The alternative would be to check the list if it were
@@ -218,7 +218,7 @@ module Memorb
 
             def _agent_finalizer(agent_id)
               # This must not be a lambda proc, otherwise GC hangs!
-              Proc.new { AGENTS.forget(agent_id) }
+              ::Proc.new { AGENTS.forget(agent_id) }
             end
 
           end

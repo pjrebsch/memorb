@@ -2,7 +2,7 @@
 
 module Memorb
 
-  class InvalidIntegrationError < StandardError
+  class InvalidIntegrationError < ::StandardError
   end
 
 end
