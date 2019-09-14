@@ -47,7 +47,7 @@ RSpec.describe Memorb::KeyValueStore do
   end
   describe '#fetch' do
     context 'when a value has not been set' do
-      it 'caches and returns the result of the block' do
+      it 'stores and returns the result of the block' do
         result = subject.fetch(key) { value }
         expect(result).to equal(value)
         data = subject.instance_variable_get(:@data)
@@ -64,7 +64,7 @@ RSpec.describe Memorb::KeyValueStore do
     end
   end
   describe '#forget' do
-    it 'removes the cache entry for the given key' do
+    it 'removes the entry for the given key' do
       data = subject.instance_variable_get(:@data)
       original = { :k1 => :v1, :k2 => :v2 }
       addition = { :k3 => :v3 }

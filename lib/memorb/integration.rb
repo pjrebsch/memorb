@@ -28,8 +28,8 @@ module Memorb
       def new(integrator)
         mixin = Module.new do
           def initialize(*)
-            cache = self.class.memorb.create_cache(self)
-            define_singleton_method(:memorb) { cache }
+            agent = ::Memorb::Integration[self.class].create_agent(self)
+            define_singleton_method(:memorb) { agent }
             super
           end
 
@@ -41,8 +41,8 @@ module Memorb
             OVERRIDES = KeyValueStore.new
             private_constant :OVERRIDES
 
-            CACHES = KeyValueStore.new
-            private_constant :CACHES
+            AGENTS = KeyValueStore.new
+            private_constant :AGENTS
 
             def register(name = nil, &block)
               name_present = !name.nil?
@@ -114,13 +114,13 @@ module Memorb
 
             # Never save reference to the integrator instance or it may
             # never be garbage collected!
-            def create_cache(integrator_instance)
-              Cache.new(integrator_instance.object_id).tap do |cache|
-                CACHES.write(cache.id, cache)
+            def create_agent(integrator_instance)
+              Agent.new(integrator_instance.object_id).tap do |agent|
+                AGENTS.write(agent.id, agent)
 
                 # The proc must not be made here because it would save a
                 # reference to `integrator_instance`.
-                finalizer = _cache_finalizer(cache.id)
+                finalizer = _agent_finalizer(agent.id)
                 ::ObjectSpace.define_finalizer(integrator_instance, finalizer)
               end
             end
@@ -178,9 +178,9 @@ module Memorb
             end
 
             def _purge(method_id)
-              CACHES.keys.each do |id|
-                cache = CACHES.read(id)
-                store = cache&.read(method_id)
+              AGENTS.keys.each do |id|
+                agent = AGENTS.read(id)
+                store = agent&.method_store&.read(method_id)
                 store&.reset!
               end
             end
@@ -198,7 +198,7 @@ module Memorb
 
             def _define_override(method_id)
               define_method(method_id.to_sym) do |*args, &block|
-                memorb
+                memorb.method_store
                   .fetch(method_id) { KeyValueStore.new }
                   .fetch([*args, block]) { super(*args, &block) }
               end
@@ -216,9 +216,9 @@ module Memorb
               visibility
             end
 
-            def _cache_finalizer(cache_id)
+            def _agent_finalizer(agent_id)
               # This must not be a lambda proc, otherwise GC hangs!
-              Proc.new { CACHES.forget(cache_id) }
+              Proc.new { AGENTS.forget(agent_id) }
             end
 
           end

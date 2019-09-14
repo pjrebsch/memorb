@@ -76,7 +76,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       integrator.define_method(method_name) { nil }
       integration.register(method_name)
       instance.send(method_name)
-      store = instance.memorb.read(method_id)
+      store = instance.memorb.method_store.read(method_id)
       expect(store.keys).not_to be_empty
       integrator.remove_method(method_name)
       expect(store.keys).to be_empty
@@ -110,7 +110,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       integrator.define_method(method_name) { nil }
       integration.register(method_name)
       instance.send(method_name)
-      store = instance.memorb.read(method_id)
+      store = instance.memorb.method_store.read(method_id)
       expect(store.keys).not_to be_empty
       integrator.undef_method(method_name)
       expect(store.keys).to be_empty

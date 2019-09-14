@@ -6,7 +6,7 @@ require_relative 'memorb/method_identifier'
 require_relative 'memorb/key_value_store'
 require_relative 'memorb/integrator_class_methods'
 require_relative 'memorb/integration'
-require_relative 'memorb/cache'
+require_relative 'memorb/agent'
 
 module Memorb
   class << self

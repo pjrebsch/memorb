@@ -56,7 +56,7 @@ RSpec.describe Memorb::Integration do
     let(:integrator) { target.tap { |x| x.extend(Memorb) } }
     let(:integrator_singleton) { integrator.singleton_class }
     let(:instance) { integrator.new }
-    let(:cache_registry) { subject.singleton_class.const_get(:CACHES) }
+    let(:agent_registry) { subject.singleton_class.const_get(:AGENTS) }
     subject { described_class[integrator] }
 
     describe 'integrator instance methods' do
@@ -64,24 +64,24 @@ RSpec.describe Memorb::Integration do
         it 'retains the behavior of the instance' do
           expect(instance.counter).to be(0)
         end
-        it 'initializes the cache with the object ID of the instance' do
-          cache = instance.memorb
-          expect(cache.id).to equal(instance.object_id)
+        it 'initializes the agent with the object ID of the instance' do
+          agent = instance.memorb
+          expect(agent.id).to equal(instance.object_id)
         end
-        it 'adds the cache to the global registry' do
-          cache = instance.memorb
-          expect(cache_registry.keys).to match_array([cache.id])
+        it 'adds the agent to the global registry' do
+          agent = instance.memorb
+          expect(agent_registry.keys).to match_array([agent.id])
         end
       end
       describe '#memorb' do
-        it 'returns the memorb cache' do
-          cache = instance.memorb
-          expect(cache).to be_an_instance_of(Memorb::Cache)
+        it 'returns the agent for the instance' do
+          agent = instance.memorb
+          expect(agent).to be_an_instance_of(::Memorb::Agent)
         end
-        it 'does not share the cache across instances' do
-          cache1 = integrator.new.memorb
-          cache2 = integrator.new.memorb
-          expect(cache1).not_to equal(cache2)
+        it 'does not share the agent across instances' do
+          agent_1 = integrator.new.memorb
+          agent_2 = integrator.new.memorb
+          expect(agent_1).not_to equal(agent_2)
         end
       end
     end
@@ -340,7 +340,7 @@ RSpec.describe Memorb::Integration do
       it 'clears cached data for the given method in all instances' do
         subject.register(method_name)
         instance.send(method_name)
-        store = instance.memorb.read(method_id)
+        store = instance.memorb.method_store.read(method_id)
         expect(store.keys).not_to be_empty
         subject.purge(method_name)
         expect(store.keys).to be_empty
@@ -348,7 +348,7 @@ RSpec.describe Memorb::Integration do
       context 'when the given method has no cache record' do
         it 'does not raise an error' do
           subject.register(method_name)
-          store = instance.memorb.read(method_id)
+          store = instance.memorb.method_store.read(method_id)
           expect(store).to be(nil)
           expect { subject.purge(method_name) }.not_to raise_error
         end
@@ -398,15 +398,15 @@ RSpec.describe Memorb::Integration do
         end
       end
     end
-    describe '::create_cache' do
-      it 'returns a cache object' do
-        cache = subject.create_cache(instance)
-        expect(cache).to be_an_instance_of(::Memorb::Cache)
+    describe '::create_agent' do
+      it 'returns a agent object' do
+        agent = subject.create_agent(instance)
+        expect(agent).to be_an_instance_of(::Memorb::Agent)
       end
-      it 'writes the cache to the global cache registry' do
-        cache = subject.create_cache(instance)
-        registry = subject.singleton_class.const_get(:CACHES)
-        expect(registry.keys).to match_array([cache.id])
+      it 'writes the agent to the global agent registry' do
+        agent = subject.create_agent(instance)
+        registry = subject.singleton_class.const_get(:AGENTS)
+        expect(registry.keys).to match_array([agent.id])
       end
     end
     it 'supports regularly invalid method names' do
@@ -429,15 +429,15 @@ RSpec.describe Memorb::Integration do
       end
     end
     context 'when freed by the garbage collector' do
-      it 'removes its cache from the global registry' do
+      it 'removes its agent from the global registry' do
         # At the time of writing, RSpec blocks aren't allowing out-of-scope
         # variables to be garbage collected, so `WeakRef` is used to fix that.
         require 'weakref'
         ref = WeakRef.new(integrator.new)
-        cache = ref.__getobj__.memorb
-        expect(cache_registry.keys).to include(cache.id)
+        agent = ref.__getobj__.memorb
+        expect(agent_registry.keys).to include(agent.id)
         SpecHelper.force_garbage_collection
-        expect(cache_registry.keys).to be_empty
+        expect(agent_registry.keys).to be_empty
       end
     end
   end
