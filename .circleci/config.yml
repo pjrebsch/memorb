@@ -19,3 +19,8 @@ jobs:
       - run:
           name: RSpec
           command: bundle exec rspec
+workflows:
+  version: 2
+  test-rubies:
+    jobs:
+      - ruby-2.6
