@@ -21,10 +21,19 @@ jobs:
   ruby-2.6:
     docker:
       - image: circleci/ruby:2.6.5
-    steps:
-      <<: *steps
+    steps: *steps
+  ruby-2.5:
+    docker:
+      - image: circleci/ruby:2.5.7
+    steps: *steps
+  ruby-2.4:
+    docker:
+      - image: circleci/ruby:2.4.8
+    steps: *steps
 workflows:
   version: 2
   test-rubies:
     jobs:
       - ruby-2.6
+      - ruby-2.5
+      - ruby-2.4
