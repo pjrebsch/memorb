@@ -197,7 +197,7 @@ module Memorb
             end
 
             def _define_override(method_id)
-              define_method(method_id.to_sym) do |*args, &block|
+              send(:define_method, method_id.to_sym) do |*args, &block|
                 memorb.method_store
                   .fetch(method_id) { KeyValueStore.new }
                   .fetch([*args, block]) { super(*args, &block) }
@@ -225,7 +225,7 @@ module Memorb
         end
 
         mixin.auto_register = false
-        mixin.singleton_class.define_method(:integrator) { integrator }
+        mixin.singleton_class.send(:define_method, :integrator) { integrator }
 
         mixin
       end

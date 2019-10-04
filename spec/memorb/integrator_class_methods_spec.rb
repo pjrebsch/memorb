@@ -24,18 +24,18 @@ RSpec.describe Memorb::IntegratorClassMethods do
 
     it 'retains upstream behavior' do
       spy = double('spy', spy!: nil)
-      integrator.singleton_class.define_method(:method_added) do |m|
+      integrator.singleton_class.send(:define_method, :method_added) do |m|
         spy.spy!(m)
       end
       expect(spy).to receive(:spy!).with(method_name)
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
     end
     context 'when the method has been registered' do
       it 'overrides the method' do
         integration.register(method_name)
         expect(integration.overridden_methods).not_to include(method_name)
         expect(integration.public_instance_methods).not_to include(method_name)
-        integrator.define_method(method_name) { nil }
+        integrator.send(:define_method, method_name) { nil }
         expect(integration.overridden_methods).to include(method_name)
         expect(integration.public_instance_methods).to include(method_name)
       end
@@ -43,7 +43,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
     context 'when automatic registration is enabled' do
       it 'registers and overrides new methods' do
         integration.auto_register = true
-        integrator.define_method(method_name) { nil }
+        integrator.send(:define_method, method_name) { nil }
         expect(integration.registered_methods).to include(method_name)
         expect(integration.overridden_methods).to include(method_name)
         expect(integration.public_instance_methods).to include(method_name)
@@ -55,16 +55,16 @@ RSpec.describe Memorb::IntegratorClassMethods do
     let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
 
     it 'retains upstream behavior' do
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
       spy = double('spy', spy!: nil)
-      integrator.singleton_class.define_method(:method_removed) do |m|
+      integrator.singleton_class.send(:define_method, :method_removed) do |m|
         spy.spy!(m)
       end
       expect(spy).to receive(:spy!).with(method_name)
       integrator.remove_method(method_name)
     end
     it 'removes the override for the method' do
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
       integration.register(method_name)
       expect(integration.overridden_methods).to include(method_name)
       expect(integration.public_instance_methods).to include(method_name)
@@ -73,7 +73,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       expect(integration.public_instance_methods).not_to include(method_name)
     end
     it 'clears cached data for the method in all instances' do
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
       integration.register(method_name)
       instance.send(method_name)
       store = instance.memorb.method_store.read(method_id)
@@ -87,16 +87,16 @@ RSpec.describe Memorb::IntegratorClassMethods do
     let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
 
     it 'retains upstream behavior' do
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
       spy = double('spy', spy!: nil)
-      integrator.singleton_class.define_method(:method_undefined) do |m|
+      integrator.singleton_class.send(:define_method, :method_undefined) do |m|
         spy.spy!(m)
       end
       expect(spy).to receive(:spy!).with(method_name)
       integrator.undef_method(method_name)
     end
     it 'undefines the override for the method' do
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
       integration.register(method_name)
       integrator.undef_method(method_name)
       instance = integrator.new
@@ -107,7 +107,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       }.to raise_error(NoMethodError, /undefined method/)
     end
     it 'clears cached data for the method in all instances' do
-      integrator.define_method(method_name) { nil }
+      integrator.send(:define_method, method_name) { nil }
       integration.register(method_name)
       instance.send(method_name)
       store = instance.memorb.method_store.read(method_id)
