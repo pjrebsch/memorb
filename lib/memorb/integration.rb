@@ -35,15 +35,6 @@ module Memorb
 
           class << self
 
-            REGISTRATIONS = KeyValueStore.new
-            private_constant :REGISTRATIONS
-
-            OVERRIDES = KeyValueStore.new
-            private_constant :OVERRIDES
-
-            AGENTS = KeyValueStore.new
-            private_constant :AGENTS
-
             def register(name = nil, &block)
               name_present = !name.nil?
               block_present = !block.nil?
@@ -62,7 +53,7 @@ module Memorb
             end
 
             def registered_methods
-              _identifiers_to_symbols(REGISTRATIONS.keys)
+              _identifiers_to_symbols(_registrations.keys)
             end
 
             def registered?(name)
@@ -78,7 +69,7 @@ module Memorb
             end
 
             def overridden_methods
-              _identifiers_to_symbols(OVERRIDES.keys)
+              _identifiers_to_symbols(_overrides.keys)
             end
 
             def overridden?(name)
@@ -116,7 +107,7 @@ module Memorb
             # never be garbage collected!
             def create_agent(integrator_instance)
               Agent.new(integrator_instance.object_id).tap do |agent|
-                AGENTS.write(agent.id, agent)
+                _agents.write(agent.id, agent)
 
                 # The proc must not be made here because it would save a
                 # reference to `integrator_instance`.
@@ -142,7 +133,7 @@ module Memorb
             end
 
             def _register_from_name(method_id)
-              REGISTRATIONS.write(method_id, nil)
+              _registrations.write(method_id, nil)
               _enable(method_id)
             end
 
@@ -154,7 +145,7 @@ module Memorb
             end
 
             def _registered?(method_id)
-              REGISTRATIONS.keys.include?(method_id)
+              _registrations.keys.include?(method_id)
             end
 
             def _enable(method_id)
@@ -163,31 +154,31 @@ module Memorb
               visibility = _integrator_instance_method_visibility(method_id)
               return if visibility.nil?
 
-              OVERRIDES.fetch(method_id) do
+              _overrides.fetch(method_id) do
                 _define_override(method_id)
                 _set_visibility(visibility, method_id.to_sym)
               end
             end
 
             def _disable(method_id)
-              OVERRIDES.forget(method_id)
+              _overrides.forget(method_id)
               _remove_override(method_id)
             end
 
             def _overridden?(method_id)
-              OVERRIDES.keys.include?(method_id)
+              _overrides.keys.include?(method_id)
             end
 
             def _purge(method_id)
-              AGENTS.keys.each do |id|
-                agent = AGENTS.read(id)
+              _agents.keys.each do |id|
+                agent = _agents.read(id)
                 store = agent&.method_store&.read(method_id)
                 store&.reset!
               end
             end
 
             def _remove_override(method_id)
-              send(:remove_method, method_id.to_sym)
+              RubyCompatibility.remove_method(self, method_id.to_sym)
             rescue ::NameError
               # Ruby will raise an exception if the method doesn't exist.
               # Catching it is the safest thing to do for thread-safety.
@@ -219,11 +210,27 @@ module Memorb
 
             def _agent_finalizer(agent_id)
               # This must not be a lambda proc, otherwise GC hangs!
-              ::Proc.new { AGENTS.forget(agent_id) }
+              ::Proc.new { _agents.forget(agent_id) }
+            end
+
+            def _registrations
+              RubyCompatibility.module_constant(self, :registrations)
+            end
+
+            def _overrides
+              RubyCompatibility.module_constant(self, :overrides)
+            end
+
+            def _agents
+              RubyCompatibility.module_constant(self, :agents)
             end
 
           end
         end
+
+        RubyCompatibility.module_constant_set(mixin, :registrations, KeyValueStore.new)
+        RubyCompatibility.module_constant_set(mixin, :overrides, KeyValueStore.new)
+        RubyCompatibility.module_constant_set(mixin, :agents, KeyValueStore.new)
 
         mixin.auto_register = false
         RubyCompatibility.define_method(mixin.singleton_class, :integrator) { integrator }

@@ -67,7 +67,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
           spy.spy!(m)
         end
       expect(spy).to receive(:spy!).with(method_name)
-      integrator.send(:remove_method, method_name)
+      ::Memorb::RubyCompatibility.remove_method(integrator, method_name)
     end
     it 'removes the override for the method' do
       ::Memorb::RubyCompatibility
@@ -75,7 +75,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       integration.register(method_name)
       expect(integration.overridden_methods).to include(method_name)
       expect(integration.public_instance_methods).to include(method_name)
-      integrator.send(:remove_method, method_name)
+      ::Memorb::RubyCompatibility.remove_method(integrator, method_name)
       expect(integration.overridden_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
     end
@@ -86,7 +86,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       instance.send(method_name)
       store = instance.memorb.method_store.read(method_id)
       expect(store.keys).not_to be_empty
-      integrator.send(:remove_method, method_name)
+      ::Memorb::RubyCompatibility.remove_method(integrator, method_name)
       expect(store.keys).to be_empty
     end
   end

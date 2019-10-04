@@ -56,7 +56,7 @@ RSpec.describe Memorb::Integration do
     let(:integrator) { target.tap { |x| x.extend(Memorb) } }
     let(:integrator_singleton) { integrator.singleton_class }
     let(:instance) { integrator.new }
-    let(:agent_registry) { subject.singleton_class.const_get(:AGENTS) }
+    let(:agent_registry) { subject.send(:_agents) }
     subject { described_class[integrator] }
 
     describe 'integrator instance methods' do
@@ -418,7 +418,7 @@ RSpec.describe Memorb::Integration do
       end
       it 'writes the agent to the global agent registry' do
         agent = subject.create_agent(instance)
-        registry = subject.singleton_class.const_get(:AGENTS)
+        registry = subject.send(:_agents)
         expect(registry.keys).to match_array([agent.id])
       end
     end

@@ -6,7 +6,7 @@ module Memorb
   class KeyValueStore
 
     def initialize
-      @data = {}
+      @data = ::Hash.new
       @lock = ::Concurrent::ReentrantReadWriteLock.new
     end
 

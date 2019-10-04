@@ -1,17 +1,10 @@
 _: &steps
   - checkout
-  - restore_cache:
-      keys:
-        - bundle-{{ checksum "Gemfile.lock" }}
   - run:
       name: Bundle
       command: |
         gem install bundler
-        bundle install --deployment
-  - save_cache:
-      key: bundle-{{ checksum "Gemfile.lock" }}
-      paths:
-        - ./vendor/bundle
+        bundle install
   - run:
       name: RSpec
       command: bundle exec rspec
