@@ -134,7 +134,8 @@ RSpec.describe Memorb::Integration do
           context 'once the method is defined' do
             it 'responds to the the method' do
               subject.register(method_name)
-              integrator.send(:define_method, method_name) { nil }
+              ::Memorb::RubyCompatibility
+                .define_method(integrator, method_name) { nil }
               expect(instance).to respond_to(method_name)
             end
           end
@@ -376,24 +377,27 @@ RSpec.describe Memorb::Integration do
       it 'includes the name of the integrating class' do
         name = 'IntegratingKlass'
         expectation = "Memorb:#{ name }"
-        integrator_singleton.send(:define_method, :name) { name }
+        ::Memorb::RubyCompatibility
+          .define_method(integrator_singleton, :name) { name }
         expect(subject.name).to eq(expectation)
       end
       context 'when integrating class does not have a name' do
         it 'uses the inspection of the integrating class' do
           expectation = "Memorb:#{ integrator.inspect }"
-          integrator_singleton.send(:define_method, :name) { nil }
+          ::Memorb::RubyCompatibility
+            .define_method(integrator_singleton, :name) { nil }
           expect(subject.name).to eq(expectation)
-          integrator_singleton.send(:undef_method, :name)
+          ::Memorb::RubyCompatibility.undef_method(integrator_singleton, :name)
           expect(subject.name).to eq(expectation)
         end
       end
       context 'when integrating class does not have an inspection' do
         it 'uses the object ID of the integrating class' do
           expectation = "Memorb:#{ integrator.object_id }"
-          integrator_singleton.send(:define_method, :inspect) { nil }
+          ::Memorb::RubyCompatibility
+            .define_method(integrator_singleton, :inspect) { nil }
           expect(subject.name).to eq(expectation)
-          integrator_singleton.send(:undef_method, :inspect)
+          ::Memorb::RubyCompatibility.undef_method(integrator_singleton, :inspect)
           expect(subject.name).to eq(expectation)
         end
       end
@@ -412,7 +416,8 @@ RSpec.describe Memorb::Integration do
     it 'supports regularly invalid method names' do
       method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'
       subject.register(method_name)
-      integrator.send(:define_method, method_name) { nil }
+      ::Memorb::RubyCompatibility
+        .define_method(integrator, method_name) { nil }
       expect(subject.registered_methods).to include(method_name)
       expect(subject.overridden_methods).to include(method_name)
       expect { instance.send(method_name) }.not_to raise_error

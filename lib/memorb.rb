@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'memorb/version'
+require_relative 'memorb/ruby_compatibility'
 require_relative 'memorb/errors'
 require_relative 'memorb/method_identifier'
 require_relative 'memorb/key_value_store'
