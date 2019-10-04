@@ -7,7 +7,7 @@ _: &steps
       name: Bundle
       command: |
         gem install bundler
-        bundle check --path ./vendor/bundle || bundle install --deployment
+        bundle install --deployment
   - save_cache:
       key: bundle-{{ checksum "Gemfile.lock" }}
       paths:
