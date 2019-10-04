@@ -36,7 +36,7 @@ jobs:
     steps: *steps
 workflows:
   version: 2
-  test-rubies:
+  rubies:
     jobs:
       - ruby-2.6
       - ruby-2.5
