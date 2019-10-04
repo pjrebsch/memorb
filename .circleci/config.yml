@@ -7,11 +7,11 @@ _: &steps
       name: Bundle
       command: |
         gem install bundler
-        bundle check --path vendor/bundle || bundle install --deployment
+        bundle check --path ./vendor/bundle || bundle install --deployment
   - save_cache:
       key: bundle-{{ checksum "Gemfile.lock" }}
       paths:
-        - vendor/bundle
+        - ./vendor/bundle
   - run:
       name: RSpec
       command: bundle exec rspec
@@ -20,19 +20,19 @@ version: 2
 jobs:
   ruby-2.6:
     docker:
-      - image: circleci/ruby:2.6.5
+      - image: circleci/ruby:2.6
     steps: *steps
   ruby-2.5:
     docker:
-      - image: circleci/ruby:2.5.7
+      - image: circleci/ruby:2.5
     steps: *steps
   ruby-2.4:
     docker:
-      - image: circleci/ruby:2.4.8
+      - image: circleci/ruby:2.4
     steps: *steps
   ruby-2.3:
     docker:
-      - image: circleci/ruby:2.3.8
+      - image: circleci/ruby:2.3
     steps: *steps
 workflows:
   version: 2
