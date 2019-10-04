@@ -384,7 +384,7 @@ RSpec.describe Memorb::Integration do
           expectation = "Memorb:#{ integrator.inspect }"
           integrator_singleton.send(:define_method, :name) { nil }
           expect(subject.name).to eq(expectation)
-          integrator_singleton.undef_method(:name)
+          integrator_singleton.send(:undef_method, :name)
           expect(subject.name).to eq(expectation)
         end
       end
@@ -393,7 +393,7 @@ RSpec.describe Memorb::Integration do
           expectation = "Memorb:#{ integrator.object_id }"
           integrator_singleton.send(:define_method, :inspect) { nil }
           expect(subject.name).to eq(expectation)
-          integrator_singleton.undef_method(:inspect)
+          integrator_singleton.send(:undef_method, :inspect)
           expect(subject.name).to eq(expectation)
         end
       end

@@ -186,7 +186,7 @@ module Memorb
             end
 
             def _remove_override(method_id)
-              remove_method(method_id.to_sym)
+              send(:remove_method, method_id.to_sym)
             rescue ::NameError
               # Ruby will raise an exception if the method doesn't exist.
               # Catching it is the safest thing to do for thread-safety.

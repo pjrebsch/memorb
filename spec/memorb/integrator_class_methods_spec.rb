@@ -61,14 +61,14 @@ RSpec.describe Memorb::IntegratorClassMethods do
         spy.spy!(m)
       end
       expect(spy).to receive(:spy!).with(method_name)
-      integrator.remove_method(method_name)
+      integrator.send(:remove_method, method_name)
     end
     it 'removes the override for the method' do
       integrator.send(:define_method, method_name) { nil }
       integration.register(method_name)
       expect(integration.overridden_methods).to include(method_name)
       expect(integration.public_instance_methods).to include(method_name)
-      integrator.remove_method(method_name)
+      integrator.send(:remove_method, method_name)
       expect(integration.overridden_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
     end
@@ -78,7 +78,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       instance.send(method_name)
       store = instance.memorb.method_store.read(method_id)
       expect(store.keys).not_to be_empty
-      integrator.remove_method(method_name)
+      integrator.send(:remove_method, method_name)
       expect(store.keys).to be_empty
     end
   end
@@ -93,12 +93,12 @@ RSpec.describe Memorb::IntegratorClassMethods do
         spy.spy!(m)
       end
       expect(spy).to receive(:spy!).with(method_name)
-      integrator.undef_method(method_name)
+      integrator.send(:undef_method, method_name)
     end
     it 'undefines the override for the method' do
       integrator.send(:define_method, method_name) { nil }
       integration.register(method_name)
-      integrator.undef_method(method_name)
+      integrator.send(:undef_method, method_name)
       instance = integrator.new
       expect(integration.overridden_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
@@ -112,7 +112,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       instance.send(method_name)
       store = instance.memorb.method_store.read(method_id)
       expect(store.keys).not_to be_empty
-      integrator.undef_method(method_name)
+      integrator.send(:undef_method, method_name)
       expect(store.keys).to be_empty
     end
   end
