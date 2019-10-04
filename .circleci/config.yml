@@ -34,6 +34,18 @@ jobs:
     docker:
       - image: circleci/ruby:2.3
     steps: *steps
+  jruby-9.2:
+    docker:
+      - image: circleci/jruby:9.2
+    steps: *steps
+  jruby-9.1:
+    docker:
+      - image: circleci/jruby:9.1
+    steps: *steps
+  jruby-9.0:
+    docker:
+      - image: circleci/jruby:9
+    steps: *steps
 workflows:
   version: 2
   rubies:
@@ -42,3 +54,6 @@ workflows:
       - ruby-2.5
       - ruby-2.4
       - ruby-2.3
+      - jruby-9.2
+      - jruby-9.1
+      - jruby-9.0
