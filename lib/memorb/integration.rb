@@ -149,6 +149,7 @@ module Memorb
             def _register_from_block(&block)
               self.auto_register = true
               integrator.class_eval(&block)
+            ensure
               self.auto_register = false
             end
 

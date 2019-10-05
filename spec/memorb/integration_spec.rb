@@ -158,6 +158,15 @@ RSpec.describe Memorb::Integration do
           expect(subject.registered_methods).to include(:method_1, :method_2)
           expect(subject.overridden_methods).to include(:method_1, :method_2)
         end
+        context 'when an error is raised in the provided block' do
+          it 'still disables automatic registration' do
+            begin
+              subject.register { raise ::RuntimeError }
+            rescue
+            end
+            expect(subject.auto_register?).to be(false)
+          end
+        end
       end
       context 'when called with arguments and a block' do
         it 'raises an error' do
