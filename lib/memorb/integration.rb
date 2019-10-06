@@ -68,12 +68,12 @@ module Memorb
               _disable(_identifier(name))
             end
 
-            def overridden_methods
+            def enabled_methods
               _identifiers_to_symbols(_overrides.keys)
             end
 
-            def overridden?(name)
-              _overridden?(_identifier(name))
+            def enabled?(name)
+              _enabled?(_identifier(name))
             end
 
             def purge(name)
@@ -165,7 +165,7 @@ module Memorb
               _remove_override(method_id)
             end
 
-            def _overridden?(method_id)
+            def _enabled?(method_id)
               _overrides.keys.include?(method_id)
             end
 

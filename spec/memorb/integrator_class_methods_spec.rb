@@ -33,23 +33,23 @@ RSpec.describe Memorb::IntegratorClassMethods do
         .define_method(integrator, method_name) { nil }
     end
     context 'when the method has been registered' do
-      it 'overrides the method' do
+      it 'enables the method' do
         integration.register(method_name)
-        expect(integration.overridden_methods).not_to include(method_name)
+        expect(integration.enabled_methods).not_to include(method_name)
         expect(integration.public_instance_methods).not_to include(method_name)
         ::Memorb::RubyCompatibility
           .define_method(integrator, method_name) { nil }
-        expect(integration.overridden_methods).to include(method_name)
+        expect(integration.enabled_methods).to include(method_name)
         expect(integration.public_instance_methods).to include(method_name)
       end
     end
     context 'when automatic registration is enabled' do
-      it 'registers and overrides new methods' do
+      it 'registers and enables new methods' do
         integration.auto_register = true
         ::Memorb::RubyCompatibility
           .define_method(integrator, method_name) { nil }
         expect(integration.registered_methods).to include(method_name)
-        expect(integration.overridden_methods).to include(method_name)
+        expect(integration.enabled_methods).to include(method_name)
         expect(integration.public_instance_methods).to include(method_name)
       end
     end
@@ -73,10 +73,10 @@ RSpec.describe Memorb::IntegratorClassMethods do
       ::Memorb::RubyCompatibility
         .define_method(integrator, method_name) { nil }
       integration.register(method_name)
-      expect(integration.overridden_methods).to include(method_name)
+      expect(integration.enabled_methods).to include(method_name)
       expect(integration.public_instance_methods).to include(method_name)
       ::Memorb::RubyCompatibility.remove_method(integrator, method_name)
-      expect(integration.overridden_methods).not_to include(method_name)
+      expect(integration.enabled_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
     end
     it 'clears cached data for the method in all instances' do
@@ -111,7 +111,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       integration.register(method_name)
       ::Memorb::RubyCompatibility.undef_method(integrator, method_name)
       instance = integrator.new
-      expect(integration.overridden_methods).not_to include(method_name)
+      expect(integration.enabled_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
       expect {
         instance.send(method_name)

@@ -2,6 +2,8 @@
 
 Memoize instance methods more succinctly.
 
+[![CircleCI](https://circleci.com/gh/pjrebsch/memorb/tree/master.svg?style=svg)](https://circleci.com/gh/pjrebsch/memorb/tree/master)
+
 ## Overview
 
 ### Why memoize?
@@ -64,7 +66,8 @@ The falsey result problem could be solved by checking if the instance variable i
 
 ```ruby
 def will_rain?
-  defined?(@will_rain) ? @will_rain : @will_rain = ...
+  return @will_rain if defined?(@will_rain)
+  @will_rain = ...
 end
 ```
 

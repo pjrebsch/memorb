@@ -119,9 +119,9 @@ RSpec.describe Memorb::Integration do
             subject.register(method_name)
             expect(subject.registered_methods).to include(method_name)
           end
-          it 'does not override the method' do
+          it 'does not enable the method' do
             subject.register(method_name)
-            expect(subject.overridden_methods).not_to include(method_name)
+            expect(subject.enabled_methods).not_to include(method_name)
           end
           it 'an integrator instance does not respond to the method' do
             subject.register(method_name)
@@ -156,7 +156,7 @@ RSpec.describe Memorb::Integration do
             def method_2; end
           end
           expect(subject.registered_methods).to include(:method_1, :method_2)
-          expect(subject.overridden_methods).to include(:method_1, :method_2)
+          expect(subject.enabled_methods).to include(:method_1, :method_2)
         end
         context 'when an error is raised in the provided block' do
           it 'still disables automatic registration' do
@@ -240,7 +240,7 @@ RSpec.describe Memorb::Integration do
             subject.register(method_name)
             subject.disable(method_name)
             subject.enable(provided_name)
-            expect(subject.overridden_methods).to include(method_name)
+            expect(subject.enabled_methods).to include(method_name)
           end
           it 'returns the visibility of the method' do
             subject.register(method_name)
@@ -253,7 +253,7 @@ RSpec.describe Memorb::Integration do
             it 'does not override the method' do
               subject.register(method_name)
               subject.enable(provided_name)
-              expect(subject.overridden_methods).not_to include(method_name)
+              expect(subject.enabled_methods).not_to include(method_name)
             end
             it 'returns nil' do
               subject.register(method_name)
@@ -265,7 +265,7 @@ RSpec.describe Memorb::Integration do
         context 'when the method is not registered' do
           it 'does not override the method' do
             subject.enable(provided_name)
-            expect(subject.overridden_methods).not_to include(method_name)
+            expect(subject.enabled_methods).not_to include(method_name)
           end
           it 'returns nil' do
             result = subject.enable(provided_name)
@@ -287,7 +287,7 @@ RSpec.describe Memorb::Integration do
         it 'removes the override method for the given method' do
           subject.register(method_name)
           subject.disable(provided_name)
-          expect(subject.overridden_methods).not_to include(method_name)
+          expect(subject.enabled_methods).not_to include(method_name)
         end
         context 'when there is no override method defined' do
           let(:target) { Class.new }
@@ -311,36 +311,36 @@ RSpec.describe Memorb::Integration do
         expect(subject.registered_methods).to match_array(methods)
       end
     end
-    describe '::overridden_methods' do
-      it 'returns an array of overridden methods' do
+    describe '::enabled_methods' do
+      it 'returns an array of enabled methods' do
         methods = [:increment, :double]
         methods.each { |m| subject.register(m) }
-        expect(subject.overridden_methods).to match_array(methods)
+        expect(subject.enabled_methods).to match_array(methods)
       end
     end
-    describe '::overridden?' do
-      shared_examples '::overridden?' do |provided_name|
+    describe '::enabled?' do
+      shared_examples '::enabled?' do |provided_name|
         let(:method_name) { :increment }
 
-        context 'when the named method is overridden' do
+        context 'when the named method is enabled' do
           it 'returns true' do
             subject.register(method_name)
-            result = subject.overridden?(provided_name)
+            result = subject.enabled?(provided_name)
             expect(result).to be(true)
           end
         end
-        context 'when the named method is not overridden' do
+        context 'when the named method is not enabled' do
           it 'returns false' do
-            result = subject.overridden?(provided_name)
+            result = subject.enabled?(provided_name)
             expect(result).to be(false)
           end
         end
       end
       context 'with method name supplied as a symbol' do
-        it_behaves_like '::overridden?', :increment
+        it_behaves_like '::enabled?', :increment
       end
       context 'with method name supplied as a string' do
-        it_behaves_like '::overridden?', 'increment'
+        it_behaves_like '::enabled?', 'increment'
       end
     end
     describe '::purge' do
@@ -428,7 +428,7 @@ RSpec.describe Memorb::Integration do
       ::Memorb::RubyCompatibility
         .define_method(integrator, method_name) { nil }
       expect(subject.registered_methods).to include(method_name)
-      expect(subject.overridden_methods).to include(method_name)
+      expect(subject.enabled_methods).to include(method_name)
       expect { instance.send(method_name) }.not_to raise_error
     end
     context 'when mixing in with another class' do
