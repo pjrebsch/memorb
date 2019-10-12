@@ -5,12 +5,12 @@ shared_examples 'for ancestry verification' do
     expect(integration).not_to be(nil)
     ancestors = integrator.ancestors
     expected_ancestry = [integration, integrator]
-    relevant_ancestors = ancestors.select { |a| expected_ancestry.include? a }
+    relevant_ancestors = ancestors.select { |a| expected_ancestry.include?(a) }
     expect(relevant_ancestors).to match_array(expected_ancestry)
   end
 end
 
-shared_examples 'for method registration verification' do |methods|
+shared_examples 'for method registration verification' do
   it 'registers the correct methods' do
     expect(integration.registered_methods).to include(:increment, :double)
   end
