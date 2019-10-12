@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'concurrent'
+
 module Memorb
   module Integration
     class << self
@@ -80,14 +82,17 @@ module Memorb
               _purge(_identifier(name))
             end
 
-            def auto_register?; @auto_register; end
+            def auto_register?
+              _auto_registration.value > 0
+            end
+
             def auto_register!(&block)
               raise ::ArgumentError, 'a block must be provided' if block.nil?
+              _auto_registration.increment
               begin
-                @auto_register = true
                 block.call
               ensure
-                @auto_register = false
+                _auto_registration.decrement
               end
             end
 
@@ -225,14 +230,20 @@ module Memorb
               RubyCompatibility.module_constant(self, :agents)
             end
 
+            def _auto_registration
+              RubyCompatibility.module_constant(self, :auto_registration)
+            end
+
           end
         end
-
-        mixin.instance_variable_set(:@auto_register, false)
 
         RubyCompatibility.module_constant_set(mixin, :registrations, KeyValueStore.new)
         RubyCompatibility.module_constant_set(mixin, :overrides, KeyValueStore.new)
         RubyCompatibility.module_constant_set(mixin, :agents, KeyValueStore.new)
+        RubyCompatibility.module_constant_set(mixin,
+          :auto_registration,
+          ::Concurrent::AtomicFixnum.new,
+        )
 
         RubyCompatibility.define_method(mixin.singleton_class, :integrator) do
           integrator

@@ -161,8 +161,8 @@ describe ::Memorb::Integration do
         context 'when an error is raised in the provided block' do
           it 'still disables automatic registration' do
             begin
-              subject.register { raise ::RuntimeError }
-            rescue
+              subject.register { raise }
+            rescue ::RuntimeError
             end
             expect(subject.auto_register?).to be(false)
           end
@@ -379,7 +379,7 @@ describe ::Memorb::Integration do
       end
       context 'when turned on' do
         it 'returns true' do
-          subject.instance_variable_set(:@auto_register, true)
+          subject.send(:_auto_registration).increment
           expect(subject.auto_register?).to be(true)
         end
       end
@@ -397,6 +397,25 @@ describe ::Memorb::Integration do
           ::Memorb::RubyCompatibility.define_method(integrator, :a) { nil }
         end
         expect(subject.registered_methods).to include(:a)
+      end
+      context 'when an error is raised in the given block' do
+        it 'still disables automatic registration' do
+          begin
+            subject.auto_register! { raise }
+          rescue ::RuntimeError
+          end
+          expect(subject.auto_register?).to be(false)
+        end
+      end
+      context 'when nested' do
+        it 'preserves the setting until the outer block ends' do
+          subject.auto_register! do
+            subject.auto_register! do
+              nil
+            end
+            expect(subject.auto_register?).to be(true)
+          end
+        end
       end
     end
     describe '::name' do

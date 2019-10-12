@@ -45,7 +45,7 @@ describe ::Memorb::IntegratorClassMethods do
     end
     context 'when automatic registration is enabled' do
       it 'registers and enables new methods' do
-        integration.instance_variable_set(:@auto_register, true)
+        integration.send(:_auto_registration).increment
         ::Memorb::RubyCompatibility
           .define_method(integrator, method_name) { nil }
         expect(integration.registered_methods).to include(method_name)
