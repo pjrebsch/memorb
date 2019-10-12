@@ -193,14 +193,16 @@ module Memorb
             end
 
             def _remove_override(method_id)
-              RubyCompatibility.remove_method(self, method_id.to_sym)
-            rescue ::NameError
               # Ruby will raise an exception if the method doesn't exist.
               # Catching it is the safest thing to do for thread-safety.
               # The alternative would be to check the list if it were
               # present or not, but the read could be outdated by the time
               # that we tried to remove the method and this exception
               # wouldn't be caught.
+              remove_method(method_id.to_sym)
+            rescue ::NameError => e
+              # If this exception was for something else, it should be re-raised.
+              raise e unless e.name.equal?(method_id.to_sym) && e.receiver.equal?(self)
             end
 
             def _define_override(method_id)
