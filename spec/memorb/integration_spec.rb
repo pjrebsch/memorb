@@ -406,6 +406,10 @@ describe ::Memorb::Integration do
         end
         expect(subject.registered_methods).to include(:a)
       end
+      it 'returns the return value of the given block' do
+        result = subject.auto_register! { 1 }
+        expect(result).to be(1)
+      end
       context 'when an error is raised in the given block' do
         it 'still disables automatic registration' do
           begin
@@ -413,6 +417,13 @@ describe ::Memorb::Integration do
           rescue ::RuntimeError
           end
           expect(subject.auto_register?).to be(false)
+        end
+        it 'returns nil' do
+          begin
+            result = subject.auto_register! { raise }
+          rescue ::RuntimeError
+          end
+          expect(result).to be(nil)
         end
       end
       context 'when nested' do

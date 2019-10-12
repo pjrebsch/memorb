@@ -97,7 +97,6 @@ module Memorb
               ensure
                 _auto_registration.update { |v| [0, v - 1].max }
               end
-              nil
             end
 
             def prepended(target)
