@@ -88,12 +88,13 @@ module Memorb
 
             def auto_register!(&block)
               raise ::ArgumentError, 'a block must be provided' if block.nil?
-              _auto_registration.increment
+              _auto_registration.update { |v| [0, v].max + 1 }
               begin
                 block.call
               ensure
-                _auto_registration.decrement
+                _auto_registration.update { |v| [0, v - 1].max }
               end
+              nil
             end
 
             def prepended(base); _check_integrator!(base); end

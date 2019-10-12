@@ -417,6 +417,14 @@ describe ::Memorb::Integration do
           end
         end
       end
+      context 'if the internal counter goes below zero' do
+        it 'be corrected on subsequent calls' do
+          subject.send(:_auto_registration).decrement
+          subject.auto_register! do
+            expect(subject.auto_register?).to be(true)
+          end
+        end
+      end
     end
     describe '::name' do
       it 'includes the name of the integrating class' do
