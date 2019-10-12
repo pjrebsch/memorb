@@ -100,12 +100,12 @@ module Memorb
               nil
             end
 
-            def prepended(base)
-              _check_integrator!(base)
+            def prepended(target)
+              _check_target!(target)
               super
             end
 
-            def included(base)
+            def included(*)
               raise InvalidIntegrationError,
                 'an integration must be applied with `prepend`, not `include`'
             end
@@ -135,8 +135,8 @@ module Memorb
 
             private
 
-            def _check_integrator!(base)
-              unless base.equal?(integrator)
+            def _check_target!(target)
+              unless target.equal?(integrator)
                 raise MismatchedTargetError
               end
             end

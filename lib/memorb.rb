@@ -12,8 +12,8 @@ require_relative 'memorb/agent'
 module Memorb
   class << self
 
-    def extended(base)
-      Integration.integrate_with!(base)
+    def extended(target)
+      Integration.integrate_with!(target)
     end
 
     def included(*)
