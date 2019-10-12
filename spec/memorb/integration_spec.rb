@@ -235,6 +235,13 @@ describe ::Memorb::Integration do
       shared_examples '::enable' do |provided_name|
         let(:method_name) { :increment }
 
+        it 'records the cache key correctly' do
+          method_id = ::Memorb::MethodIdentifier.new(provided_name)
+          subject.register(method_name)
+          instance.send(method_name)
+          store = instance.memorb.method_store
+          expect(store.keys).to contain_exactly(method_id)
+        end
         context 'when the method is registered' do
           it 'overrides the method' do
             subject.register(method_name)

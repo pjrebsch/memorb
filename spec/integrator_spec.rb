@@ -10,22 +10,6 @@ shared_examples 'for ancestry verification' do
   end
 end
 
-shared_examples 'for method registration verification' do
-  it 'registers the correct methods' do
-    expect(integration.registered_methods).to include(:increment, :double)
-  end
-end
-
-shared_examples 'for cache key verification' do
-  it 'records the cache key correctly' do
-    method_name = :increment
-    method_id = ::Memorb::MethodIdentifier.new(method_name)
-    instance.send(method_name)
-    store = instance.memorb.method_store
-    expect(store.keys).to contain_exactly(method_id)
-  end
-end
-
 describe 'integrators of Memorb' do
   let(:target) { ::SpecHelper.basic_target_class }
   let(:integration) { ::Memorb::Integration[integrator] }
@@ -74,19 +58,6 @@ describe 'integrators of Memorb' do
       end
     }
     include_examples 'for ancestry verification'
-  end
-
-  describe 'an integrator that registers methods' do
-    let(:integrator) {
-      ::Class.new(target) do
-        extend ::Memorb
-        memorb.register(:increment)
-        memorb.register(:double)
-      end
-    }
-    include_examples 'for ancestry verification'
-    include_examples 'for method registration verification'
-    include_examples 'for cache key verification'
   end
 
 end
