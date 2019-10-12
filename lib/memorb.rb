@@ -16,5 +16,20 @@ module Memorb
       Integration.integrate_with!(base)
     end
 
+    def included(*)
+      _raise_invalid_integration_error!
+    end
+
+    def prepended(*)
+      _raise_invalid_integration_error!
+    end
+
+    private
+
+    def _raise_invalid_integration_error!
+      raise InvalidIntegrationError
+        .new('Memorb must be integrated using `extend`')
+    end
+
   end
 end

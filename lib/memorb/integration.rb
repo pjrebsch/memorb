@@ -121,7 +121,7 @@ module Memorb
 
             def _check_integrator!(base)
               unless base.equal?(integrator)
-                raise InvalidIntegrationError
+                raise InvalidTargetError
               end
             end
 
