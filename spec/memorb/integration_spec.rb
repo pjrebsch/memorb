@@ -491,7 +491,7 @@ describe ::Memorb::Integration do
         .map(&:to_a)
         .flatten
         .map(&:chr)
-        .shuffle(random: ::Random.new(::RSpec.configuration.seed))
+        .shuffle(random: ::SpecHelper.rng)
         .join
         .to_sym
       subject.register(method_name)

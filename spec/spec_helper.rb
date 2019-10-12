@@ -14,6 +14,10 @@ module SpecHelper
       end
     end
 
+    def rng
+      ::Random.new(::RSpec.configuration.seed)
+    end
+
     def force_garbage_collection(wait_cycle: 0, min_passes: 1)
       ::GC.stress = true
       ::GC.start
