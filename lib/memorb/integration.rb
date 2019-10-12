@@ -7,6 +7,9 @@ module Memorb
     class << self
 
       def integrate_with!(target)
+        unless target.is_a?(::Class)
+          raise InvalidIntegrationError, 'integration target must be a class'
+        end
         INTEGRATIONS.fetch(target) do
           new(target).tap do |integration|
             target.singleton_class.prepend(IntegratorClassMethods)

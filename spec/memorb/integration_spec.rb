@@ -22,6 +22,14 @@ describe ::Memorb::Integration do
         expect(integrations).to contain_exactly(integration)
       end
     end
+    context 'when given a regular object' do
+      it 'raises an error' do
+        obj = ::Object.new
+        error = ::Memorb::InvalidIntegrationError
+        error_message = 'integration target must be a class'
+        expect { obj.extend(::Memorb) }.to raise_error(error, error_message)
+      end
+    end
   end
   describe '::integrated?' do
     context 'when a given class has not integrated Memorb' do

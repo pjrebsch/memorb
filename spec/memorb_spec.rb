@@ -1,20 +1,23 @@
 # frozen_string_literal: true
 
 describe ::Memorb do
-  context 'when included on a target' do
-    it 'raises an error' do
-      expect { ::Class.new { include ::Memorb } }.to raise_error(
-        ::Memorb::InvalidIntegrationError,
-        'Memorb must be integrated using `extend`',
-      )
+  context 'when integrating improperly' do
+    let(:error) { ::Memorb::InvalidIntegrationError }
+    let(:error_message) { 'Memorb must be integrated using `extend`' }
+
+    context 'when included on a target' do
+      it 'raises an error' do
+        expect {
+          ::Class.new { include ::Memorb }
+        }.to raise_error(error, error_message)
+      end
     end
-  end
-  context 'when prepended on a target' do
-    it 'raises an error' do
-      expect { ::Class.new { prepend ::Memorb } }.to raise_error(
-        ::Memorb::InvalidIntegrationError,
-        'Memorb must be integrated using `extend`',
-      )
+    context 'when prepended on a target' do
+      it 'raises an error' do
+        expect {
+          ::Class.new { prepend ::Memorb }
+        }.to raise_error(error, error_message)
+      end
     end
   end
 
