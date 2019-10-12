@@ -18,10 +18,3 @@ module Memorb
 
   end
 end
-
-def Memorb(&block)
-  target = block.binding.receiver
-  integration = ::Memorb::Integration.integrate_with!(target)
-  integration.register(&block)
-  ::Memorb
-end
