@@ -449,7 +449,7 @@ describe ::Memorb::Integration do
       expect { instance.send(method_name) }.not_to raise_error
     end
     context 'when mixing in with another class' do
-      let(:error) { ::Memorb::InvalidTargetError }
+      let(:error) { ::Memorb::MismatchedTargetError }
       let(:klass) { ::Class.new.singleton_class }
 
       it 'raises an error when using prepend' do
