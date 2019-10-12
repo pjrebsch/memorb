@@ -27,8 +27,7 @@ module Memorb
     private
 
     def _raise_invalid_integration_error!
-      raise InvalidIntegrationError
-        .new('Memorb must be integrated using `extend`')
+      raise InvalidIntegrationError, 'Memorb must be integrated using `extend`'
     end
 
   end

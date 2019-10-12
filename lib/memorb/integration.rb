@@ -100,8 +100,15 @@ module Memorb
               nil
             end
 
-            def prepended(base); _check_integrator!(base); end
-            def included(base);  _check_integrator!(base); end
+            def prepended(base)
+              _check_integrator!(base)
+              super
+            end
+
+            def included(base)
+              raise InvalidIntegrationError,
+                'an integration must be applied with `prepend`, not `include`'
+            end
 
             def name
               [:name, :inspect, :object_id].each do |m|

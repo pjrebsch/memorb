@@ -490,15 +490,19 @@ describe ::Memorb::Integration do
       expect(subject.enabled_methods).to include(method_name)
       expect { instance.send(method_name) }.not_to raise_error
     end
-    context 'when mixing in with another class' do
-      let(:error) { ::Memorb::MismatchedTargetError }
-      let(:klass) { ::Class.new.singleton_class }
-
-      it 'raises an error when using prepend' do
+    context 'when prepending on another class' do
+      it 'raises an error' do
+        klass = ::Class.new.singleton_class
+        error = ::Memorb::MismatchedTargetError
         expect { klass.prepend(subject) }.to raise_error(error)
       end
-      it 'raises an error when using include' do
-        expect { klass.include(subject) }.to raise_error(error)
+    end
+    context 'when including with any class' do
+      it 'raises an error' do
+        klass = subject.integrator
+        error = ::Memorb::InvalidIntegrationError
+        error_message = 'an integration must be applied with `prepend`, not `include`'
+        expect { klass.include(subject) }.to raise_error(error, error_message)
       end
     end
     # JRuby garbage collection isn't as straightforward as CRuby, so tests
