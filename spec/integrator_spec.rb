@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'for ancestry verification' do
+shared_examples 'for ancestry verification' do
   it 'has the correct ancestry' do
     expect(integration).not_to be(nil)
     ancestors = integrator.ancestors
@@ -10,31 +10,31 @@ RSpec.shared_examples 'for ancestry verification' do
   end
 end
 
-RSpec.shared_examples 'for method registration verification' do |methods|
+shared_examples 'for method registration verification' do |methods|
   it 'registers the correct methods' do
     expect(integration.registered_methods).to include(:increment, :double)
   end
 end
 
-RSpec.shared_examples 'for cache key verification' do
+shared_examples 'for cache key verification' do
   it 'records the cache key correctly' do
     method_name = :increment
-    method_id = Memorb::MethodIdentifier.new(method_name)
+    method_id = ::Memorb::MethodIdentifier.new(method_name)
     instance.send(method_name)
     store = instance.memorb.method_store
     expect(store.keys).to match_array([method_id])
   end
 end
 
-RSpec.describe 'integrators of Memorb' do
-  let(:target) { SpecHelper.basic_target_class }
-  let(:integration) { Memorb::Integration[integrator] }
+describe 'integrators of Memorb' do
+  let(:target) { ::SpecHelper.basic_target_class }
+  let(:integration) { ::Memorb::Integration[integrator] }
   let(:instance) { integrator.new }
 
   describe 'a basic integrator' do
     let(:integrator) {
-      Class.new do
-        extend Memorb
+      ::Class.new do
+        extend ::Memorb
       end
     }
     include_examples 'for ancestry verification'
@@ -42,9 +42,9 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'an integrator that includes Memorb more than once' do
     let(:integrator) {
-      Class.new do
-        extend Memorb
-        extend Memorb
+      ::Class.new do
+        extend ::Memorb
+        extend ::Memorb
       end
     }
     include_examples 'for ancestry verification'
@@ -52,25 +52,25 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'a child of an integrator' do
     let(:parent_integrator) {
-      Class.new do
-        extend Memorb
+      ::Class.new do
+        extend ::Memorb
       end
     }
     let(:integrator) {
-      Class.new(parent_integrator)
+      ::Class.new(parent_integrator)
     }
     include_examples 'for ancestry verification'
   end
 
   describe 'a child of an integrator that includes Memorb again' do
     let(:parent_integrator) {
-      Class.new do
-        extend Memorb
+      ::Class.new do
+        extend ::Memorb
       end
     }
     let(:integrator) {
-      Class.new(parent_integrator) do
-        extend Memorb
+      ::Class.new(parent_integrator) do
+        extend ::Memorb
       end
     }
     include_examples 'for ancestry verification'
@@ -78,8 +78,8 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'an integrator that registers methods' do
     let(:integrator) {
-      Class.new(target) do
-        extend Memorb
+      ::Class.new(target) do
+        extend ::Memorb
         memorb.register(:increment)
         memorb.register(:double)
       end
@@ -91,7 +91,7 @@ RSpec.describe 'integrators of Memorb' do
 
   describe 'an integrator that registers methods using a block when integrating' do
     let(:integrator) {
-      Class.new do
+      ::Class.new do
         extend Memorb {
           def increment; end
           def double; end

@@ -26,7 +26,7 @@ module Memorb
       INTEGRATIONS = KeyValueStore.new
 
       def new(integrator)
-        mixin = Module.new do
+        mixin = ::Module.new do
           def initialize(*)
             agent = Integration[self.class].create_agent(self)
             define_singleton_method(:memorb) { agent }
@@ -82,7 +82,7 @@ module Memorb
 
             def auto_register?; @auto_register; end
             def auto_register!(&block)
-              raise ArgumentError, 'a block must be provided' if block.nil?
+              raise ::ArgumentError, 'a block must be provided' if block.nil?
               begin
                 @auto_register = true
                 block.call

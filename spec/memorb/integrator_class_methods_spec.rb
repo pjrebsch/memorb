@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Memorb::IntegratorClassMethods do
-  let(:integrator) { Class.new { extend Memorb } }
-  let(:integration) { Memorb::Integration[integrator] }
+describe ::Memorb::IntegratorClassMethods do
+  let(:integrator) { ::Class.new { extend ::Memorb } }
+  let(:integration) { ::Memorb::Integration[integrator] }
   let(:instance) { integrator.new }
 
   describe '::memorb' do
@@ -12,8 +12,8 @@ RSpec.describe Memorb::IntegratorClassMethods do
   end
   describe '::inherited' do
     it 'makes children of integrators get their own integration' do
-      child_integrator = Class.new(integrator)
-      integration = Memorb::Integration[child_integrator]
+      child_integrator = ::Class.new(integrator)
+      integration = ::Memorb::Integration[child_integrator]
       expect(integration).not_to be(nil)
       expected_ancestry = [integration, child_integrator]
       expect(child_integrator.ancestors).to start_with(*expected_ancestry)
@@ -56,7 +56,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
   end
   describe '::method_removed' do
     let(:method_name) { :method_1 }
-    let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
+    let(:method_id) { ::Memorb::MethodIdentifier.new(method_name) }
 
     it 'retains upstream behavior' do
       ::Memorb::RubyCompatibility
@@ -92,7 +92,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
   end
   describe '::method_undefined' do
     let(:method_name) { :method_1 }
-    let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
+    let(:method_id) { ::Memorb::MethodIdentifier.new(method_name) }
 
     it 'retains upstream behavior' do
       ::Memorb::RubyCompatibility
@@ -115,7 +115,7 @@ RSpec.describe Memorb::IntegratorClassMethods do
       expect(integration.public_instance_methods).not_to include(method_name)
       expect {
         instance.send(method_name)
-      }.to raise_error(NoMethodError, /undefined method/)
+      }.to raise_error(::NoMethodError, /undefined method/)
     end
     it 'clears cached data for the method in all instances' do
       ::Memorb::RubyCompatibility

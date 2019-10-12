@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Memorb::Integration do
-  let(:target) { SpecHelper.basic_target_class }
+describe ::Memorb::Integration do
+  let(:target) { ::SpecHelper.basic_target_class }
 
   describe '::integrate_with!' do
     it 'returns the integration for the given class' do
@@ -53,7 +53,7 @@ RSpec.describe Memorb::Integration do
   end
 
   describe 'an integration' do
-    let(:integrator) { target.tap { |x| x.extend(Memorb) } }
+    let(:integrator) { target.tap { |x| x.extend(::Memorb) } }
     let(:integrator_singleton) { integrator.singleton_class }
     let(:instance) { integrator.new }
     let(:agent_registry) { subject.send(:_agents) }
@@ -113,7 +113,7 @@ RSpec.describe Memorb::Integration do
           end
         end
         context 'when registering a method that does not exist' do
-          let(:target) { Class.new }
+          let(:target) { ::Class.new }
 
           it 'still allows the method to be registered' do
             subject.register(method_name)
@@ -129,7 +129,7 @@ RSpec.describe Memorb::Integration do
           end
           it 'raises an error when trying to call it' do
             subject.register(method_name)
-            expect { instance.send(method_name) }.to raise_error(NoMethodError)
+            expect { instance.send(method_name) }.to raise_error(::NoMethodError)
           end
           context 'once the method is defined' do
             it 'responds to the the method' do
@@ -172,12 +172,12 @@ RSpec.describe Memorb::Integration do
         it 'raises an error' do
           expect {
             subject.register(:method_1) { nil }
-          }.to raise_error(ArgumentError)
+          }.to raise_error(::ArgumentError)
         end
       end
       context 'when called without arguments or a block' do
         it 'raises an error' do
-          expect { subject.register }.to raise_error(ArgumentError)
+          expect { subject.register }.to raise_error(::ArgumentError)
         end
       end
     end
@@ -186,12 +186,12 @@ RSpec.describe Memorb::Integration do
         visibilities = [:public, :protected, :private]
         method_names = visibilities.map { |vis| :"#{ vis }_method" }
 
-        integrator = Class.new.tap do |target|
+        integrator = ::Class.new.tap do |target|
           eval_string = visibilities.map.with_index do |vis, i|
             "#{ vis }; def #{ method_names[i] }; end;"
           end.join("\n")
           target.class_eval(eval_string)
-          target.extend(Memorb)
+          target.extend(::Memorb)
         end
 
         subject = described_class[integrator]
@@ -248,7 +248,7 @@ RSpec.describe Memorb::Integration do
             expect(result).to be(:public)
           end
           context 'when the method is not defined' do
-            let(:target) { Class.new }
+            let(:target) { ::Class.new }
 
             it 'does not override the method' do
               subject.register(method_name)
@@ -290,7 +290,7 @@ RSpec.describe Memorb::Integration do
           expect(subject.enabled_methods).not_to include(method_name)
         end
         context 'when there is no override method defined' do
-          let(:target) { Class.new }
+          let(:target) { ::Class.new }
 
           it 'does not raise an error' do
             expect { subject.disable(provided_name) }.not_to raise_error
@@ -345,7 +345,7 @@ RSpec.describe Memorb::Integration do
     end
     describe '::purge' do
       let(:method_name) { :increment }
-      let(:method_id) { Memorb::MethodIdentifier.new(method_name) }
+      let(:method_id) { ::Memorb::MethodIdentifier.new(method_name) }
 
       it 'clears cached data for the given method in all instances' do
         subject.register(method_name)
@@ -382,7 +382,7 @@ RSpec.describe Memorb::Integration do
         it 'raises an error' do
           expect {
             subject.auto_register!
-          }.to raise_error(ArgumentError, 'a block must be provided')
+          }.to raise_error(::ArgumentError, 'a block must be provided')
         end
       end
       it 'enables automatic registration of methods defined in the block' do
@@ -442,8 +442,8 @@ RSpec.describe Memorb::Integration do
       expect { instance.send(method_name) }.not_to raise_error
     end
     context 'when mixing in with another class' do
-      let(:error) { Memorb::InvalidIntegrationError }
-      let(:klass) { Class.new.singleton_class }
+      let(:error) { ::Memorb::InvalidIntegrationError }
+      let(:klass) { ::Class.new.singleton_class }
 
       it 'raises an error when using prepend' do
         expect { klass.prepend(subject) }.to raise_error(error)
@@ -460,10 +460,10 @@ RSpec.describe Memorb::Integration do
           # At the time of writing, RSpec blocks aren't allowing out-of-scope
           # variables to be garbage collected, so `WeakRef` is used to fix that.
           require 'weakref'
-          ref = WeakRef.new(integrator.new)
+          ref = ::WeakRef.new(integrator.new)
           agent = ref.__getobj__.memorb
           expect(agent_registry.keys).to include(agent.id)
-          SpecHelper.force_garbage_collection
+          ::SpecHelper.force_garbage_collection
           expect(agent_registry.keys).to be_empty
         end
       end

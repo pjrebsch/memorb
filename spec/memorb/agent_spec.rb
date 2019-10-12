@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe Memorb::Agent do
-  let(:target) { SpecHelper.basic_target_class }
-  let(:integrator) { Class.new(target) { extend Memorb } }
+describe ::Memorb::Agent do
+  let(:target) { ::SpecHelper.basic_target_class }
+  let(:integrator) { ::Class.new(target) { extend ::Memorb } }
   let(:integrator_instance) { integrator.new }
   subject { described_class.new(integrator_instance.object_id) }
 
