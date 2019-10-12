@@ -440,7 +440,14 @@ describe ::Memorb::Integration do
       end
     end
     it 'supports regularly invalid method names' do
-      method_name = :' 1!2@3#4$5%6^7&8*9(0),\./=<+>-??'
+      invalid_starting_chars = [0x00..0x40, 0x5b..0x60, 0x7b..0xff]
+      method_name = invalid_starting_chars
+        .map(&:to_a)
+        .flatten
+        .map(&:chr)
+        .shuffle(random: ::Random.new(::RSpec.configuration.seed))
+        .join
+        .to_sym
       subject.register(method_name)
       ::Memorb::RubyCompatibility
         .define_method(integrator, method_name) { nil }
