@@ -19,7 +19,7 @@ describe ::Memorb::Integration do
         integration = described_class.integrate_with!(target)
         ancestors = target.ancestors
         integrations = ancestors.select { |a| a.equal? integration }
-        expect(integrations).to match_array([integration])
+        expect(integrations).to contain_exactly(integration)
       end
     end
   end
@@ -70,7 +70,7 @@ describe ::Memorb::Integration do
         end
         it 'adds the agent to the global registry' do
           agent = instance.memorb
-          expect(agent_registry.keys).to match_array([agent.id])
+          expect(agent_registry.keys).to contain_exactly(agent.id)
         end
       end
       describe '#memorb' do
@@ -429,7 +429,7 @@ describe ::Memorb::Integration do
       it 'writes the agent to the global agent registry' do
         agent = subject.create_agent(instance)
         registry = subject.send(:_agents)
-        expect(registry.keys).to match_array([agent.id])
+        expect(registry.keys).to contain_exactly(agent.id)
       end
     end
     it 'supports regularly invalid method names' do
