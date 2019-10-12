@@ -365,21 +365,31 @@ RSpec.describe Memorb::Integration do
       end
     end
     describe '::auto_register?' do
-      it 'is off by default' do
-        expect(subject.auto_register?).to be(false)
+      context 'by default' do
+        it 'returns false' do
+          expect(subject.auto_register?).to be(false)
+        end
+      end
+      context 'when turned on' do
+        it 'returns true' do
+          subject.instance_variable_set(:@auto_register, true)
+          expect(subject.auto_register?).to be(true)
+        end
       end
     end
-    describe '::auto_register=' do
-      it 'sets the auto_register flag' do
-        subject.auto_register = true
-        expect(subject.auto_register?).to be(true)
-        subject.auto_register = false
-        expect(subject.auto_register?).to be(false)
-      end
-      context 'when passing in a non-boolean value' do
+    describe '::auto_register!' do
+      context 'when not given a block' do
         it 'raises an error' do
-          expect { subject.auto_register = nil }.to raise_error(::ArgumentError)
+          expect {
+            subject.auto_register!
+          }.to raise_error(ArgumentError, 'a block must be provided')
         end
+      end
+      it 'enables automatic registration of methods defined in the block' do
+        subject.auto_register! do
+          ::Memorb::RubyCompatibility.define_method(integrator, :a) { nil }
+        end
+        expect(subject.registered_methods).to include(:a)
       end
     end
     describe '::name' do

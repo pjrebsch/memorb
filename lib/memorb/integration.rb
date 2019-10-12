@@ -81,12 +81,13 @@ module Memorb
             end
 
             def auto_register?; @auto_register; end
-            def auto_register=(bool)
-              case bool
-              when true, false
-                @auto_register = bool
-              else
-                raise ::ArgumentError, 'Only boolean values are allowed'
+            def auto_register!(&block)
+              raise ArgumentError, 'a block must be provided' if block.nil?
+              begin
+                @auto_register = true
+                block.call
+              ensure
+                @auto_register = false
               end
             end
 
@@ -138,10 +139,9 @@ module Memorb
             end
 
             def _register_from_block(&block)
-              self.auto_register = true
-              integrator.class_eval(&block)
-            ensure
-              self.auto_register = false
+              auto_register! do
+                integrator.class_eval(&block)
+              end
             end
 
             def _registered?(method_id)
@@ -228,12 +228,15 @@ module Memorb
           end
         end
 
+        mixin.instance_variable_set(:@auto_register, false)
+
         RubyCompatibility.module_constant_set(mixin, :registrations, KeyValueStore.new)
         RubyCompatibility.module_constant_set(mixin, :overrides, KeyValueStore.new)
         RubyCompatibility.module_constant_set(mixin, :agents, KeyValueStore.new)
 
-        mixin.auto_register = false
-        RubyCompatibility.define_method(mixin.singleton_class, :integrator) { integrator }
+        RubyCompatibility.define_method(mixin.singleton_class, :integrator) do
+          integrator
+        end
 
         mixin
       end
