@@ -36,6 +36,14 @@ module Memorb
         receiver.instance_variable_set(n, value)
       end
 
+      # JRuby *
+      # JRuby does not yet support `receiver` on `NameError`.
+      # https://github.com/jruby/jruby/issues/5576
+      def name_error_matches(error, expected_name, expected_receiver)
+        return false unless error.name.equal?(expected_name)
+        ::RUBY_ENGINE == 'jruby' || error.receiver.equal?(expected_receiver)
+      end
+
       private
 
       def ivar_name(key)

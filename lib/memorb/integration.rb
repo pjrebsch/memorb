@@ -202,7 +202,9 @@ module Memorb
               remove_method(method_id.to_sym)
             rescue ::NameError => e
               # If this exception was for something else, it should be re-raised.
-              raise e unless e.name.equal?(method_id.to_sym) && e.receiver.equal?(self)
+              unless RubyCompatibility.name_error_matches(e, method_id.to_sym, self)
+                raise e
+              end
             end
 
             def _define_override(method_id)
