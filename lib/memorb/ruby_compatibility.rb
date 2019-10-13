@@ -15,7 +15,7 @@ module Memorb
       # MRI < 2.5
       # These methods are `private` and require the use of `send`.
       %i[ define_method remove_method undef_method ].each do |m|
-        eval(<<~RUBY)
+        eval(<<~RUBY, binding, __FILE__, __LINE__ + 1)
           def #{ m }(receiver, *args, &block)
             receiver.send(__method__, *args, &block)
           end
