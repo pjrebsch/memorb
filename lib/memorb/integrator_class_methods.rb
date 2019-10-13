@@ -7,6 +7,10 @@ module Memorb
       Integration[self]
     end
 
+    def memorb!(*args)
+      memorb.register(*args)
+    end
+
     private
 
     def inherited(child)

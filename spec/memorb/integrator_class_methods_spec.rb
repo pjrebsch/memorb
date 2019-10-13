@@ -10,6 +10,12 @@ describe ::Memorb::IntegratorClassMethods do
       expect(integrator.memorb).to be(integration)
     end
   end
+  describe '::memorb!' do
+    it 'registers the given method name' do
+      integrator.memorb!(:a)
+      expect(integration.registered_methods).to include(:a)
+    end
+  end
   describe '::inherited' do
     it 'makes children of integrators get their own integration' do
       child_integrator = ::Class.new(integrator)
