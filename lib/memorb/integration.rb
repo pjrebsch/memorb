@@ -77,6 +77,10 @@ module Memorb
               _identifiers_to_symbols(_overrides.keys)
             end
 
+            def disabled_methods
+              registered_methods - enabled_methods
+            end
+
             def enabled?(name)
               _enabled?(_identifier(name))
             end

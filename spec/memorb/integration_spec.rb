@@ -333,6 +333,13 @@ describe ::Memorb::Integration do
         expect(subject.enabled_methods).to match_array(methods)
       end
     end
+    describe '::disabled_methods' do
+      it 'returns an array of methods that are not enabled' do
+        methods = [:a, :increment, :b, :double, :c]
+        methods.each { |m| subject.register(m) }
+        expect(subject.disabled_methods).to contain_exactly(:a, :b, :c)
+      end
+    end
     describe '::enabled?' do
       shared_examples '::enabled?' do |provided_name|
         let(:method_name) { :increment }
