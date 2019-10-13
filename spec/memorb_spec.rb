@@ -33,6 +33,7 @@ describe ::Memorb do
     end
 
     let(:integration) { ::Memorb::Integration[integrator] }
+    let(:instance) { integrator.new }
 
     describe 'a basic integrator' do
       let(:integrator) {
@@ -77,6 +78,38 @@ describe ::Memorb do
         end
       }
       include_examples 'for ancestry verification'
+    end
+
+    describe 'an integrator that aliases a method after registration' do
+      let(:integrator) {
+        ::Class.new(::SpecHelper.basic_target_class) do
+          extend ::Memorb
+          memorb.register(:increment)
+          alias_method :other_increment, :increment
+        end
+      }
+
+      it 'implements caching for the aliased method' do
+        result_1 = instance.other_increment
+        result_2 = instance.other_increment
+        expect(result_1).to eq(result_2)
+      end
+    end
+
+    describe 'an integrator that aliases a method before registration' do
+      let(:integrator) {
+        ::Class.new(::SpecHelper.basic_target_class) do
+          extend ::Memorb
+          alias_method :other_increment, :increment
+          memorb.register(:increment)
+        end
+      }
+
+      it 'does not implement caching for the aliased method' do
+        result_1 = instance.other_increment
+        result_2 = instance.other_increment
+        expect(result_1).not_to eq(result_2)
+      end
     end
   end
 end
