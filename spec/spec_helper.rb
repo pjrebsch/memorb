@@ -32,5 +32,15 @@ module SpecHelper
       ::GC.stress = false
     end
 
+    def test_method_name(stringlike, &block)
+      ctx = block.binding.receiver
+      [stringlike, stringlike.to_s].each do |converted|
+        type = converted.class.name.downcase
+        ctx.context "with method name supplied as a #{ type }" do
+          instance_exec(stringlike, converted, &block)
+        end
+      end
+    end
+
   end
 end

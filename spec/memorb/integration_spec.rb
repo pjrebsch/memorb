@@ -215,9 +215,7 @@ describe ::Memorb::Integration do
           expect(overrides).not_to include(*other_methods)
         end
       end
-      shared_examples '::registered?' do |provided_name|
-        let(:method_name) { :increment }
-
+      ::SpecHelper.test_method_name(:increment) do |method_name, provided_name|
         context 'when the named method is registered' do
           it 'returns true' do
             subject.register(method_name)
@@ -232,17 +230,9 @@ describe ::Memorb::Integration do
           end
         end
       end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::registered?', :increment
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::registered?', 'increment'
-      end
     end
     describe '::enable' do
-      shared_examples '::enable' do |provided_name|
-        let(:method_name) { :increment }
-
+      ::SpecHelper.test_method_name(:increment) do |method_name, provided_name|
         it 'records the cache key correctly' do
           method_id = ::Memorb::MethodIdentifier.new(provided_name)
           subject.register(method_name)
@@ -288,17 +278,9 @@ describe ::Memorb::Integration do
           end
         end
       end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::enable', :increment
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::enable', 'increment'
-      end
     end
     describe '::disable' do
-      shared_examples '::disable' do |provided_name|
-        let(:method_name) { :increment }
-
+      ::SpecHelper.test_method_name(:increment) do |method_name, provided_name|
         it 'removes the override method for the given method' do
           subject.register(method_name)
           subject.disable(provided_name)
@@ -311,12 +293,6 @@ describe ::Memorb::Integration do
             expect { subject.disable(provided_name) }.not_to raise_error
           end
         end
-      end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::disable', :increment
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::disable', 'increment'
       end
     end
     describe '::registered_methods' do
@@ -341,9 +317,7 @@ describe ::Memorb::Integration do
       end
     end
     describe '::enabled?' do
-      shared_examples '::enabled?' do |provided_name|
-        let(:method_name) { :increment }
-
+      ::SpecHelper.test_method_name(:increment) do |method_name, provided_name|
         context 'when the named method is enabled' do
           it 'returns true' do
             subject.register(method_name)
@@ -357,12 +331,6 @@ describe ::Memorb::Integration do
             expect(result).to be(false)
           end
         end
-      end
-      context 'with method name supplied as a symbol' do
-        it_behaves_like '::enabled?', :increment
-      end
-      context 'with method name supplied as a string' do
-        it_behaves_like '::enabled?', 'increment'
       end
     end
     describe '::purge' do
