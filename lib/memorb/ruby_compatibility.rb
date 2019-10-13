@@ -40,7 +40,7 @@ module Memorb
       # JRuby does not yet support `receiver` on `NameError`.
       # https://github.com/jruby/jruby/issues/5576
       def name_error_matches(error, expected_name, expected_receiver)
-        return false unless error.name.equal?(expected_name)
+        return false unless error.name.to_s == expected_name.to_s
         ::RUBY_ENGINE == 'jruby' || error.receiver.equal?(expected_receiver)
       end
 

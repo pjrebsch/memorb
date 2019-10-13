@@ -206,7 +206,7 @@ module Memorb
               remove_method(method_id.to_sym)
             rescue ::NameError => e
               # If this exception was for something else, it should be re-raised.
-              unless RubyCompatibility.name_error_matches(e, method_id.to_sym, self)
+              unless RubyCompatibility.name_error_matches(e, method_id, self)
                 raise e
               end
             end
