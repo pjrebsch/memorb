@@ -40,21 +40,23 @@ module Memorb
 
           class << self
 
-            def register(name = nil, &block)
-              name_present = !name.nil?
+            def register(*names, &block)
+              names_present = !names.empty?
               block_present = !block.nil?
 
-              if name_present && block_present
+              if names_present && block_present
                 raise ::ArgumentError,
                   'register may not be called with both a method name and a block'
-              elsif name_present
-                _register_from_name(_identifier(name))
+              elsif names_present
+                names.flatten.each { |n| _register_from_name(_identifier(n)) }
               elsif block_present
                 _register_from_block(&block)
               else
                 raise ::ArgumentError,
                   'register must be called with either a method name or a block'
               end
+
+              nil
             end
 
             def registered_methods

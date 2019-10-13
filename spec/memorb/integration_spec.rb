@@ -101,7 +101,7 @@ describe ::Memorb::Integration do
     describe '::register' do
       let(:method_name) { :increment }
 
-      context 'when called with a single argument' do
+      context 'when called with method names as arguments' do
         it 'caches the registered method' do
           subject.register(method_name)
           result1 = instance.send(method_name)
@@ -112,12 +112,34 @@ describe ::Memorb::Integration do
           subject.register(method_name)
           expect(subject.registered_methods).to include(method_name)
         end
+        context 'when providing a method name as a string' do
+          it 'registers the given method' do
+            subject.register('a')
+            expect(subject.registered_methods).to include(:a)
+          end
+        end
+        context 'when providing multiple method names' do
+          it 'registers each method' do
+            subject.register(:a, :b)
+            expect(subject.registered_methods).to include(:a, :b)
+          end
+        end
+        context 'when providing arrays of method names' do
+          it 'registers all methods in those arrays' do
+            subject.register([:a, :b], [:c])
+            expect(subject.registered_methods).to include(:a, :b, :c)
+          end
+        end
         context 'when registering a method multiple times' do
+          before(:each) { 2.times { subject.register(method_name) } }
+
           it 'still caches the registered method' do
-            2.times { subject.register(method_name) }
             result1 = instance.send(method_name)
             result2 = instance.send(method_name)
             expect(result1).to eq(result2)
+          end
+          it 'records registration of the method once' do
+            expect(subject.registered_methods).to contain_exactly(method_name)
           end
         end
         context 'when registering a method that does not exist' do
