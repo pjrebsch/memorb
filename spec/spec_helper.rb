@@ -14,7 +14,7 @@ module SpecHelper
       end
     end
 
-    def rng
+    def prng
       ::Random.new(::RSpec.configuration.seed)
     end
 

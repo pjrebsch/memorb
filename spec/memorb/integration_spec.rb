@@ -498,7 +498,7 @@ describe ::Memorb::Integration do
         .map(&:to_a)
         .flatten
         .map(&:chr)
-        .shuffle(random: ::SpecHelper.rng)
+        .shuffle(random: ::SpecHelper.prng)
         .join
         .to_sym
       subject.register(method_name)
