@@ -215,7 +215,7 @@ module Memorb
               define_method(method_id.to_sym) do |*args, &block|
                 memorb.method_store
                   .fetch(method_id) { KeyValueStore.new }
-                  .fetch([*args, block]) { super(*args, &block) }
+                  .fetch(args) { super(*args, &block) }
               end
             end
 
