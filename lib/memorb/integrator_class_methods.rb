@@ -7,8 +7,8 @@ module Memorb
       Integration[self]
     end
 
-    def memorb!(*args)
-      memorb.register(*args)
+    def memorb!(*args, &block)
+      memorb.register(*args, &block)
     end
 
     private

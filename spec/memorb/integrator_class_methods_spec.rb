@@ -11,9 +11,14 @@ describe ::Memorb::IntegratorClassMethods do
     end
   end
   describe '::memorb!' do
-    it 'registers the given method name' do
-      integrator.memorb!(:a)
-      expect(integration.registered_methods).to include(:a)
+    it 'calls register with the same arguments' do
+      spy = double('spy', register: nil)
+      mod = Module.new
+      ::Memorb::RubyCompatibility.define_method(mod, :memorb) { spy }
+      integrator.singleton_class.prepend(mod)
+      block = Proc.new { nil }
+      expect(spy).to receive(:register).with(:a, &block)
+      integrator.memorb!(:a, &block)
     end
   end
   describe '::inherited' do
