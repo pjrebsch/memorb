@@ -11,8 +11,8 @@ This is a contrived example class that could benefit from memoization:
 ```ruby
 class WeekForecast
 
-  def initialize(starting:)
-    @date = starting
+  def initialize(date:)
+    @date = date
   end
 
   def data
@@ -20,7 +20,7 @@ class WeekForecast
   end
 
   def week_days
-    Date::ABBR_DAYNAMES.rotate(@date)
+    Date::ABBR_DAYNAMES.rotate(@date.wday)
   end
 
   def rain_on?(week_day)
@@ -69,7 +69,7 @@ There are a few other benefits to using Memorb than just ease of implementation.
 
 The first requirement is that a class must extend the `Memorb` module.
 
-Instance methods can be registered with the `memorb.register` or `memorb!` methods by passing in a list of method names as was seen in the example from the previous section.
+Instance methods can be registered from a class definition with the `memorb.register` or `memorb!` methods by passing in a list of method names as was seen in the example from the previous section.
 
 Conveniently, methods defined using the `def` keyword return the method name, so the method definition can just be prefixed with a registration directive. This approach helps make apparent the fact that the method is being memoized when reading the method.
 
@@ -93,14 +93,24 @@ end
 
 ## How does it work?
 
-Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered, Memorb will override once it's defined so that on initial invocation, the method's return value is cached to be returned immediately on every invocation thereafter. Once the method has been overridden, it is considered "enabled" for Memorb functionality. Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
+Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered and defined, Memorb will override it so that on initial invocation, the method's return value is cached to be returned immediately on every invocation thereafter. Once the method has been overridden, it is considered "enabled" for Memorb functionality. Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
 
 ## Advisories
+
+### Argument variability leading to cache explosion
+
+Because memoization trades memory for computation savings, there is potential for memory explosion with a method that accepts arguments. All distinct arguments to a method will map to a return value.
+
+...
 
 ### Aliasing overridden methods
 
 ...
 
-### Defining methods dynamically
+### Potential for race conditions with method invocations
 
-Memorb overrides a registered method only once that method is defined. Memorb must wait until after the method is officially defined to prevent `respond_to?` from returning true for an instance prematurely. There is no way to hook into Ruby's method definition process, so Memorb can only know of a method definition event after it has occurred using Ruby's provided notification methods. This means that there is a small window between when a registered method is originally defined and when Memorb overrides it with memoization support. Within an open class definition, this should not be a problem because Ruby implementations should serialize class definitions. But if a registered instance method is defined dynamically or otherwise for a "closed" class, it is theoretically possible for another thread to call the method before Memorb has had a chance to override. If you are relying on Memorb's serialization for method invocation to prevent multiple executions of the method body, then you should be aware of this possibility.
+If you are relying on Memorb's serialization for method invocation to prevent multiple executions of a method body, then you should read this section.
+
+Memorb overrides a registered method only once that method has been defined. To prevent `respond_to?` from returning true for an instance prematurely or allowing the method to be called prematurely, Memorb must wait until after the method is officially defined. There is no way to hook into Ruby's method definition process (in pure Ruby), so Memorb can only know of a method definition event after it has occurred using Ruby's provided notification methods.
+
+This means that there is a small window of time between when a registered method is originally defined and when Memorb overrides it with memoization support. For methods that are registered and defined within the initial class definition, this shouldn't be a problem because there should be no instantiations of the class before its initial definition is closed. But methods that are defined dynamically may be able to be called by another thread before Memorb has had a chance to override them.
