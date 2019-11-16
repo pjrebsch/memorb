@@ -6,7 +6,7 @@ Memoize instance methods with ease.
 
 ## Overview
 
-This is a contrived example class that could benefit from memoization:
+This is a contrived example class that could benefit from memoization. It is designed for demonstration, not for making a good case for the use of memoization.
 
 ```ruby
 class WeekForecast
@@ -23,8 +23,8 @@ class WeekForecast
     Date::ABBR_DAYNAMES.rotate(@date.wday)
   end
 
-  def rain_on?(week_day)
-    percent_chance = data.dig('days', week_day.to_s, 'rain')
+  def rain_on?(day)
+    percent_chance = data.dig('days', day.to_s, 'rain')
     percent_chance > 75 if percent_chance
   end
 
@@ -35,7 +35,7 @@ class WeekForecast
 end
 ```
 
-All of its instance methods could be memoized to save them from unnecessary recomputation.
+All of its instance methods could be memoized to save them from unnecessary recomputation or I/O.
 
 A common way of accomplishing memoization is to save the result in an instance variable:
 
@@ -95,21 +95,48 @@ end
 
 Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered and defined, Memorb will override it so that on initial invocation, the method's return value is cached to be returned immediately on every invocation thereafter. Once the method has been overridden, it is considered "enabled" for Memorb functionality. Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
 
-## Advisories
+## Cache explosion
 
-### Argument variability leading to cache explosion
+No, sorry, not [the show](https://www.cashexplosionshow.com/).
 
-Because memoization trades memory for computation savings, there is potential for memory explosion with a method that accepts arguments. All distinct arguments to a method will map to a return value.
+Because memoization trades memory for computation savings, there is potential for memory explosion with a method that accepts arguments. All distinct sets of arguments to a method will map to a return value, and this mapping will be stored, so the potential for explosion increases exponentially as more arguments are supported. As long as the method is guaranteed to be called with a small, finite set of arguments, this shouldn't be a concern. But if the method is expected to handle arbitrary arguments or a large range of values, you may want to handle caching at a lower level within the method or abandon the memoization/caching approach altogether.
 
-...
+The `rain_on?` method in the example class represents a method that is subject to this. It can also be used as a good example of how to handle caching at a lower level. The only valid arguments are a representation of the seven days of the week, so there need only ever be up to seven cache entries. The day might not always be passed as a string—it might be passed as a symbol. The logic of the method makes no distinction because it always transforms the argument to a string, but Memorb can't know that the method considers them to be the same thing, so it would cache them as distinct values. This kind of "argument normalization" is another reason for handling caching inside the method.
+
+```ruby
+def rain_on?(day)
+  day = day.to_s
+  return unless week_days.include?(day)
+  memorb.fetch(:rain_on?, day) do
+    percent_chance = data.dig('days', day, 'rain')
+    percent_chance > 75 if percent_chance
+  end
+end
+```
+
+Obviously, this example method doesn't benefit much from a caching approach: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. In most cases, methods that take arguments are usually not going to be good candidates for caching because the explosion problem may represent too big a risk for the benefits that caching would provide, but there may be circumstances where it is advantageous, so it is supported.
+
+## Other Advisories
+
+### Redefining an enabled method
+
+Redefining a method that Memorb has already overridden can be done. Since Memorb's override of the method is of greater precedence, Memorb will continue to work for the method. But if you are doing this, you'll want to read this section to understand what behavior to expect.
+
+Any return values from previous executions of the method will remain in Memorb's cache even after the method has been redefined. If the method was redefined in a way that return values from the old definition no longer make sense for the application, then you can clear the cache after redefining the method.
+
+If redefinining the method changes its class visibility, see the next section.
+
+### Changing the visibility of an enabled method
+
+If you change the visibility of an enabled method, Memorb won't automatically know that it needs to change the visibility of its corresponding override, so the visibility change will appear to have not worked because Memorb's override takes precedence. Memorb is unable to reliably override the visibility modifier for a class to detect such changes on its own (see [this Ruby not-a-bug report](https://bugs.ruby-lang.org/issues/16100)). You're advised to avoid doing this.
 
 ### Aliasing overridden methods
 
 ...
 
-### Potential for race conditions with method invocations
+### Potential for initial method invocation race
 
-If you are relying on Memorb's serialization for method invocation to prevent multiple executions of a method body, then you should read this section.
+If you are relying on Memorb's serialization for method invocation to prevent multiple executions of a method body across threads, then you should read this section.
 
 Memorb overrides a registered method only once that method has been defined. To prevent `respond_to?` from returning true for an instance prematurely or allowing the method to be called prematurely, Memorb must wait until after the method is officially defined. There is no way to hook into Ruby's method definition process (in pure Ruby), so Memorb can only know of a method definition event after it has occurred using Ruby's provided notification methods.
 
