@@ -6,7 +6,9 @@ Memoize instance methods with ease.
 
 ## Overview
 
-This is a contrived example class that could benefit from memoization. It is designed for demonstration, not for making a good case for the use of memoization.
+Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered and defined, Memorb will override it so that on initial invocation, the method's return value is cached to be returned immediately on every invocation thereafter. Once the method has been overridden, it is considered "enabled" for Memorb functionality. Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
+
+Below is a contrived example class that could benefit from memoization. It is designed for effective demonstration, not for making a good case for the use of memoization.
 
 ```ruby
 class WeekForecast
@@ -63,13 +65,17 @@ end
 
 These methods' return values will now be memoized on each instance of `WeekForecast`. The `rain_on?` method will memoize its return values based on the arguments supplied to it (in this case one argument since that's all it accepts), and the other methods will each memoize their single, independent return value.
 
-There are a few other benefits to using Memorb than just ease of implementation. Using instance variables directly can make default inspection of the instance more difficult, and unfortunately timed concurrent initial invocations of a method could result in unexpected computations of what was expected to be computed once. Memorb assists with the former and prevents the latter.
-
 ## Usage
 
-The first requirement is that a class must extend the `Memorb` module.
+Registration of methods tells Memorb to enable memoization for them once they are defined. There are a few ways to register instance methods with Memorb. A common requirement is that a class must integrate Memorb with `extend Memorb` except for classes that inherit from a class that already has. Registration can be done with `memorb.register` or `memorb!` from a class context. It is recommended in general that you register methods before defining them.
 
-Instance methods can be registered from a class definition with the `memorb.register` or `memorb!` methods by passing in a list of method names as was seen in the example from the previous section.
+### List form
+
+This is the form used in the example code snippet above where Memorb is given a list of method names to register. The provided names may be strings or symbols.
+
+Memorb can't know when that definition is going to occur, so if you mistype the name of a method you intend to register later, Memorb will anticipate the method's definition indefinitely and the method that you intended to register won't end up being memoized. For this reason (among others), the Prefix form described below is recommended. If you do use the List form, you can use `memorb.check_registrations!` once you expect the methods you registered to have all been defined. If there are any registrations that don't have a method definition, it will raise an error containing those names.
+
+### Prefix form
 
 Conveniently, methods defined using the `def` keyword return the method name, so the method definition can just be prefixed with a registration directive. This approach helps make apparent the fact that the method is being memoized when reading the method.
 
@@ -82,7 +88,7 @@ class WeekForecast
 end
 ```
 
-If you prefer `def` and `end` to align, you can move `memorb!` up to a new line and escape the line break. The Memorb registration methods require arguments, so if you forget the escape the line break, you'll be made aware when the class itself is loaded.
+If you prefer `def` and `end` to align, you can move `memorb!` up to a new line and escape the line break. The Memorb registration methods require arguments, so if you forget to escape the line break, you'll be made aware when the class is loaded.
 
 ```ruby
 memorb! \
@@ -91,9 +97,36 @@ def week_days
 end
 ```
 
-## How does it work?
+### Block form
 
-Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered and defined, Memorb will override it so that on initial invocation, the method's return value is cached to be returned immediately on every invocation thereafter. Once the method has been overridden, it is considered "enabled" for Memorb functionality. Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
+Instead of listing out method names or decorating their definitions, you can just define them within a block.
+
+```ruby
+class WeekForecast
+  ...
+
+  memorb! do
+    def data
+      ...
+    end
+
+    def week_days
+      ...
+    end
+
+    def rain_on?(day)
+      ...
+    end
+
+    def will_rain?
+      ...
+    end
+  end
+
+end
+```
+
+Just be careful not to accidentally include `initialize` or any other methods that must always execute! It is also important to note that all instance methods that are defined while the block is open will be registered, not just the ones that can be seen using the `def` keyword.
 
 ## Cache explosion
 
@@ -101,20 +134,19 @@ No, sorry, not [the show](https://www.cashexplosionshow.com/).
 
 Because memoization trades memory for computation savings, there is potential for memory explosion with a method that accepts arguments. All distinct sets of arguments to a method will map to a return value, and this mapping will be stored, so the potential for explosion increases exponentially as more arguments are supported. As long as the method is guaranteed to be called with a small, finite set of arguments, this shouldn't be a concern. But if the method is expected to handle arbitrary arguments or a large range of values, you may want to handle caching at a lower level within the method or abandon the memoization/caching approach altogether.
 
-The `rain_on?` method in the example class represents a method that is subject to this. It can also be used as a good example of how to handle caching at a lower level. The only valid arguments are a representation of the seven days of the week, so there need only ever be up to seven cache entries. The day might not always be passed as a string—it might be passed as a symbol. The logic of the method makes no distinction because it always transforms the argument to a string, but Memorb can't know that the method considers them to be the same thing, so it would cache them as distinct values. This kind of "argument normalization" is another reason for handling caching inside the method.
+The `rain_on?` method in the example class represents a method that is subject to this. It can also be used as a good example of how to handle caching at a lower level. The only valid arguments are a representation of the seven days of the week, so there need only ever be up to seven cache entries. The day might not always be passed as a string—it could be anything that responds to `to_s`. The logic of the method doesn't care because it always transforms the argument to a string, but Memorb can't know what values for that argument the method would consider to be the same thing, so it would cache them as distinct values. This kind of "argument normalization" is another reason for handling caching inside the method.
 
 ```ruby
 def rain_on?(day)
   day = day.to_s
   return unless week_days.include?(day)
-  memorb.fetch(:rain_on?, day) do
-    percent_chance = data.dig('days', day, 'rain')
-    percent_chance > 75 if percent_chance
+  memorb.fetch(__method__, day) do
+    ...
   end
 end
 ```
 
-Obviously, this example method doesn't benefit much from a caching approach: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. In most cases, methods that take arguments are usually not going to be good candidates for caching because the explosion problem may represent too big a risk for the benefits that caching would provide, but there may be circumstances where it is advantageous, so it is supported.
+Obviously, this example method doesn't benefit much from a caching approach: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. In most cases, methods that take arguments are usually not going to be good candidates for memoization because the explosion problem may represent too big a risk for the benefits that it would provide, but there may be circumstances where it is advantageous, so it is supported.
 
 ## Other Advisories
 
