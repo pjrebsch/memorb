@@ -73,7 +73,7 @@ Registration of methods tells Memorb to enable memoization for them once they ar
 
 This is the form used in the example code snippet above where Memorb is given a list of method names to register. The provided names may be strings or symbols.
 
-Memorb can't know when that definition is going to occur, so if you mistype the name of a method you intend to register later, Memorb will anticipate the method's definition indefinitely and the method that you intended to register won't end up being memoized. For this reason (among others), the Prefix form described below is recommended. If you do use the List form, you can use `memorb.check_registrations!` once you expect the methods you registered to have all been defined. If there are any registrations that don't have a method definition, it will raise an error containing those names.
+Memorb can't know when a registered method's definition is going to occur, so if you mistype the name of a method you intend to define later, Memorb will anticipate that method's definition indefinitely and the method that you intended to register won't end up being memoized. For this reason (among others), the Prefix form described below is recommended. If you do use the List form, you can use `memorb.check_registrations!` once you expect the methods you registered to have all been defined. If there are any registrations that don't have a method definition, it will raise an error containing those names.
 
 ### Prefix form
 
@@ -103,32 +103,30 @@ Instead of listing out method names or decorating their definitions, you can jus
 
 ```ruby
 class WeekForecast
+  extend Memorb
   ...
-
   memorb! do
     def data
       ...
     end
-
     def week_days
       ...
     end
-
     def rain_on?(day)
       ...
     end
-
     def will_rain?
       ...
     end
   end
-
 end
 ```
 
-Just be careful not to accidentally include `initialize` or any other methods that must always execute! It is also important to note that all instance methods that are defined while the block is open will be registered, not just the ones that can be seen using the `def` keyword.
+Just be careful not to accidentally include `initialize` or any other methods that must always execute!
 
-## Cache explosion
+It is also important to note that all instance methods that are defined while the block is executing will be registered, not just the ones that can be seen using the `def` keyword. This is also not thread-safe, so if you are defining methods concurrently (which you shouldn't be), you may risk registering methods you didn't intend to register.
+
+## Cache Explosion
 
 No, sorry, not [the show](https://www.cashexplosionshow.com/).
 
@@ -146,7 +144,7 @@ def rain_on?(day)
 end
 ```
 
-Obviously, this example method doesn't benefit much from a caching approach: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. In most cases, methods that take arguments are usually not going to be good candidates for memoization because the explosion problem may represent too big a risk for the benefits that it would provide, but there may be circumstances where it is advantageous, so it is supported.
+Obviously, this example method doesn't benefit much from a caching approach: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. In most cases, methods that take arguments are usually not going to be good candidates for memoization because the explosion problem may represent too big a risk for the benefits that it would provide, but there may be circumstances where it is advantageous and/or low-risk, so it is supported.
 
 ## Other Advisories
 
