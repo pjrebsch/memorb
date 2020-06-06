@@ -130,9 +130,9 @@ It is also important to note that all instance methods that are defined while th
 
 No, sorry, not [the show](https://www.cashexplosionshow.com/).
 
-Because memoization trades memory for computation savings, there is potential for memory explosion with a method that accepts arguments. All distinct sets of arguments to a method will map to a return value, and this mapping will be stored, so the potential for explosion increases exponentially as more arguments are supported. As long as the method is guaranteed to be called with a small, finite set of arguments, this shouldn't be a concern. But if the method is expected to handle arbitrary arguments or a large range of values, you may want to handle caching at a lower level within the method or abandon the memoization/caching approach altogether.
+Because memoization trades computation for memory, there is potential for memory explosion with a method that accepts arguments. All distinct sets of arguments to a method will map to a return value, and this mapping will be stored, so the potential for explosion increases exponentially as more arguments are supported. As long as the method is guaranteed to be called with a small, finite set of arguments, this needn't be much of a concern. But if the method is expected to handle arbitrary arguments or a large range of values, you may want to handle caching at a lower level within the method or even abandon the memoization/caching approach altogether.
 
-The `rain_on?` method in the example class represents a method that is subject to this. It can also be used as a good example of how to handle caching at a lower level. The only valid arguments are a representation of the seven days of the week, so there need only ever be up to seven cache entries. The day might not always be passed as a string—it could be anything that responds to `to_s`. The logic of the method doesn't care because it always transforms the argument to a string, but Memorb can't know what values for that argument the method would consider to be the same thing, so it would cache them as distinct values. This kind of "argument normalization" is another reason for handling caching inside the method.
+The `rain_on?` method in the example class represents a method that is subject to this. It can also be used as an example of how to handle caching at a lower level. The only valid arguments to it are a representation of the seven days of the week, so there need only ever be up to seven cache entries. The day might not always be passed as a string—it could be anything that responds to `to_s`. The logic of the method doesn't care because it always transforms the argument to a string, but Memorb can't know what values for that argument the method's logic would consider to be the same thing, so it would cache them as distinct values. A solution is to perform "argument normalization" and use the results of that to implement caching within the method:
 
 ```ruby
 def rain_on?(day)
@@ -144,7 +144,7 @@ def rain_on?(day)
 end
 ```
 
-Obviously, this example method doesn't benefit much from a caching approach: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. In most cases, methods that take arguments are usually not going to be good candidates for memoization because the explosion problem may represent too big a risk for the benefits that it would provide, but there may be circumstances where it is advantageous and/or low-risk, so it is supported.
+Obviously, this method doesn't benefit much from a caching approach in the first place: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. Methods that take arguments may not be good candidates for memoization because the explosion problem may represent too big a risk for the benefits that caching would provide, but this is a judgment call to be made per case.
 
 ## Other Advisories
 
