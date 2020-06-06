@@ -514,7 +514,9 @@ describe ::Memorb::Integration do
       end
     end
     # JRuby garbage collection isn't as straightforward as CRuby, so tests
-    # that rely on garbage collection are skipped.
+    # that rely on garbage collection are skipped. The expectation is that
+    # if this works for CRuby's GC, then it should work for the GCs of other
+    # Ruby implementations.
     if ::RUBY_ENGINE != 'jruby'
       context 'when freed by the garbage collector' do
         it 'removes its agent from the global registry' do

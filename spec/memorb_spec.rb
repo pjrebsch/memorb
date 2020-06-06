@@ -123,10 +123,45 @@ describe ::Memorb do
         end
       }
 
-      it 'results in an infinite loop' do
+      it 'results in infinite recursion when the method is called' do
         expect {
           instance.increment
         }.to raise_error(::SystemStackError, 'stack level too deep')
+      end
+    end
+
+    describe 'an integrator with a method that accepts a block' do
+      let(:integrator) {
+        ::Class.new(::SpecHelper.basic_target_class) do
+          extend ::Memorb
+          def with_block(&block); block ? block.call(self) : increment; end
+          memorb.register(:with_block)
+        end
+      }
+
+      it 'still gets the block as a parameter' do
+        result = instance.with_block { |x| x }
+        expect(result).to be(instance)
+      end
+
+      it 'considers calls with different blocks to have the same arguments' do
+        result_1 = instance.with_block { |x| x.increment }
+        result_2 = instance.with_block { |x| x.increment }
+        expect(result_1).to eq(result_2)
+      end
+
+      it 'considers calls with different proc-blocks to have the same arguments' do
+        proc_1 = ::Proc.new { |x| x.increment }
+        proc_2 = ::Proc.new { |x| x.increment }
+        result_1 = instance.with_block(&proc_1)
+        result_2 = instance.with_block(&proc_2)
+        expect(result_1).to eq(result_2)
+      end
+
+      it 'considers a call with a block to be the same as a call without one' do
+        result_1 = instance.with_block { |x| x.increment }
+        result_2 = instance.with_block
+        expect(result_1).to eq(result_2)
       end
     end
   end

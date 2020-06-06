@@ -148,6 +148,12 @@ Obviously, this method doesn't benefit much from a caching approach in the first
 
 ## Other Advisories
 
+### Blocks are not considered distinguishing arguments
+
+Memorb ignores block arguments when determining whether or not a method has been called with the same arguments. It doesn't matter if a block is provided explicitly (using `&block` as a parameter), provided implicitly (using `yield` in the method body), or not provided at all. Therefore, blocks should not be used to distinguish otherwise equivalent method calls for the sake of memoization.
+
+However, a `Proc` can be passed as a normal argument and it _will_ be used in distinguishing method calls.
+
 ### Redefining an enabled method
 
 Redefining a method that Memorb has already overridden can be done. Since Memorb's override of the method is of greater precedence, Memorb will continue to work for the method. But if you are doing this, you'll want to read this section to understand what behavior to expect.
