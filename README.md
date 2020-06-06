@@ -172,7 +172,7 @@ Using `alias_method` in Ruby will create a copy under the new name of the existi
 
 ### Alias method chaining on overridden methods
 
-If you or another library uses alias method chaining on a method that Memorb has overridden, you will experience infinite recursion upon calling that method. See [this article](https://blog.newrelic.com/engineering/ruby-agent-module-prepend-alias-method-chains/) for an explanation of the incompatibility between using `Module#prepend` (which Memorb uses internally) with the alias method chaining technique. Refactoring such alias method chaining in the integrating class to use `Module#prepend` instead will prevent this issue.
+If you or another library uses alias method chaining on a method that Memorb has overridden, you will experience infinite recursion upon calling that method. See [this article](https://blog.newrelic.com/engineering/ruby-agent-module-prepend-alias-method-chains/) for an explanation of the incompatibility between using `Module#prepend` (which Memorb uses internally) with the alias method chaining technique. Refactoring such alias method chaining in the integrating class to instead use `Module#prepend` will prevent this issue.
 
 ### Potential for initial method invocation race
 
@@ -181,3 +181,17 @@ If you are relying on Memorb's serialization for method invocation to prevent mu
 Memorb overrides a registered method only once that method has been defined. To prevent `respond_to?` from returning true for an instance prematurely or allowing the method to be called prematurely, Memorb must wait until after the method is officially defined. There is no way to hook into Ruby's method definition process (in pure Ruby), so Memorb can only know of a method definition event after it has occurred using Ruby's provided notification methods.
 
 This means that there is a small window of time between when a registered method is originally defined and when Memorb overrides it with memoization support. For methods that are registered and defined within the initial class definition, this shouldn't be a problem because there should be no instantiations of the class before its initial definition is closed. But methods that are defined dynamically may be able to be called by another thread before Memorb has had a chance to override them.
+
+## Potential Enhancements
+
+### Ability to configure Memorb
+
+It could be beneficial to configure Memorb, though the options for configuration are unclear.
+
+### Ability to log cache accesses
+
+Caching introduces the possibility of bugs when things are cached too much. It would be helpful for debugging to be able to configure a `Logger` for cache accesses.
+
+### Alternative to instance variables
+
+Expanding Memorb to more than just memoization could include providing enhanced features for local instance state, such as capturing parameters during `initialize`.
