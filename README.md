@@ -162,7 +162,11 @@ If you change the visibility of an enabled method, Memorb won't automatically kn
 
 ### Aliasing overridden methods
 
-...
+Using `alias_method` in Ruby will create a copy under the new name of the existing method implementation found at that time. This means that the aliased method will have different behavior relative to when the method was overridden by Memorb. If the method was aliased before override by Memorb, then it's calls will not reference the cache of the original method, but if aliased after the override, then it will.
+
+### Alias method chaining on overridden methods
+
+If you or another library uses alias method chaining on a method that Memorb has overridden, you will experience infinite recursion upon calling that method. See [this article](https://blog.newrelic.com/engineering/ruby-agent-module-prepend-alias-method-chains/) for an explanation of the incompatibility between using `Module#prepend` (which Memorb uses internally) with the alias method chaining technique. Refactoring such alias method chaining in the integrating class to use `Module#prepend` instead will prevent this issue.
 
 ### Potential for initial method invocation race
 

@@ -111,5 +111,23 @@ describe ::Memorb do
         expect(result_1).not_to eq(result_2)
       end
     end
+
+    describe 'an integrator that uses alias method chaining' do
+      let(:integrator) {
+        ::Class.new(::SpecHelper.basic_target_class) do
+          extend ::Memorb
+          memorb.register(:increment)
+          def new_increment; old_increment; end
+          alias_method :old_increment, :increment
+          alias_method :increment, :new_increment
+        end
+      }
+
+      it 'results in an infinite loop' do
+        expect {
+          instance.increment
+        }.to raise_error(::SystemStackError, 'stack level too deep')
+      end
+    end
   end
 end
