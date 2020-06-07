@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = '>= 2.6'
 
   s.add_development_dependency 'bundler', '~> 2.0'
-  s.add_development_dependency 'rspec', '~> 3.8'
+  s.add_development_dependency 'rspec', '~> 3.9'
   s.add_dependency 'concurrent-ruby', '~> 1.1'
 
   s.require_paths = ['lib']
