@@ -124,9 +124,13 @@ describe ::Memorb do
       }
 
       it 'results in infinite recursion when the method is called' do
-        expect {
-          instance.increment
-        }.to raise_error(::SystemStackError, 'stack level too deep')
+        error = case ::RUBY_ENGINE
+        when 'jruby'
+          [java.lang.StackOverflowError]
+        else
+          [::SystemStackError, 'stack level too deep']
+        end
+        expect { instance.increment }.to raise_error(*error)
       end
     end
 
