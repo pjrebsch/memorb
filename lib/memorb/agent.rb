@@ -14,6 +14,14 @@ module Memorb
       store.fetch(:methods) { KeyValueStore.new }
     end
 
+    def value_store
+      store.fetch(:value) { KeyValueStore.new }
+    end
+
+    def fetch(key, &block)
+      value_store.fetch(key, &block)
+    end
+
     private
 
     attr_reader :store

@@ -23,4 +23,23 @@ describe ::Memorb::Agent do
       end
     end
   end
+  describe '#value_store' do
+    it 'returns a key-values store' do
+      expect(subject.value_store).to be_an_instance_of(::Memorb::KeyValueStore)
+    end
+    context 'when called more than once' do
+      it 'returns the same store each time' do
+        store_1 = subject.value_store
+        store_2 = subject.value_store
+        expect(store_1).to be(store_2)
+      end
+    end
+  end
+  describe '#fetch' do
+    it 'delegates to the value store' do
+      subject.fetch([:a, :b]) { :c }
+      value = subject.value_store.read([:a, :b])
+      expect(value).to eq(:c)
+    end
+  end
 end

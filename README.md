@@ -67,15 +67,23 @@ These methods' return values will now be memoized on each instance of `WeekForec
 
 ## Usage
 
+### Class Methods
+
+#### `register` / `memorb!`
+
+Use this method to register instance methods for memoization. Such methods will be enabled (overridden) with the memoization features once they are both registered and defined.
+
 Registration of methods tells Memorb to enable memoization for them once they are defined. There are a few ways to register instance methods with Memorb. A common requirement is that a class must integrate Memorb with `extend Memorb` except for classes that inherit from a class that already has. Registration can be done with `memorb.register` or `memorb!` from a class context. It is recommended in general that you register methods before defining them.
 
-### List form
+##### List form
 
 This is the form used in the example code snippet above where Memorb is given a list of method names to register. The provided names may be strings or symbols.
 
-Memorb can't know when a registered method's definition is going to occur, so if you mistype the name of a method you intend to define later, Memorb will anticipate that method's definition indefinitely and the method that you intended to register won't end up being memoized. For this reason (among others), the Prefix form described below is recommended. If you do use the List form, you can use `memorb.check_registrations!` once you expect the methods you registered to have all been defined. If there are any registrations that don't have a method definition, it will raise an error containing those names.
+Memorb can't know when a registered method's definition is going to occur, so if you mistype the name of a method you intend to define later, Memorb will anticipate that method's definition indefinitely and the method that you intended to register won't end up being memoized. For this reason (among others), the Prefix form described below is recommended.
 
-### Prefix form
+If you do use the List form, you can check that all registered methods were enabled by checking that `::disabled_methods` is empty which might be valuable in a test suite.
+
+##### Prefix form
 
 Conveniently, methods defined using the `def` keyword return the method name, so the method definition can just be prefixed with a registration directive. This approach helps make apparent the fact that the method is being memoized when reading the method.
 
@@ -97,7 +105,7 @@ def week_days
 end
 ```
 
-### Block form
+##### Block form
 
 Instead of listing out method names or decorating their definitions, you can just define them within a block.
 
@@ -122,11 +130,43 @@ class WeekForecast
 end
 ```
 
-Just be careful not to accidentally include `initialize` or any other methods that must always execute!
+Just be careful not to accidentally include any other methods that must always execute!
 
 It is also important to note that all instance methods that are defined while the block is executing will be registered, not just the ones that can be seen using the `def` keyword. This is also not thread-safe, so if you are defining methods concurrently (which you shouldn't be), you may risk registering methods you didn't intend to register.
 
-## Cache Explosion
+#### `registered_methods`
+
+Returns the names of methods that have been registered for the integrating class.
+
+#### `registered?(method_name)`
+
+Returns whether or not the specified method is registered.
+
+#### `enable(method_name)` / `disable(method_name)`
+
+Enable/Disable a registered method.
+
+#### `enabled?(method_name)`
+
+Returns whether or not the specified method is enabled.
+
+#### `enabled_methods` / `disabled_methods`
+
+Returns which methods are enabled/disabled for the integrating class.
+
+#### `purge(method_name)`
+
+Clears all caches for the specified method across all instances of the integrating class.
+
+### Instance Methods
+
+#### `memorb`
+
+Returns the Memorb agent for the object instance.
+
+## Advisories
+
+### Cache Explosion
 
 No, sorry, not [the show](https://www.cashexplosionshow.com/).
 
@@ -138,15 +178,13 @@ The `rain_on?` method in the example class represents a method that is subject t
 def rain_on?(day)
   day = day.to_s
   return unless week_days.include?(day)
-  memorb.fetch(__method__, day) do
+  memorb.fetch([__method__, day]) do
     ...
   end
 end
 ```
 
 Obviously, this method doesn't benefit much from a caching approach in the first place: computation already needs to be done to achieve argument normalization and the actual logic for the method is quite lightweight. Methods that take arguments may not be good candidates for memoization because the explosion problem may represent too big a risk for the benefits that caching would provide, but this is a judgment call to be made per case.
-
-## Other Advisories
 
 ### Blocks are not considered distinguishing arguments
 
