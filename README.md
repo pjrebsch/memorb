@@ -6,9 +6,7 @@ Memoize instance methods with ease.
 
 ## Overview
 
-Specifying methods to be memoized by Memorb is referred to as "registering" them. When a method is registered and defined, Memorb will override it so that on initial invocation, the method's return value is cached to be returned immediately on every invocation thereafter. Once the method has been overridden, it is considered "enabled" for Memorb functionality. Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
-
-Below is a contrived example class that could benefit from memoization. It is designed for effective demonstration, not for making a good case for the use of memoization.
+Below is a contrived example class that could benefit from memoization.
 
 ```ruby
 class WeekForecast
@@ -58,81 +56,108 @@ Memorb exists to make memoization in these cases much easier to implement. Simpl
 ```ruby
 class WeekForecast
   extend Memorb
-  memorb.register :data, :week_days, :rain_on?, :will_rain?
-  ...
+
+  memorb! def data
+    ...
+  end
+
+  memorb! def week_days
+    ...
+  end
+
+  memorb! def rain_on?(day)
+    ...
+  end
+
+  memorb! def will_rain?
+    ...
+  end
 end
 ```
 
-These methods' return values will now be memoized on each instance of `WeekForecast`. The `rain_on?` method will memoize its return values based on the arguments supplied to it (in this case one argument since that's all it accepts), and the other methods will each memoize their single, independent return value.
+These methods' return values will now be memoized for each instance of `WeekForecast`. The `rain_on?` method will memoize its return values based on the arguments supplied to it (in this case one argument since that's all it accepts), and the other methods will each memoize their single, independent return value.
 
 ## Usage
 
-### Class Methods
+First, integrate Memorb into a class with `extend Memorb`. Then, use the `memorb!` class method to register instance methods for memoization.
 
-#### `register` / `memorb!`
+### Integrating Class Methods
 
-Use this method to register instance methods for memoization. Such methods will be enabled (overridden) with the memoization features once they are both registered and defined.
+These methods are available as class methods on the integrating class.
 
-Registration of methods tells Memorb to enable memoization for them once they are defined. There are a few ways to register instance methods with Memorb. A common requirement is that a class must integrate Memorb with `extend Memorb` except for classes that inherit from a class that already has. Registration can be done with `memorb.register` or `memorb!` from a class context. It is recommended in general that you register methods before defining them.
+#### `memorb!`
 
-##### List form
+Use this method to register instance methods for memoization. When a method is both registered and defined, Memorb will override it. Once the method is overridden, it's considered "enabled" for memoization. On initial invocation with a given set of arguments, the method's return value is cached based on the given arguments and returned. Then, subsequent invocations of that method with the same arguments return the cached value.
 
-This is the form used in the example code snippet above where Memorb is given a list of method names to register. The provided names may be strings or symbols.
-
-Memorb can't know when a registered method's definition is going to occur, so if you mistype the name of a method you intend to define later, Memorb will anticipate that method's definition indefinitely and the method that you intended to register won't end up being memoized. For this reason (among others), the Prefix form described below is recommended.
-
-If you do use the List form, you can check that all registered methods were enabled by checking that `::disabled_methods` is empty which might be valuable in a test suite.
+Internally, calls to the overriding method implementation are serialized with a read-write lock to guarantee that the initial method call is not subject to a race condition between threads, while also optimizing the performance of concurrent reads of the cached result.
 
 ##### Prefix form
 
 Conveniently, methods defined using the `def` keyword return the method name, so the method definition can just be prefixed with a registration directive. This approach helps make apparent the fact that the method is being memoized when reading the method.
 
 ```ruby
-class WeekForecast
-  extend Memorb
-  memorb! def week_days
-    ...
-  end
-end
-```
-
-If you prefer `def` and `end` to align, you can move `memorb!` up to a new line and escape the line break. The Memorb registration methods require arguments, so if you forget to escape the line break, you'll be made aware when the class is loaded.
-
-```ruby
-memorb! \
-def week_days
+memorb! def data
   ...
 end
 ```
+
+If you prefer `def` and `end` to align, you can move `memorb!` up to a new line and escape the line break. The Memorb registration methods require arguments, so if you forget to escape the line break, you'll be made aware with an exception when the class is loaded.
+
+```ruby
+memorb! \
+def data
+  ...
+end
+```
+
+##### List form
+
+If you wish to enumerate the methods to register all at once, or don't have access to a method's implementation source to use the Prefix form, you can supply a list of method names instead.
+
+```ruby
+memorb! :data, :week_days, :rain_on?, :will_rain?
+```
+
+Typos are a potential problem. Memorb can't know when a registered method's definition is going to occur, so if you mistype the name of a method you intend to define later, Memorb will anticipate that method's definition indefinitely and the method that you intended to register won't end up being memoized. The Prefix form is recommended for this reason.
+
+If you do use this form, you can check that all registered methods were enabled by validating that `memorb.disabled_methods` is empty, which might be a valuable addition in a test suite.
 
 ##### Block form
 
 Instead of listing out method names or decorating their definitions, you can just define them within a block.
 
 ```ruby
-class WeekForecast
-  extend Memorb
-  ...
-  memorb! do
-    def data
-      ...
-    end
-    def week_days
-      ...
-    end
-    def rain_on?(day)
-      ...
-    end
-    def will_rain?
-      ...
-    end
+memorb! do
+  def data
+    ...
+  end
+  def week_days
+    ...
+  end
+  def rain_on?(day)
+    ...
+  end
+  def will_rain?
+    ...
   end
 end
 ```
 
 Just be careful not to accidentally include any other methods that must always execute!
 
-It is also important to note that all instance methods that are defined while the block is executing will be registered, not just the ones that can be seen using the `def` keyword. This is also not thread-safe, so if you are defining methods concurrently (which you shouldn't be), you may risk registering methods you didn't intend to register.
+It is also important to note that all instance methods that are defined while the block is executing will be registered, not necessarily just the ones that can be seen using the `def` keyword. This is also not thread-safe, so if you are defining methods concurrently (which you shouldn't be), you may risk registering methods you didn't intend to register.
+
+#### `memorb`
+
+Returns the `Memorb::Integration` instance for the integrating class.
+
+### Integration Methods
+
+These methods are available on the `Memorb::Integration` instance for an integrating class.
+
+#### `register`
+
+Alias of `memorb!`.
 
 #### `registered_methods`
 
@@ -152,17 +177,15 @@ Returns whether or not the specified method is enabled.
 
 #### `enabled_methods` / `disabled_methods`
 
-Returns which methods are enabled/disabled for the integrating class.
-
-#### `purge(method_name)`
-
-Clears all caches for the specified method across all instances of the integrating class.
+Returns which methods are registered and enabled/disabled for the integrating class.
 
 ### Instance Methods
 
+These methods are available to instances of the integrating class.
+
 #### `memorb`
 
-Returns the Memorb agent for the object instance.
+Returns the `Memorb::Agent` for the object instance.
 
 ## Advisories
 
@@ -206,7 +229,7 @@ If you change the visibility of an enabled method, Memorb won't automatically kn
 
 ### Aliasing overridden methods
 
-Using `alias_method` in Ruby will create a copy under the new name of the existing method implementation found at that time. This means that the aliased method will have different behavior relative to when the method was overridden by Memorb. If the method was aliased before override by Memorb, then it's calls will not reference the cache of the original method, but if aliased after the override, then it will.
+Using `alias_method` in Ruby will create a copy of the method implementation found at that time. This means that the aliased method will have different behavior relative to when the method was overridden by Memorb. If the method was aliased before override by Memorb, then its calls will not reference the cache of the original method, but if aliased after the override, then such calls will reference the cache.
 
 ### Alias method chaining on overridden methods
 
