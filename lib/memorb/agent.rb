@@ -19,7 +19,7 @@ module Memorb
     end
 
     def fetch(key, &block)
-      value_store.fetch(key, &block)
+      value_store.fetch(key.hash, &block)
     end
 
     private

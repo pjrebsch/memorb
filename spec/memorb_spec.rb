@@ -168,5 +168,31 @@ describe ::Memorb do
         expect(result_1).to eq(result_2)
       end
     end
+
+    ::SpecHelper.for_testing_garbage_collection do
+      let(:integrator) {
+        ::Class.new(::SpecHelper.basic_target_class) do
+          extend ::Memorb
+          memorb.register(:noop)
+        end
+      }
+
+      describe 'a method argument for a memoized method' do
+        it 'allows the argument to be garbage collected' do
+          ref = ::WeakRef.new(Object.new)
+          instance.send(:noop, ref.__getobj__)
+          ::SpecHelper.force_garbage_collection
+          expect(ref.weakref_alive?).to be_falsey
+        end
+      end
+      describe 'a low-level cache fetch' do
+        it 'allows the cache key to be garbage collected' do
+          ref = ::WeakRef.new(Object.new)
+          instance.memorb.fetch(ref.__getobj__) { nil }
+          ::SpecHelper.force_garbage_collection
+          expect(ref.weakref_alive?).to be_falsey
+        end
+      end
+    end
   end
 end

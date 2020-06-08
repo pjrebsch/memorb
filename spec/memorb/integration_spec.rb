@@ -513,20 +513,14 @@ describe ::Memorb::Integration do
         expect { klass.include(subject) }.to raise_error(error, error_message)
       end
     end
-    # JRuby garbage collection isn't as straightforward as CRuby, so tests
-    # that rely on garbage collection are skipped. The expectation is that
-    # if this works for CRuby's GC, then it should work for the GCs of other
-    # Ruby implementations.
-    if ::RUBY_ENGINE != 'jruby'
+    ::SpecHelper.for_testing_garbage_collection do
       context 'when freed by the garbage collector' do
         it 'removes its agent from the global registry' do
-          # At the time of writing, RSpec blocks aren't allowing out-of-scope
-          # variables to be garbage collected, so `WeakRef` is used to fix that.
-          require 'weakref'
           ref = ::WeakRef.new(integrator.new)
           agent = ref.__getobj__.memorb
           expect(agent_registry.keys).to include(agent.id)
           ::SpecHelper.force_garbage_collection
+          expect(ref.weakref_alive?).to be_falsey
           expect(agent_registry.keys).to be_empty
         end
       end

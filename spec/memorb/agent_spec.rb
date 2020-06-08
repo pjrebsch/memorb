@@ -38,7 +38,7 @@ describe ::Memorb::Agent do
   describe '#fetch' do
     it 'delegates to the value store' do
       subject.fetch([:a, :b]) { :c }
-      value = subject.value_store.read([:a, :b])
+      value = subject.value_store.read([:a, :b].hash)
       expect(value).to eq(:c)
     end
   end
