@@ -29,14 +29,12 @@ module Memorb
     def method_removed(name)
       super.tap do
         memorb.disable(name)
-        memorb.purge(name)
       end
     end
 
     def method_undefined(name)
       super.tap do
         memorb.disable(name)
-        memorb.purge(name)
       end
     end
 

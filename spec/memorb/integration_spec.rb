@@ -64,7 +64,6 @@ describe ::Memorb::Integration do
     let(:integrator) { target.tap { |x| x.extend(::Memorb) } }
     let(:integrator_singleton) { integrator.singleton_class }
     let(:instance) { integrator.new }
-    let(:agent_registry) { subject.send(:_agents) }
     subject { described_class[integrator] }
 
     describe 'integrator instance methods' do
@@ -75,10 +74,6 @@ describe ::Memorb::Integration do
         it 'initializes the agent with the object ID of the instance' do
           agent = instance.memorb
           expect(agent.id).to equal(instance.object_id)
-        end
-        it 'adds the agent to the global registry' do
-          agent = instance.memorb
-          expect(agent_registry.keys).to contain_exactly(agent.id)
         end
       end
       describe '#memorb' do
@@ -355,27 +350,6 @@ describe ::Memorb::Integration do
         end
       end
     end
-    describe '::purge' do
-      let(:method_name) { :increment }
-      let(:method_id) { ::Memorb::MethodIdentifier.new(method_name) }
-
-      it 'clears cached data for the given method in all instances' do
-        subject.register(method_name)
-        instance.send(method_name)
-        store = instance.memorb.method_store.read(method_id)
-        expect(store.keys).not_to be_empty
-        subject.purge(method_name)
-        expect(store.keys).to be_empty
-      end
-      context 'when the given method has no cache record' do
-        it 'does not raise an error' do
-          subject.register(method_name)
-          store = instance.memorb.method_store.read(method_id)
-          expect(store).to be(nil)
-          expect { subject.purge(method_name) }.not_to raise_error
-        end
-      end
-    end
     describe '::auto_register?' do
       context 'by default' do
         it 'returns false' do
@@ -476,11 +450,6 @@ describe ::Memorb::Integration do
         agent = subject.create_agent(instance)
         expect(agent).to be_an_instance_of(::Memorb::Agent)
       end
-      it 'writes the agent to the global agent registry' do
-        agent = subject.create_agent(instance)
-        registry = subject.send(:_agents)
-        expect(registry.keys).to contain_exactly(agent.id)
-      end
     end
     it 'supports regularly invalid method names' do
       invalid_starting_chars = [0x00..0x40, 0x5b..0x60, 0x7b..0xff]
@@ -511,18 +480,6 @@ describe ::Memorb::Integration do
         error = ::Memorb::InvalidIntegrationError
         error_message = 'an integration must be applied with `prepend`, not `include`'
         expect { klass.include(subject) }.to raise_error(error, error_message)
-      end
-    end
-    ::SpecHelper.for_testing_garbage_collection do
-      context 'when freed by the garbage collector' do
-        it 'removes its agent from the global registry' do
-          ref = ::WeakRef.new(integrator.new)
-          agent = ref.__getobj__.memorb
-          expect(agent_registry.keys).to include(agent.id)
-          ::SpecHelper.force_garbage_collection
-          expect(ref.weakref_alive?).to be_falsey
-          expect(agent_registry.keys).to be_empty
-        end
       end
     end
   end

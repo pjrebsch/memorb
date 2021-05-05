@@ -87,10 +87,6 @@ module Memorb
               _enabled?(_identifier(name))
             end
 
-            def purge(name)
-              _purge(_identifier(name))
-            end
-
             def auto_register?
               _auto_registration.value > 0
             end
@@ -125,17 +121,8 @@ module Memorb
 
             alias_method :inspect, :name
 
-            # Never save reference to the integrator instance or it may
-            # never be garbage collected!
             def create_agent(integrator_instance)
-              Agent.new(integrator_instance.object_id).tap do |agent|
-                _agents.write(agent.id, agent)
-
-                # The proc must not be made here because it would save a
-                # reference to `integrator_instance`.
-                finalizer = _agent_finalizer(agent.id)
-                ::ObjectSpace.define_finalizer(integrator_instance, finalizer)
-              end
+              Agent.new(integrator_instance.object_id)
             end
 
             private
@@ -190,14 +177,6 @@ module Memorb
               _overrides.keys.include?(method_id)
             end
 
-            def _purge(method_id)
-              _agents.keys.each do |id|
-                agent = _agents.read(id)
-                store = agent&.method_store&.read(method_id)
-                store&.reset!
-              end
-            end
-
             def _remove_override(method_id)
               # Ruby will raise an exception if the method doesn't exist.
               # Catching it is the safest thing to do for thread-safety.
@@ -233,21 +212,12 @@ module Memorb
               visibility
             end
 
-            def _agent_finalizer(agent_id)
-              # This must not be a lambda proc, otherwise GC hangs!
-              ::Proc.new { _agents.forget(agent_id) }
-            end
-
             def _registrations
               RubyCompatibility.module_constant(self, :registrations)
             end
 
             def _overrides
               RubyCompatibility.module_constant(self, :overrides)
-            end
-
-            def _agents
-              RubyCompatibility.module_constant(self, :agents)
             end
 
             def _auto_registration
@@ -259,7 +229,6 @@ module Memorb
 
         RubyCompatibility.module_constant_set(mixin, :registrations, KeyValueStore.new)
         RubyCompatibility.module_constant_set(mixin, :overrides, KeyValueStore.new)
-        RubyCompatibility.module_constant_set(mixin, :agents, KeyValueStore.new)
         RubyCompatibility.module_constant_set(mixin,
           :auto_registration,
           ::Concurrent::AtomicFixnum.new,

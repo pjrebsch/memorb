@@ -90,16 +90,6 @@ describe ::Memorb::IntegratorClassMethods do
       expect(integration.enabled_methods).not_to include(method_name)
       expect(integration.public_instance_methods).not_to include(method_name)
     end
-    it 'clears cached data for the method in all instances' do
-      ::Memorb::RubyCompatibility
-        .define_method(integrator, method_name) { nil }
-      integration.register(method_name)
-      instance.send(method_name)
-      store = instance.memorb.method_store.read(method_id)
-      expect(store.keys).not_to be_empty
-      ::Memorb::RubyCompatibility.remove_method(integrator, method_name)
-      expect(store.keys).to be_empty
-    end
   end
   describe '::method_undefined' do
     let(:method_name) { :method_1 }
@@ -127,16 +117,6 @@ describe ::Memorb::IntegratorClassMethods do
       expect {
         instance.send(method_name)
       }.to raise_error(::NoMethodError, /undefined method/)
-    end
-    it 'clears cached data for the method in all instances' do
-      ::Memorb::RubyCompatibility
-        .define_method(integrator, method_name) { nil }
-      integration.register(method_name)
-      instance.send(method_name)
-      store = instance.memorb.method_store.read(method_id)
-      expect(store.keys).not_to be_empty
-      ::Memorb::RubyCompatibility.undef_method(integrator, method_name)
-      expect(store.keys).to be_empty
     end
   end
 end
