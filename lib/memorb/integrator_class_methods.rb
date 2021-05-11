@@ -7,7 +7,7 @@ module Memorb
       Integration[self]
     end
 
-    def memorb!(*args, &block)
+    def memoize(*args, &block)
       memorb.register(*args, &block)
     end
 

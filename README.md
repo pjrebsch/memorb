@@ -61,19 +61,19 @@ Memorb exists to make memoization in these cases much easier to implement. Simpl
 class WeekForecast
   extend Memorb
 
-  memorb! def data
+  memoize def data
     ...
   end
 
-  memorb! def week_days
+  memoize def week_days
     ...
   end
 
-  memorb! def rain_on?(day)
+  memoize def rain_on?(day)
     ...
   end
 
-  memorb! def will_rain?
+  memoize def will_rain?
     ...
   end
 end
@@ -83,13 +83,13 @@ These methods' return values will now be memoized for each instance of `WeekFore
 
 ## Usage
 
-First, integrate Memorb into a class with `extend Memorb`. Then, use the `memorb!` class method to register instance methods for memoization.
+First, integrate Memorb into a class with `extend Memorb`. Then, use the `memoize` class method to register instance methods for memoization.
 
 ### Integrating Class Methods
 
 These methods are available as class methods on the integrating class.
 
-#### `memorb!`
+#### `memoize`
 
 Use this method to register instance methods for memoization. When a method is both registered and defined, Memorb will override it. Once the method is overridden, it's considered "enabled" for memoization. On initial invocation with a given set of arguments, the method's return value is cached based on the given arguments and returned. Then, subsequent invocations of that method with the same arguments return the cached value.
 
@@ -100,15 +100,15 @@ Internally, calls to the overriding method implementation are serialized with a 
 Conveniently, methods defined using the `def` keyword return the method name, so the method definition can just be prefixed with a registration directive. This approach helps make apparent the fact that the method is being memoized when reading the method.
 
 ```ruby
-memorb! def data
+memoize def data
   ...
 end
 ```
 
-If you prefer `def` and `end` to align, you can move `memorb!` up to a new line and escape the line break. The Memorb registration methods require arguments, so if you forget to escape the line break, you'll be made aware with an exception when the class is loaded.
+If you prefer `def` and `end` to align, you can move `memoize` up to a new line and escape the line break. The Memorb registration methods require arguments, so if you forget to escape the line break, you'll be made aware with an exception when the class is loaded.
 
 ```ruby
-memorb! \
+memoize \
 def data
   ...
 end
@@ -119,7 +119,7 @@ end
 If you wish to enumerate the methods to register all at once, or don't have access to a method's implementation source to use the Prefix form, you can supply a list of method names instead.
 
 ```ruby
-memorb! :data, :week_days, :rain_on?, :will_rain?
+memoize :data, :week_days, :rain_on?, :will_rain?
 ```
 
 Typos are a potential problem. Memorb can't know when a registered method's definition is going to occur, so if you mistype the name of a method you intend to define later, Memorb will anticipate that method's definition indefinitely and the method that you intended to register won't end up being memoized. The Prefix form is recommended for this reason.
@@ -131,7 +131,7 @@ If you do use this form, you can check that all registered methods were enabled 
 Instead of listing out method names or decorating their definitions, you can just define them within a block.
 
 ```ruby
-memorb! do
+memoize do
   def data
     ...
   end
@@ -161,7 +161,7 @@ These methods are available on the `Memorb::Integration` instance for an integra
 
 #### `register`
 
-Alias of `memorb!`.
+Alias of `memoize`.
 
 #### `registered_methods`
 

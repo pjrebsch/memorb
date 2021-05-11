@@ -10,7 +10,7 @@ describe ::Memorb::IntegratorClassMethods do
       expect(integrator.memorb).to be(integration)
     end
   end
-  describe '::memorb!' do
+  describe '::memoize' do
     it 'calls register with the same arguments' do
       spy = double('spy', register: nil)
       mod = Module.new
@@ -18,7 +18,7 @@ describe ::Memorb::IntegratorClassMethods do
       integrator.singleton_class.prepend(mod)
       block = Proc.new { nil }
       expect(spy).to receive(:register).with(:a, &block)
-      integrator.memorb!(:a, &block)
+      integrator.memoize(:a, &block)
     end
   end
   describe '::inherited' do
