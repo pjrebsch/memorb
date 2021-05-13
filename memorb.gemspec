@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   TXT
 
   s.required_ruby_version     = '~> 2.3'
-  s.required_rubygems_version = '>= 2.6'
+  s.required_rubygems_version = '>= 2.5'
 
   s.add_development_dependency 'bundler', '~> 2.0'
   s.add_development_dependency 'rspec', '~> 3.9'
