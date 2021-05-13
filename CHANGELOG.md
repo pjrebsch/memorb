@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2021-05-13
+
+### Changed
+
+- Decreased RubyGems version requirement from `>= 2.6` to `>= 2.5`.
+
 ## [0.2.0] - 2021-05-11
 
 ### Changed
