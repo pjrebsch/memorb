@@ -115,7 +115,7 @@ module Memorb
               [:name, :inspect, :object_id].each do |m|
                 next unless integrator.respond_to?(m)
                 base_name = integrator.public_send(m)
-                return "Memorb:#{ base_name }" if base_name
+                return "Memorb::Integration[#{ base_name }]" if base_name
               end
             end
 

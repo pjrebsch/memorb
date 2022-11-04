@@ -419,14 +419,14 @@ describe ::Memorb::Integration do
     describe '::name' do
       it 'includes the name of the integrating class' do
         name = 'IntegratingKlass'
-        expectation = "Memorb:#{ name }"
+        expectation = "Memorb::Integration[#{ name }]"
         ::Memorb::RubyCompatibility
           .define_method(integrator_singleton, :name) { name }
         expect(subject.name).to eq(expectation)
       end
       context 'when integrating class does not have a name' do
         it 'uses the inspection of the integrating class' do
-          expectation = "Memorb:#{ integrator.inspect }"
+          expectation = "Memorb::Integration[#{ integrator.inspect }]"
           ::Memorb::RubyCompatibility
             .define_method(integrator_singleton, :name) { nil }
           expect(subject.name).to eq(expectation)
@@ -436,7 +436,7 @@ describe ::Memorb::Integration do
       end
       context 'when integrating class does not have an inspection' do
         it 'uses the object ID of the integrating class' do
-          expectation = "Memorb:#{ integrator.object_id }"
+          expectation = "Memorb::Integration[#{ integrator.object_id }]"
           ::Memorb::RubyCompatibility
             .define_method(integrator_singleton, :inspect) { nil }
           expect(subject.name).to eq(expectation)
