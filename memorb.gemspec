@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
     Memorb makes instance method memoization easy to set up and use.
   TXT
 
-  s.required_ruby_version     = '~> 2.3'
+  s.required_ruby_version     = '>= 2.3'
   s.required_rubygems_version = '>= 2.5'
 
   s.add_development_dependency 'bundler', '~> 2.0'
