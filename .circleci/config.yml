@@ -1,9 +1,6 @@
 _: &steps
   - checkout
   - run:
-      name: Update RubyGems
-      command: gem update --system 3.3
-  - run:
       name: Bundle
       command: gem install bundler && bundle install
   - run:
@@ -30,11 +27,11 @@ jobs:
     steps: *steps
   ruby-2.5:
     docker:
-      - image: circleci/ruby:2.5
+      - image: cimg/ruby:2.5
     steps: *steps
   ruby-2.4:
     docker:
-      - image: circleci/ruby:2.4
+      - image: cimg/ruby:2.4
     steps: *steps
   ruby-2.3:
     docker:
