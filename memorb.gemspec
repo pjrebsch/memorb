@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require File.expand_path('../lib/memorb/version', __FILE__)
+$:.push File.expand_path('../lib', __FILE__)
+
+require 'memorb/version'
 
 Gem::Specification.new do |s|
   s.name        = 'memorb'
