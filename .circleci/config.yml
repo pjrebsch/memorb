@@ -1,10 +1,11 @@
 _: &steps
   - checkout
   - run:
+      name: Update RubyGems
+      command: gem update --system 3.3
+  - run:
       name: Bundle
-      command: |
-        gem install bundler
-        bundle install
+      command: gem install bundler && bundle install
   - run:
       name: RSpec
       command: bundle exec rspec
