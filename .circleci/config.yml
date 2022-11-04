@@ -13,19 +13,19 @@ version: 2
 jobs:
   ruby-3.1:
     docker:
-      - image: circleci/ruby:3.1
+      - image: cimg/ruby:3.1
     steps: *steps
   ruby-3.0:
     docker:
-      - image: circleci/ruby:3.0
+      - image: cimg/ruby:3.0
     steps: *steps
   ruby-2.7:
     docker:
-      - image: circleci/ruby:2.7
+      - image: cimg/ruby:2.7
     steps: *steps
   ruby-2.6:
     docker:
-      - image: circleci/ruby:2.6
+      - image: cimg/ruby:2.6
     steps: *steps
   ruby-2.5:
     docker:
