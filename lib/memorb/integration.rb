@@ -32,10 +32,8 @@ module Memorb
 
       def new(integrator)
         mixin = ::Module.new do
-          def initialize(*)
-            agent = Integration[self.class].create_agent(self)
-            define_singleton_method(:memorb) { agent }
-            super
+          def memorb
+            @memorb ||= Integration[self.class].create_agent(self)
           end
 
           class << self
