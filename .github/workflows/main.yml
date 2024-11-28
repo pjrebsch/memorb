@@ -1,0 +1,39 @@
+on:
+  pull_request:
+    branches: ["*"]
+  push:
+    branches: [master]
+jobs:
+  test:
+    strategy:
+      matrix:
+        version:
+          - ruby-3.3
+          - ruby-3.2
+          - ruby-3.1
+          - ruby-3.0
+          - ruby-2.7
+          - ruby-2.6
+          - ruby-2.5
+          - ruby-2.4
+          - ruby-2.3
+          - jruby-9.4
+          - jruby-9.3
+          - jruby-9.2
+          - jruby-9.1
+          - jruby-9.0
+    name: ${{ matrix.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.version }}
+      - name: Install bundler
+        run: gem install bundler
+      - name: Install gems
+        run: bundle install
+      - name: Run tests
+        run: bundle exec rspec
