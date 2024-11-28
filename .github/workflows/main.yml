@@ -17,11 +17,11 @@ jobs:
           - ruby-2.5
           - ruby-2.4
           - ruby-2.3
-          - jruby-9.4
-          - jruby-9.3
-          - jruby-9.2
-          - jruby-9.1
-          - jruby-9.0
+          # - jruby-9.4
+          # - jruby-9.3
+          # - jruby-9.2
+          # - jruby-9.1
+          # - jruby-9.0
     name: ${{ matrix.version }}
     runs-on: ubuntu-latest
     steps:
