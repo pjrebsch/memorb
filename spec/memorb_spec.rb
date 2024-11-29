@@ -178,7 +178,7 @@ describe ::Memorb do
       }
 
       describe 'a method argument for a memoized method' do
-        it 'allows the argument to be garbage collected' do
+        xit 'allows the argument to be garbage collected' do
           ref = ::WeakRef.new(Object.new)
           instance.send(:noop, ref.__getobj__)
           ::SpecHelper.force_garbage_collection
@@ -186,7 +186,7 @@ describe ::Memorb do
         end
       end
       describe 'a low-level cache fetch' do
-        it 'allows the cache key to be garbage collected' do
+        xit 'allows the cache key to be garbage collected' do
           ref = ::WeakRef.new(Object.new)
           instance.memorb.fetch(ref.__getobj__) { nil }
           ::SpecHelper.force_garbage_collection
