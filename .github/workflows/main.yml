@@ -6,6 +6,7 @@ on:
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         # https://bundler.io/compatibility.html
         ruby:
