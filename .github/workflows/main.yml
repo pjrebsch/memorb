@@ -29,9 +29,9 @@ jobs:
           - version: jruby-9.4
             bundler: "2.5"
           - version: jruby-9.3
-            bundler: "2.5"
+            bundler: "2.4"
           - version: jruby-9.2
-            bundler: "2.5"
+            bundler: "2.3"
     name: ${{ matrix.ruby.version }}
     runs-on: ubuntu-latest
     steps:
