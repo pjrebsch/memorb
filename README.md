@@ -2,7 +2,7 @@
 
 Memoize instance methods with ease.
 
-[![Gem Version](https://badge.fury.io/rb/memorb.svg)](https://badge.fury.io/rb/memorb) ![GitHub Actions](https://github.com/pjrebsch/memorb/actions/workflows/main.yml/badge.svg)
+[![Gem Version](https://badge.fury.io/rb/memorb.svg)](https://badge.fury.io/rb/memorb) [![GitHub Actions](https://github.com/pjrebsch/memorb/actions/workflows/main.yml/badge.svg)](https://github.com/pjrebsch/memorb/actions/workflows/main.yml)
 
 ```bash
 gem install memorb
