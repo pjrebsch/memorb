@@ -7,20 +7,26 @@ jobs:
   test:
     strategy:
       matrix:
+        # https://bundler.io/compatibility.html
         ruby:
           - version: ruby-3.3
-            bundler: ">= 2.5"
+            bundler: ">=2.5"
           - version: ruby-3.2
-            bundler: ">= 2.5"
+            bundler: ">=2.5"
           - version: ruby-3.1
-            bundler: ">= 2.5"
+            bundler: ">=2.5"
           - version: ruby-3.0
-            bundler: ">= 2.5"
-          # - ruby-2.7
-          # - ruby-2.6
-          # - ruby-2.5
-          # - ruby-2.4
-          # - ruby-2.3
+            bundler: ">=2.5"
+          - version: ruby-2.7
+            bundler: "2.4"
+          - version: ruby-2.6
+            bundler: "2.4"
+          - version: ruby-2.5
+            bundler: "2.3"
+          - version: ruby-2.4
+            bundler: "2.3"
+          - version: ruby-2.3
+            bundler: "2.3"
           # - jruby-9.4
           # - jruby-9.3
           # - jruby-9.2
