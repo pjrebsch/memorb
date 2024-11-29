@@ -1,0 +1,50 @@
+name: Test Suite
+on:
+  pull_request:
+    branches: ["*"]
+  push:
+    branches: [master]
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        # https://bundler.io/compatibility.html
+        ruby:
+          - version: ruby-3.3
+            bundler: "2.5"
+          - version: ruby-3.2
+            bundler: "2.5"
+          - version: ruby-3.1
+            bundler: "2.5"
+          - version: ruby-3.0
+            bundler: "2.5"
+          - version: ruby-2.7
+            bundler: "2.4"
+          - version: ruby-2.6
+            bundler: "2.4"
+          - version: ruby-2.5
+            bundler: "2.3"
+          - version: ruby-2.4
+            bundler: "2.3"
+          - version: jruby-9.4
+            bundler: "2.5"
+          - version: jruby-9.3
+            bundler: "2.4"
+          - version: jruby-9.2
+            bundler: "2.3"
+    name: ${{ matrix.ruby.version }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby.version }}
+      - name: Install bundler
+        run: gem install bundler --version ${{ matrix.ruby.bundler }}
+      - name: Install gems
+        run: bundle install
+      - name: Run tests
+        run: bundle exec rspec
